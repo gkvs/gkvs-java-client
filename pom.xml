@@ -12,6 +12,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <msgpack.version>0.8.11</msgpack.version>
+    <protobuf.version>3.5.1</protobuf.version>
   </properties>
   
   <scm>
@@ -36,6 +37,12 @@
        <artifactId>msgpack-core</artifactId>
        <version>${msgpack.version}</version>
     </dependency> 
+    
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>    
 
     <!-- TEST -->
 
@@ -50,7 +57,57 @@
 
   <build>
   
+    <resources>
+      <resource>
+        <directory>target/generated-resources</directory>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/protos</directory>
+        <filtering>false</filtering>
+      </resource>      
+    </resources> 
+    
     <plugins>
+    
+     <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>build-helper-maven-plugin</artifactId>
+         <version>1.9.1</version>
+         <executions>
+             <execution>
+                 <phase>generate-sources</phase>
+                 <goals><goal>add-source</goal></goals>
+                 <configuration>
+                     <sources>
+                         <source>src/main/protos</source>                                          
+                     </sources>
+                 </configuration>
+             </execution>                
+         </executions>
+     </plugin>   
+     
+       <plugin>
+          <groupId>com.github.os72</groupId>
+          <artifactId>protoc-jar-maven-plugin</artifactId>
+          <version>3.5.1</version>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>run</goal>
+                  </goals>
+                  <configuration>
+                      <includeDirectories>
+                          <include>src/main/protos</include>
+                      </includeDirectories>
+                      <inputDirectories>
+                          <include>src/main/protos</include>
+                      </inputDirectories>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+    
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
