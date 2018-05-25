@@ -1,0 +1,18 @@
+<assembly>
+  <id>distr</id>
+  <formats>
+    <format>dir</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>*:jar:*</include>
+      </includes>
+      <outputDirectory>/lib</outputDirectory>
+      <unpack>false</unpack>
+      <fileMode>664</fileMode>
+      <directoryMode>775</directoryMode>
+    </dependencySet>
+  </dependencySets>
+</assembly>
