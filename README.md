@@ -23,3 +23,9 @@ Simple get example:
 ```
 byte[] value = GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().value();
 ```
+
+### Maven
+
+gKVS-java is the single jar with all shaded libraries except "com.google.code.findbugs:jsr305".
+Jsr305 is using for annotations only.
+
