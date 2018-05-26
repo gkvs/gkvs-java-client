@@ -2,7 +2,10 @@
 gKVS Java Client
 
 The purpose of the gKVS Java Client is to provide better API to access data.
-
+* Scala friendly design.
+* Based on GPRC and protobuf
+* Support sync and async calls
+* Low footprint
 
 ### Performance
 
@@ -37,7 +40,7 @@ mvn clean install -Prelease
 How to see all final deps
 ```
 mvn clean install -Plibs
-ls /target/gkvs-java/libs
+ls -l target/gkvs-java/lib/
 ```
 
 How to build regular simple jar
