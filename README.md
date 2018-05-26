@@ -17,3 +17,9 @@ Random sync gets (JVM->gKVS->VirtualBox->Aerospike->Memory)
 10000 get requests in 4622 milliseconds
 ```
 
+### API
+
+Simple get example:
+```
+byte[] value = GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().value();
+```
