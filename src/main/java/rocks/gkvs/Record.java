@@ -18,12 +18,25 @@
 
 package rocks.gkvs;
 
-public class GetAll {
+import java.util.List;
+import java.util.Map;
 
-	private final GKVSClient instance;
+import javax.annotation.Nullable;
+
+public interface Record {
+
+	boolean exists();
 	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
-	}
+	long version();
+	
+	int ttl();
+
+	@Nullable Key key();
+	
+	@Nullable byte[] value();
+	
+	@Nullable List<Cell> valueList();
+	
+	@Nullable Map<String, byte[]> valueMap();
 	
 }

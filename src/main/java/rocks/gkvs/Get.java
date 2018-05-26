@@ -18,22 +18,93 @@
 
 package rocks.gkvs;
 
-import io.netty.util.concurrent.Future;
+import rocks.gkvs.protos.KeyOperation;
+import rocks.gkvs.protos.OperationOptions;
+import rocks.gkvs.protos.OutputOptions;
+import rocks.gkvs.protos.Select;
+import rocks.gkvs.protos.ValueResult;
 
 public class Get {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
+
+	private Key key;
+	private int timeoutMls;
+	private long pit;
 	
-	public Get(GKVSInstance instance) {
+	private Select.Builder selectOrNull;
+	
+	public Get(GKVSClient instance) {
 		this.instance = instance;
 	}
 	
-	public ValueSet sync() {
-		return null;
+	public Get setKey(Key key) {
+		this.key = key;
+		return this;
 	}
 	
-	public Future<ValueSet> async() {
-		return null;
+	public Get withTimeout(int timeoutMls) {
+		this.timeoutMls = timeoutMls;
+		return this;
 	}
+	
+	public Get withPit(long pit) {
+		this.pit = pit;
+		return this;
+	}
+	
+	public Get select(String columnName) {
+		if (selectOrNull == null) {
+			selectOrNull = Select.newBuilder();
+		}
+		selectOrNull.addColumn(columnName);
+		return this;
+	}
+	
+	
+	public Record sync() {
+		
+		KeyOperation.Builder builder = KeyOperation.newBuilder();
+		
+		builder.setSequenceNum(instance.nextSequenceNum());
+		
+		builder.setKey(key.toProto());
+		builder.setOutput(OutputOptions.VALUE_RAW);
+		
+		if (timeoutMls > 0 || pit > 0) {
+			OperationOptions.Builder options = OperationOptions.newBuilder();
+			
+			if (timeoutMls > 0) {
+				options.setTimeout(timeoutMls);
+			}
+			
+			if (pit > 0) {
+				options.setPit(pit);
+			}
+			
+			builder.setOptions(options);
+		}
+		
+		if (selectOrNull != null) {
+			builder.setSelect(selectOrNull);
+		}
+		
+		ValueResult result = instance.getBlockingStub().get(builder.build());
+		
+		instance.postProcess(result.getStatus());
+		
+		if (result.hasMetadata()) {
+			return new RecordFound(result);
+		}
+		else {
+			// record not found
+			return RecordNotFound.RECORD_NOT_FOUND;
+		}
+		
+	}
+	
+	//public Future<ValueSet> async() {
+	//	return null;
+	//}
 	
 }

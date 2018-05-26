@@ -18,12 +18,47 @@
 
 package rocks.gkvs;
 
-public class GetAll {
+import java.util.List;
+import java.util.Map;
 
-	private final GKVSClient instance;
+public enum RecordNotFound implements Record {
 	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
+	RECORD_NOT_FOUND;
+
+	@Override
+	public boolean exists() {
+		return false;
 	}
 	
+	@Override
+	public long version() {
+		return 0;
+	}
+
+	@Override
+	public int ttl() {
+		return 0;
+	}
+
+	@Override
+	public Key key() {
+		return null;
+	}
+
+	@Override
+	public byte[] value() {
+		return null;
+	}
+
+	@Override
+	public List<Cell> valueList() {
+		return null;
+	}
+
+	@Override
+	public Map<String, byte[]> valueMap() {
+		return null;
+	}
+	
+		
 }

@@ -15,28 +15,24 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-import java.util.HashMap;
-import java.util.Map;
+public final class Cell {
 
-public class ValueSet {
+	private final String column;
+	private final byte[] value;
+	
+	protected Cell(String column, byte[] value) {
+		this.column = column;
+		this.value = value;
+	}
 
-	private Map<String, byte[]> values = new HashMap<String, byte[]>();
-	
-	public ValueSet() {
+	public String column() {
+		return column;
 	}
-	
-	public Map<String, byte[]> map() {
-		return values;
+
+	public byte[] value() {
+		return value;
 	}
-	
-	public byte[] single() {
-		if (values.size() != 1) {
-			throw new IllegalArgumentException("expected a single value");
-		}
-		return values.entrySet().iterator().next().getValue();
-	}
-	
+
 }

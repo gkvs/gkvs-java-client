@@ -20,9 +20,9 @@ package rocks.gkvs;
 
 public class Scan {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
 	
-	public Scan(GKVSInstance instance) {
+	public Scan(GKVSClient instance) {
 		this.instance = instance;
 	}
 	

@@ -15,15 +15,9 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-public class GetAll {
+public abstract class AbstractClientTest {
 
-	private final GKVSClient instance;
-	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
-	}
 	
 }

@@ -18,12 +18,6 @@
 
 package rocks.gkvs;
 
-public class GetAll {
-
-	private final GKVSClient instance;
-	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
-	}
-	
+public enum KeyType {
+	RAW, DIGEST;
 }

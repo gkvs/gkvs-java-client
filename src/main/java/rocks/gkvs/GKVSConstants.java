@@ -18,12 +18,15 @@
 
 package rocks.gkvs;
 
-public class GetAll {
+import java.nio.charset.Charset;
 
-	private final GKVSClient instance;
-	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
+public final class GKVSConstants {
+
+	private GKVSConstants() {
 	}
+
+	public static volatile Charset MUTABLE_KEY_CHARSET = Charset.defaultCharset();
+	
+	
 	
 }

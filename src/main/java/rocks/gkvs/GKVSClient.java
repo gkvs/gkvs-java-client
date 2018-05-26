@@ -21,37 +21,95 @@ package rocks.gkvs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
+import rocks.gkvs.protos.Status;
+import rocks.gkvs.protos.StatusCode;
 
-public class GKVSInstance implements Closeable {
+public class GKVSClient implements Closeable {
 
+	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
+	private static volatile GKVSClient defaultInstance = null;
+	
 	private final ManagedChannel channel;
 	private final GenericStoreBlockingStub blockingStub;
 	private final GenericStoreStub asyncStub;
 	
-	public GKVSInstance() {
+	private final AtomicLong sequenceNum = new AtomicLong(1L);
+	
+	public GKVSClient() {
 		this("localhost", 4040);
 	}
 	
-	public static GKVSInstance createFromClasspath() {
-		return new GKVSInstance(); 
+	public static GKVSClient createFromClasspath() {
+		return new GKVSClient(); 
 	}
 	
-	public GKVSInstance(String host, int port) {
+	public GKVSClient(String host, int port) {
 		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
 	}
 	
-	public GKVSInstance(ManagedChannelBuilder<?> channelBuilder) {
+	public GKVSClient(ManagedChannelBuilder<?> channelBuilder) {
 		channel = channelBuilder.build();
 		blockingStub = GenericStoreGrpc.newBlockingStub(channel);
 		asyncStub = GenericStoreGrpc.newStub(channel);
 	}
+	
+	public static GKVSClient getDefaultInstance() {
+		if (NO_SINGLTON) {
+			throw new IllegalStateException("gKVS singleton is not allowed");
+		}
+		if (defaultInstance == null) {
+			synchronized (GKVS.class) {
+				if (defaultInstance == null) {
+					defaultInstance = GKVSClient.createFromClasspath();
+				}
+			}
+		}
+		return defaultInstance;
+	}
+	
+	protected GenericStoreBlockingStub getBlockingStub() {
+		return blockingStub;
+	}
 
+	protected GenericStoreStub getAsyncStub() {
+		return asyncStub;
+	}
+	
+	protected long nextSequenceNum() {
+		long num = sequenceNum.incrementAndGet();
+		if (num > Long.MAX_VALUE - 100) {
+			if (!sequenceNum.compareAndSet(num, 1)) {
+				return nextSequenceNum();
+			}
+			return 1L;
+		}
+	    return num;
+	}
+	
+	protected void postProcess(Status status) {
+		if (!success(status.getCode())) {
+			throw new GKVSResultException(status);
+		}
+	}
+
+	protected boolean success(StatusCode code) {
+		switch(code) {
+		case SUCCESS:
+		case SUCCESS_NOT_UPDATED:
+		case SUCCESS_END_STREAM:
+			return true;
+		default:
+			return false;
+		}
+	}
+		
 	@Override
 	public void close() throws IOException {
 		try {
@@ -62,7 +120,11 @@ public class GKVSInstance implements Closeable {
 	}
 	
 	public Get get(String tableName, String recordKey) {
-		return new Get(this);
+		return new Get(this).setKey(Key.raw(tableName, recordKey));
+	}
+	
+	public Get get(Key key) {
+		return new Get(this).setKey(key);
 	}
 	
 	public MultiGet multiGet(String tableName, String... recordKeys) {

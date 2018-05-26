@@ -20,9 +20,9 @@ package rocks.gkvs;
 
 public class Put {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
 	
-	public Put(GKVSInstance instance) {
+	public Put(GKVSClient instance) {
 		this.instance = instance;
 	}
 	

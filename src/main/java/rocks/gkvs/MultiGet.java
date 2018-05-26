@@ -20,9 +20,9 @@ package rocks.gkvs;
 
 public class MultiGet {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
 	
-	public MultiGet(GKVSInstance instance) {
+	public MultiGet(GKVSClient instance) {
 		this.instance = instance;
 	}
 	

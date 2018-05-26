@@ -20,9 +20,9 @@ package rocks.gkvs;
 
 public class RemoveAll {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
 	
-	public RemoveAll(GKVSInstance instance) {
+	public RemoveAll(GKVSClient instance) {
 		this.instance = instance;
 	}
 	

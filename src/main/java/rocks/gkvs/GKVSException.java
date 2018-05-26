@@ -18,12 +18,21 @@
 
 package rocks.gkvs;
 
-public class GetAll {
+/**
+ * Generic Exception for GKVS
+ *
+ */
 
-	private final GKVSClient instance;
-	
-	public GetAll(GKVSClient instance) {
-		this.instance = instance;
+public class GKVSException extends RuntimeException {
+
+	private static final long serialVersionUID = 5573528917974940776L;
+
+	public GKVSException(String msg) {
+		super(msg);
 	}
-	
+
+	public GKVSException(String msg, Throwable t) {
+		super(msg, t);
+	}
+
 }

@@ -20,9 +20,9 @@ package rocks.gkvs;
 
 public class Exist {
 
-	private final GKVSInstance instance;
+	private final GKVSClient instance;
 	
-	public Exist(GKVSInstance instance) {
+	public Exist(GKVSClient instance) {
 		this.instance = instance;
 	}
 	

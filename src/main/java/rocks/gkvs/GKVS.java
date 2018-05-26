@@ -18,47 +18,32 @@
 
 package rocks.gkvs;
 
-public final class GKVS {
+/**
+ *  GKVS singleton class is visible from scala 
+ */
 
-	/**
-	 * Singleton for JVM
-	 */
+public enum GKVS {
+
+	Client;
 	
-	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
-	private static volatile GKVSInstance instance = null;
-	
-	public GKVS() {
-		
+	public Get get(String tableName, String recordKey) {
+		return GKVSClient.getDefaultInstance().get(tableName, recordKey);
 	}
 	
-	public static GKVSInstance getInstance() {
-		if (!NO_SINGLTON) {
-			throw new IllegalStateException("gKVS singleton is not allowed");
-		}
-		if (instance == null) {
-			synchronized (GKVS.class) {
-				if (instance == null) {
-					instance = GKVSInstance.createFromClasspath();
-				}
-			}
-		}
-		return instance;
-	}
-	
-	public static Get get(String tableName, String recordKey) {
-		return getInstance().get(tableName, recordKey);
+	public Get get(Key key) {
+		return GKVSClient.getDefaultInstance().get(key);
 	}
 	
 	public static MultiGet multiGet(String tableName, String... recordKey) {
-		return getInstance().multiGet(tableName, recordKey);
+		return GKVSClient.getDefaultInstance().multiGet(tableName, recordKey);
 	}
 	
 	public static Put put(String tableName, String recordKey) {
-		return getInstance().put(tableName, recordKey);
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey);
 	}
 	
 	public static Remove remove(String tableName, String recordKey) {
-		return getInstance().remove(tableName, recordKey);
+		return GKVSClient.getDefaultInstance().remove(tableName, recordKey);
 	}
 
 	
