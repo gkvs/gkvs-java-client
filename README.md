@@ -29,3 +29,18 @@ byte[] value = GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().valu
 gKVS-java is the single jar with all shaded libraries except "com.google.code.findbugs:jsr305".
 Jsr305 is using for annotations only.
 
+How to make release version
+```
+mvn clean install -Prelease
+```
+
+How to see all final deps
+```
+mvn clean install -Plibs
+ls /target/gkvs-java/libs
+```
+
+How to build regular simple jar
+```
+mvn clean install
+```
