@@ -103,7 +103,7 @@
 	
 	
 	<profile>
-	    <id>libs</id>
+	    <id>deps</id>
         
         <build>
 	        <plugins>

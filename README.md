@@ -22,10 +22,29 @@ Random sync gets (JVM->gKVS->VirtualBox->Aerospike->Memory)
 
 ### API
 
-Simple get example:
+Two types of API are supported: sync and async
+
+#### GET
 ```
-byte[] value = GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().value();
+byte[] value = GKVS.Client.get("TEST", "key").sync().value();
 ```
+
+#### PUT
+```
+GKVS.Client.put("TEST", "key", "value").sync();
+```
+
+#### REMOVE
+```
+GKVS.Client.remove("TEST", "key").sync();
+```
+
+#### COMPARE_AND_PUT
+```
+Record record = GKVS.Client.get("TEST", "key").sync();
+boolean updated = GKVS.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync();
+```
+
 
 ### Maven
 
@@ -39,7 +58,7 @@ mvn clean install -Prelease
 
 How to see all final deps
 ```
-mvn clean install -Plibs
+mvn clean install -Pdeps
 ls -l target/gkvs-java/lib/
 ```
 
