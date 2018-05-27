@@ -50,4 +50,36 @@ public class PutTest extends AbstractClientTest {
 		
 	}
 	
+	@Test
+	public void testCompareAndPut() {
+		
+		String key = UUID.randomUUID().toString();
+		String value = "org";
+		String replaceValue = "replaced";
+		
+		
+		GKVS.Client.put(TABLE, key, value).sync();
+		
+		Record record = GKVS.Client.get(TABLE, key).sync();
+		
+		Put put = GKVS.Client.put(TABLE, key, replaceValue);
+		put.compareAndPut(0).sync();
+		
+		System.out.println("result = " + put.result());
+		
+		// try with 0 version
+		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(0).sync());
+		
+		// try with unknown version
+		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(435345234).sync());
+		
+		// try with valid version
+		Assert.assertTrue(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(record.version()).sync());
+		
+		// check
+		record = GKVS.Client.get(TABLE, key).sync();
+		
+		Assert.assertEquals(replaceValue, record.valueAsString());
+	}
+	
 }

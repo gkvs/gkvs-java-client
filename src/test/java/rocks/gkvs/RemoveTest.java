@@ -15,31 +15,14 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-import rocks.gkvs.protos.Status;
+import org.junit.Test;
 
+public class RemoveTest extends AbstractClientTest {
 
-public class GKVSResultException extends GKVSException {
-
-	private static final long serialVersionUID = -4698988155155482009L;
-	
-	private final String errorDetails;
-	private final Resultable result;
-	
-	public GKVSResultException(Status status, Resultable result) {
-		super(status.getCode().name() + ", errorCode=" + status.getErrorCode() + ", errorMessage=" + status.getErrorMessage());
-		this.errorDetails = status.getErrorDetails();
-		this.result = result;
+	@Test
+	public void testRemoveSelected() {
+		
 	}
-
-	public String getErrorDetails() {
-		return errorDetails;
-	}
-	
-	public String getResult() {
-		return result.result();
-	}
-
 }

@@ -18,18 +18,25 @@
 
 package rocks.gkvs;
 
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.OperationOptions;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.StatusResult;
 
-public final class Remove {
+public final class Remove implements Resultable {
 
 	private final GKVSClient instance;
 	
 	private Key key;
 	private OperationOptions.Builder optionsOrNull;
 	private Select.Builder selectOrNull;
+	
+	private final static AtomicReferenceFieldUpdater<Remove, StatusResult> RESULT_UPDATER
+	  = AtomicReferenceFieldUpdater.newUpdater(Remove.class, StatusResult.class, "result"); 
+	  
+	private volatile StatusResult result;
 	
 	public Remove(GKVSClient instance) {
 		this.instance = instance;
@@ -90,10 +97,15 @@ public final class Remove {
 			builder.setSelect(selectOrNull);
 		}
 		
-		StatusResult result = instance.getBlockingStub().remove(builder.build());
+		RESULT_UPDATER.set(this, instance.getBlockingStub().remove(builder.build()));
 		
-		instance.postProcess(result.getStatus());
+		instance.postProcess(result.getStatus(), this);
 		
+	}
+	
+	@Override
+	public String result() {
+		return result.toString();
 	}
 	
 }

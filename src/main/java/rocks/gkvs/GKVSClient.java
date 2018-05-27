@@ -94,9 +94,9 @@ public class GKVSClient implements Closeable {
 	    return num;
 	}
 	
-	protected void postProcess(Status status) {
+	protected void postProcess(Status status, Resultable result) {
 		if (!success(status.getCode())) {
-			throw new GKVSResultException(status);
+			throw new GKVSResultException(status, result);
 		}
 	}
 

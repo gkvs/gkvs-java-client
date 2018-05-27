@@ -15,31 +15,13 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-import rocks.gkvs.protos.Status;
+public interface Resultable {
 
-
-public class GKVSResultException extends GKVSException {
-
-	private static final long serialVersionUID = -4698988155155482009L;
+	/**
+	 * @return result as a string for logging
+	 */
+	String result();
 	
-	private final String errorDetails;
-	private final Resultable result;
-	
-	public GKVSResultException(Status status, Resultable result) {
-		super(status.getCode().name() + ", errorCode=" + status.getErrorCode() + ", errorMessage=" + status.getErrorMessage());
-		this.errorDetails = status.getErrorDetails();
-		this.result = result;
-	}
-
-	public String getErrorDetails() {
-		return errorDetails;
-	}
-	
-	public String getResult() {
-		return result.result();
-	}
-
 }
