@@ -42,8 +42,8 @@ public enum RecordNotFound implements Record {
 	}
 
 	@Override
-	public Key key() {
-		return null;
+	public NullableKey key() {
+		return new NullableKey(null);
 	}
 
 	@Override

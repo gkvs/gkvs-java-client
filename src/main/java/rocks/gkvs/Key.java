@@ -57,8 +57,12 @@ public final class Key {
 		return recordKeyType;
 	}
 
-	public ByteString getRecordKey() {
+	protected ByteString getRecordKey() {
 		return recordKey;
+	}
+	
+	public byte[] getRecordKeyBytes() {
+		return recordKey.toByteArray();
 	}
 	
 	public String getRecordKeyAsString() {

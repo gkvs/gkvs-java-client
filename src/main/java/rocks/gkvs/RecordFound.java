@@ -52,7 +52,7 @@ public class RecordFound implements Record {
 	}
 	
 	@Override
-	public @Nullable Key key() {
+	public NullableKey key() {
 		
 		if (result.hasKey()) {
 			
@@ -61,9 +61,9 @@ public class RecordFound implements Record {
 			switch(protoKey.getRecordKeyCase()) {
 			
 			case RAW:
-				return Key.raw(protoKey.getTableName(), protoKey.getRaw().toByteArray());
+				return new NullableKey(Key.raw(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
 			case DIGEST:
-				return Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray());
+				return new NullableKey(Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
 			
 			default:
 				throw new GKVSException("unknown key type: " + protoKey);
@@ -71,7 +71,7 @@ public class RecordFound implements Record {
 			
 		}
 		
-		return null;
+		return new NullableKey(null);
 	}
 	
 	@Override

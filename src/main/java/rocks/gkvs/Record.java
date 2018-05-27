@@ -21,8 +21,6 @@ package rocks.gkvs;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 public interface Record {
 
 	boolean exists();
@@ -31,7 +29,7 @@ public interface Record {
 	
 	int ttl();
 
-	@Nullable Key key();
+	NullableKey key();
 	
 	NullableValue value();
 		
