@@ -33,6 +33,7 @@ public final class Get implements Resultable {
 	private Key key;
 	private RequestOptions.Builder optionsOrNull;
 	private Select.Builder selectOrNull;
+	private boolean metadataOnly = false;
 	
 	private final static AtomicReferenceFieldUpdater<Get, ValueResult> RESULT_UPDATER
 	  = AtomicReferenceFieldUpdater.newUpdater(Get.class, ValueResult.class, "result"); 
@@ -82,6 +83,11 @@ public final class Get implements Resultable {
 		return this;
 	}
 	
+	public Get metadataOnly() {
+		this.metadataOnly = true;
+		return this;
+	}
+	
 	public Record sync() {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
@@ -89,7 +95,13 @@ public final class Get implements Resultable {
 		builder.setSequenceNum(instance.nextSequenceNum());
 		
 		builder.setKey(key.toProto());
-		builder.setOutput(OutputOptions.VALUE_RAW);
+		
+		if (metadataOnly) {
+			builder.setOutput(OutputOptions.METADATA_ONLY);
+		}
+		else {
+			builder.setOutput(OutputOptions.VALUE_RAW);
+		}
 		
 		if (optionsOrNull != null) {
 			builder.setOptions(optionsOrNull);

@@ -45,6 +45,10 @@ Record record = GKVS.Client.get("TEST", "key").sync();
 boolean updated = GKVS.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync();
 ```
 
+#### EXISTS
+```
+boolean exists = GKVS.Client.exists("TEST", "key").sync().exists();
+```
 
 ### Maven
 

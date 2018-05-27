@@ -26,5 +26,8 @@ public class MultiGet {
 		this.instance = instance;
 	}
 	
+	public MultiGet setKeys(Key...keys) {
+		return this;
+	}
 	
 }

@@ -15,15 +15,30 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-public final class Exist {
+import java.util.UUID;
 
-	private final GKVSClient instance;
-	
-	public Exist(GKVSClient instance) {
-		this.instance = instance;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ExistsTest extends AbstractClientTest {
+
+	@Test
+	public void testExists() {
+		
+		String key = UUID.randomUUID().toString();
+		
+		Assert.assertFalse(GKVS.Client.exists(TABLE, key).sync().exists());
+		
+		GKVS.Client.put(TABLE, key, "value").sync();
+		
+		Assert.assertTrue(GKVS.Client.exists(TABLE, key).sync().exists());
+		
+		GKVS.Client.remove(TABLE, key).sync();
+		
+		Assert.assertFalse(GKVS.Client.exists(TABLE, key).sync().exists());
+		
 	}
 	
 }

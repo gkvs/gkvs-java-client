@@ -120,6 +120,14 @@ public class GKVSClient implements Closeable {
 		}
 	}
 	
+	public Get exists(String tableName, String recordKey) {
+		return new Get(this).setKey(Key.raw(tableName, recordKey)).metadataOnly();
+	}
+	
+	public Get exists(Key key) {
+		return new Get(this).setKey(key).metadataOnly();
+	}
+	
 	public Get get(String tableName, String recordKey) {
 		return new Get(this).setKey(Key.raw(tableName, recordKey));
 	}
@@ -128,13 +136,18 @@ public class GKVSClient implements Closeable {
 		return new Get(this).setKey(key);
 	}
 	
-	public MultiGet multiGet(String tableName, String... recordKeys) {
-		return new MultiGet(this);
+	public MultiGet multiGet(Key...keys) {
+		return new MultiGet(this).setKeys(keys);
 	}
 
-	public Put put(String tableName, String recordKey) {
+	public Put putWithKey(String tableName, String recordKey) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey));
+	}
+	
+	public Put putWithKey(Key key) {
+		return new Put(this)
+				.setKey(key);
 	}
 	
 	public Put put(String tableName, String recordKey, String value) {
@@ -174,7 +187,11 @@ public class GKVSClient implements Closeable {
 	}
 	
 	public Remove remove(String tableName, String recordKey) {
-		return new Remove(this);
+		return new Remove(this).setKey(Key.raw(tableName, recordKey));
+	}
+	
+	public Remove remove(Key key) {
+		return new Remove(this).setKey(key);
 	}
 	
 }
