@@ -56,7 +56,7 @@ public enum RecordNotFound implements Record {
 	}
 	
 	@Override
-	public List<Cell> valueList() {
+	public List<Value> valueList() {
 		return null;
 	}
 

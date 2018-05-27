@@ -140,31 +140,31 @@ public class GKVSClient implements Closeable {
 	public Put put(String tableName, String recordKey, String value) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey))
-				.put(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value);
+				.put(Value.of(value));
 	}
 
 	public Put put(String tableName, String recordKey, byte[] value) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey))
-				.put(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value);
+				.put(Value.of(value));
 	}
 
-	public Put put(String tableName, String recordKey, Cell cell) {
+	public Put put(String tableName, String recordKey, Value value) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey))
-				.put(cell);
+				.put(value);
 	}
 
-	public Put put(String tableName, String recordKey, Cell... cells) {
+	public Put put(String tableName, String recordKey, Value... values) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey))
-				.putAll(cells);
+				.putAll(values);
 	}
 
-	public Put put(String tableName, String recordKey, Iterable<Cell> cells) {
+	public Put put(String tableName, String recordKey, Iterable<Value> values) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey))
-				.putAll(cells);
+				.putAll(values);
 	}
 	
 	public Put put(String tableName, String recordKey, Map<String, byte[]> map) {

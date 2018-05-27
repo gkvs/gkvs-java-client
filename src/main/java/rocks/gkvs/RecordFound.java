@@ -106,12 +106,12 @@ public class RecordFound implements Record {
 	}
 	
 	@Override
-	public @Nullable List<Cell> valueList() {
+	public @Nullable List<rocks.gkvs.Value> valueList() {
 		
-		List<Cell> list = new ArrayList<Cell>(result.getValueCount());
+		List<rocks.gkvs.Value> list = new ArrayList<>(result.getValueCount());
 		
 		for (Value value : result.getValueList()) {
-			list.add(new Cell(value.getColumn(),  getValuePayload(value)));
+			list.add(new rocks.gkvs.Value(value.getColumn(),  getValuePayload(value), 0));
 		}
 		
 		return list;

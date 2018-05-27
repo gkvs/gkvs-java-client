@@ -21,10 +21,8 @@ package rocks.gkvs;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-import com.google.protobuf.ByteString;
-
-import rocks.gkvs.protos.OperationOptions;
 import rocks.gkvs.protos.PutOperation;
+import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
 
@@ -35,7 +33,7 @@ public final class Put implements Resultable {
 	private final PutOperation.Builder builder = PutOperation.newBuilder();
 	
 	private Key key;
-	private OperationOptions.Builder optionsOrNull;
+	private RequestOptions.Builder optionsOrNull;
 	
 	private final static AtomicReferenceFieldUpdater<Put, StatusResult> RESULT_UPDATER
 	  = AtomicReferenceFieldUpdater.newUpdater(Put.class, StatusResult.class, "result"); 
@@ -58,7 +56,7 @@ public final class Put implements Resultable {
 	
 	public Put withTimeout(int timeoutMls) {
 		if (optionsOrNull == null) {
-			optionsOrNull = OperationOptions.newBuilder();
+			optionsOrNull = RequestOptions.newBuilder();
 		}
 		optionsOrNull.setTimeout(timeoutMls);
 		return this;
@@ -66,7 +64,7 @@ public final class Put implements Resultable {
 	
 	public Put withPit(long pit) {
 		if (optionsOrNull == null) {
-			optionsOrNull = OperationOptions.newBuilder();
+			optionsOrNull = RequestOptions.newBuilder();
 		}
 		optionsOrNull.setPit(pit);
 		return this;
@@ -82,66 +80,29 @@ public final class Put implements Resultable {
 		builder.setVersion(version);
 		return this;
 	}
-	
-	public Put put(String column, byte[] value) {
 		
-		if (column == null) {
-			throw new IllegalArgumentException("column is null");
-		}
+	public Put put(Value value) {
+		builder.addValue(value.toProto());
+		return this;
+	}
 
-		if (value == null) {
-			throw new IllegalArgumentException("value is null");
+	public Put putAll(Value... cells) {
+		for (Value cell : cells) {
+			put(cell);
 		}
-
-		rocks.gkvs.protos.Value.Builder valueBuilder = rocks.gkvs.protos.Value.newBuilder();
-		valueBuilder.setColumn(column);
-		valueBuilder.setRaw(ByteString.copyFrom(value));
-		builder.addValue(valueBuilder);
+		return this;
+	}
+	
+	public Put putAll(Iterable<Value> cells) {
+		for (Value cell : cells) {
+			put(cell);
+		}
 		return this;
 	}
 	
 	public Put putAll(Map<String, byte[]> map) {
 		for (Map.Entry<String, byte[]> entry : map.entrySet()) {
-			put(entry.getKey(), entry.getValue());
-		}
-		return this;
-	}
-	
-	public Put put(String column, String value) {
-		
-		if (column == null) {
-			throw new IllegalArgumentException("column is null");
-		}
-
-		if (value == null) {
-			throw new IllegalArgumentException("value is null");
-		}		
-		
-		rocks.gkvs.protos.Value.Builder valueBuilder = rocks.gkvs.protos.Value.newBuilder();
-		valueBuilder.setColumn(column);
-		valueBuilder.setRaw(ByteString.copyFrom(value, GKVSConstants.MUTABLE_VALUE_CHARSET));
-		builder.addValue(valueBuilder);
-		return this;
-	}
-	
-	public Put put(Cell cell) {
-		rocks.gkvs.protos.Value.Builder valueBuilder = rocks.gkvs.protos.Value.newBuilder();
-		valueBuilder.setColumn(cell.column());
-		valueBuilder.setRaw(cell.valueBytes());
-		builder.addValue(valueBuilder);
-		return this;
-	}
-
-	public Put putAll(Cell... cells) {
-		for (Cell cell : cells) {
-			put(cell);
-		}
-		return this;
-	}
-	
-	public Put putAll(Iterable<Cell> cells) {
-		for (Cell cell : cells) {
-			put(cell);
+			put(Value.of(entry.getKey(), entry.getValue()));
 		}
 		return this;
 	}

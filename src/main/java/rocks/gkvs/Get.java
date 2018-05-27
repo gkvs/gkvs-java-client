@@ -21,8 +21,8 @@ package rocks.gkvs;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import rocks.gkvs.protos.KeyOperation;
-import rocks.gkvs.protos.OperationOptions;
 import rocks.gkvs.protos.OutputOptions;
+import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.ValueResult;
 
@@ -31,7 +31,7 @@ public final class Get implements Resultable {
 	private final GKVSClient instance;
 
 	private Key key;
-	private OperationOptions.Builder optionsOrNull;
+	private RequestOptions.Builder optionsOrNull;
 	private Select.Builder selectOrNull;
 	
 	private final static AtomicReferenceFieldUpdater<Get, ValueResult> RESULT_UPDATER
@@ -55,7 +55,7 @@ public final class Get implements Resultable {
 	
 	public Get withTimeout(int timeoutMls) {
 		if (optionsOrNull == null) {
-			optionsOrNull = OperationOptions.newBuilder();
+			optionsOrNull = RequestOptions.newBuilder();
 		}
 		optionsOrNull.setTimeout(timeoutMls);
 		return this;
@@ -63,7 +63,7 @@ public final class Get implements Resultable {
 	
 	public Get withPit(long pit) {
 		if (optionsOrNull == null) {
-			optionsOrNull = OperationOptions.newBuilder();
+			optionsOrNull = RequestOptions.newBuilder();
 		}
 		optionsOrNull.setPit(pit);
 		return this;

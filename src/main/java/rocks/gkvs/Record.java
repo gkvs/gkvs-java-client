@@ -37,7 +37,7 @@ public interface Record {
 	
 	@Nullable String valueAsString();
 	
-	@Nullable List<Cell> valueList();
+	@Nullable List<Value> valueList();
 	
 	@Nullable Map<String, byte[]> valueMap();
 	

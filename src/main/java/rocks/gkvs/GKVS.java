@@ -52,15 +52,15 @@ public enum GKVS {
 		return GKVSClient.getDefaultInstance().put(tableName, recordKey, value);
 	}
 
-	public Put put(String tableName, String recordKey, Cell cell) {
+	public Put put(String tableName, String recordKey, Value cell) {
 		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cell);
 	}
 
-	public Put put(String tableName, String recordKey, Cell... cells) {
+	public Put put(String tableName, String recordKey, Value... cells) {
 		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cells);
 	}
 
-	public Put put(String tableName, String recordKey, Iterable<Cell> cells) {
+	public Put put(String tableName, String recordKey, Iterable<Value> cells) {
 		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cells);
 	}
 
