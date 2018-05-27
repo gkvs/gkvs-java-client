@@ -18,6 +18,8 @@
 
 package rocks.gkvs;
 
+import java.util.Map;
+
 /**
  *  GKVS singleton class is visible from scala 
  */
@@ -34,15 +36,39 @@ public enum GKVS {
 		return GKVSClient.getDefaultInstance().get(key);
 	}
 	
-	public static MultiGet multiGet(String tableName, String... recordKey) {
+	public MultiGet multiGet(String tableName, String... recordKey) {
 		return GKVSClient.getDefaultInstance().multiGet(tableName, recordKey);
 	}
 	
-	public static Put put(String tableName, String recordKey) {
+	public Put put(String tableName, String recordKey) {
 		return GKVSClient.getDefaultInstance().put(tableName, recordKey);
 	}
 	
-	public static Remove remove(String tableName, String recordKey) {
+	public Put put(String tableName, String recordKey, String value) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, value);
+	}
+
+	public Put put(String tableName, String recordKey, byte[] value) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, value);
+	}
+
+	public Put put(String tableName, String recordKey, Cell cell) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cell);
+	}
+
+	public Put put(String tableName, String recordKey, Cell... cells) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cells);
+	}
+
+	public Put put(String tableName, String recordKey, Iterable<Cell> cells) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, cells);
+	}
+
+	public Put put(String tableName, String recordKey, Map<String, byte[]> map) {
+		return GKVSClient.getDefaultInstance().put(tableName, recordKey, map);
+	}
+	
+	public Remove remove(String tableName, String recordKey) {
 		return GKVSClient.getDefaultInstance().remove(tableName, recordKey);
 	}
 

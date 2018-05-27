@@ -19,14 +19,17 @@
 package rocks.gkvs;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class GKVSConstants {
 
 	private GKVSConstants() {
 	}
 
-	public static volatile Charset MUTABLE_KEY_CHARSET = Charset.defaultCharset();
+	public static volatile Charset MUTABLE_KEY_CHARSET = StandardCharsets.US_ASCII;
 	
+	public static volatile Charset MUTABLE_VALUE_CHARSET = StandardCharsets.UTF_8;
 	
+	public static volatile String DEFAULT_SINGLE_VALUE_COLUMN = "";
 	
 }

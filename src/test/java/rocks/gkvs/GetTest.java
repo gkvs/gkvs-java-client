@@ -27,20 +27,20 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		byte[] result = GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().value();
+		byte[] result = GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
 		
 		Assert.assertNull("expected null result", result);
 		
 	}
 	
 	
-	@Test
+	//@Test
 	public void testPerformanceGet() {
 	
 		long t0 = System.currentTimeMillis();
 		
 		for (int i = 0; i != 10000; ++i) {
-			GKVS.Client.get("TEST", UUID.randomUUID().toString()).sync().value();
+			GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
 		}
 		
 		long diff = System.currentTimeMillis() - t0;

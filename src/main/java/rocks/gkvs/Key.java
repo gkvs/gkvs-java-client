@@ -31,6 +31,19 @@ public final class Key {
 	private final ByteString recordKey;
 
 	public Key(String tableName, KeyType recordKeyType, ByteString recordKey) {
+		
+		if (tableName == null) {
+			throw new IllegalArgumentException("tableName is null");
+		}		
+
+		if (recordKeyType == null) {
+			throw new IllegalArgumentException("recordKeyType is null");
+		}		
+
+		if (recordKey == null) {
+			throw new IllegalArgumentException("recordKey is null");
+		}		
+
 		this.tableName = tableName;
 		this.recordKeyType = recordKeyType;
 		this.recordKey = recordKey;

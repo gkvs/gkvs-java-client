@@ -36,7 +36,7 @@ public enum RecordNotFound implements Record {
 	}
 
 	@Override
-	public int ttl() {
+	public int leftTtl() {
 		return 0;
 	}
 
@@ -50,6 +50,11 @@ public enum RecordNotFound implements Record {
 		return null;
 	}
 
+	@Override
+	public String valueAsString() {
+		return null;
+	}
+	
 	@Override
 	public List<Cell> valueList() {
 		return null;

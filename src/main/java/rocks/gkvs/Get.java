@@ -24,14 +24,12 @@ import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.ValueResult;
 
-public class Get {
+public final class Get {
 
 	private final GKVSClient instance;
 
 	private Key key;
-	private int timeoutMls;
-	private long pit;
-	
+	private OperationOptions.Builder optionsOrNull;
 	private Select.Builder selectOrNull;
 	
 	public Get(GKVSClient instance) {
@@ -39,28 +37,43 @@ public class Get {
 	}
 	
 	public Get setKey(Key key) {
+		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		
 		this.key = key;
 		return this;
 	}
 	
 	public Get withTimeout(int timeoutMls) {
-		this.timeoutMls = timeoutMls;
+		if (optionsOrNull == null) {
+			optionsOrNull = OperationOptions.newBuilder();
+		}
+		optionsOrNull.setTimeout(timeoutMls);
 		return this;
 	}
 	
 	public Get withPit(long pit) {
-		this.pit = pit;
+		if (optionsOrNull == null) {
+			optionsOrNull = OperationOptions.newBuilder();
+		}
+		optionsOrNull.setPit(pit);
 		return this;
 	}
 	
-	public Get select(String columnName) {
+	public Get select(String column) {
+		
+		if (column == null) {
+			throw new IllegalArgumentException("column is null");
+		}		
+		
 		if (selectOrNull == null) {
 			selectOrNull = Select.newBuilder();
 		}
-		selectOrNull.addColumn(columnName);
+		selectOrNull.addColumn(column);
 		return this;
 	}
-	
 	
 	public Record sync() {
 		
@@ -71,18 +84,8 @@ public class Get {
 		builder.setKey(key.toProto());
 		builder.setOutput(OutputOptions.VALUE_RAW);
 		
-		if (timeoutMls > 0 || pit > 0) {
-			OperationOptions.Builder options = OperationOptions.newBuilder();
-			
-			if (timeoutMls > 0) {
-				options.setTimeout(timeoutMls);
-			}
-			
-			if (pit > 0) {
-				options.setPit(pit);
-			}
-			
-			builder.setOptions(options);
+		if (optionsOrNull != null) {
+			builder.setOptions(optionsOrNull);
 		}
 		
 		if (selectOrNull != null) {

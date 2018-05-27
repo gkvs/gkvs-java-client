@@ -17,22 +17,62 @@
  */
 package rocks.gkvs;
 
+import com.google.protobuf.ByteString;
+
 public final class Cell {
 
 	private final String column;
-	private final byte[] value;
+	private final ByteString value;
 	
-	protected Cell(String column, byte[] value) {
+	protected Cell(String column, ByteString value) {
 		this.column = column;
 		this.value = value;
 	}
 
+	public Cell(String column, byte[] value) {
+		
+		if (column == null) {
+			throw new IllegalArgumentException("column is null");
+		}
+
+		if (value == null) {
+			throw new IllegalArgumentException("value is null");
+		}
+
+		this.column = column;
+		this.value = ByteString.copyFrom(value);
+	}
+
+	public Cell(String column, String value) {
+		
+		if (column == null) {
+			throw new IllegalArgumentException("column is null");
+		}
+
+		if (value == null) {
+			throw new IllegalArgumentException("value is null");
+		}
+		
+		this.column = column;
+		this.value = ByteString.copyFrom(value, GKVSConstants.MUTABLE_VALUE_CHARSET);
+	}
+	
 	public String column() {
 		return column;
 	}
 
 	public byte[] value() {
-		return value;
+		return value.toByteArray();
 	}
 
+	protected ByteString valueBytes() {
+		return value;
+	}
+	
+	@Override
+	public String toString() {
+		return "Cell [column=" + column + ", value=" + value + "]";
+	}
+
+	
 }

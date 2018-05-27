@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.google.protobuf.ByteString;
+
 import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
@@ -47,7 +49,7 @@ public class RecordFound implements Record {
 	}
 	
 	@Override
-	public int ttl() {
+	public int leftTtl() {
 		return result.getMetadata().getTtl();
 	}
 	
@@ -85,7 +87,22 @@ public class RecordFound implements Record {
 			return null;
 		}
 		
-		return getPayload(result.getValue(0));
+		return getValuePayload(result.getValue(0)).toByteArray();
+	}
+	
+	@Override
+	public @Nullable String valueAsString() {
+		
+		if (result.getValueCount() > 1) {
+			throw new GKVSException("expected a single value in result");
+		}
+		
+		if (result.getValueCount() == 0) {
+			return null;
+		}
+		
+		return getValuePayload(result.getValue(0)).toString(GKVSConstants.MUTABLE_VALUE_CHARSET);
+		
 	}
 	
 	@Override
@@ -94,7 +111,7 @@ public class RecordFound implements Record {
 		List<Cell> list = new ArrayList<Cell>(result.getValueCount());
 		
 		for (Value value : result.getValueList()) {
-			list.add(new Cell(value.getColumn(),  getPayload(value)));
+			list.add(new Cell(value.getColumn(),  getValuePayload(value)));
 		}
 		
 		return list;
@@ -108,23 +125,22 @@ public class RecordFound implements Record {
 		Map<String, byte[]> map = new HashMap<String, byte[]>();
 		
 		for (Value value : result.getValueList()) {
-			map.put(value.getColumn(),  getPayload(value));
+			map.put(value.getColumn(), getValuePayload(value).toByteArray());
 		}
 		
 		return map;
 		
 	}
 	
-	
-	private byte[] getPayload(Value value) {
+	private @Nullable ByteString getValuePayload(Value value) {
 
 		switch (value.getValueCase()) {
 		case RAW:
-			return value.getRaw().toByteArray();
+			return value.getRaw();
 		case DIGEST:
-			return value.getDigest().toByteArray();
+			return value.getDigest();
 		default:
-			throw new GKVSException("unknown value type: " + value);
+			return ByteString.EMPTY;
 		}
 	}
 }

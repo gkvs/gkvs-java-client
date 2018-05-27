@@ -29,11 +29,13 @@ public interface Record {
 	
 	long version();
 	
-	int ttl();
+	int leftTtl();
 
 	@Nullable Key key();
 	
 	@Nullable byte[] value();
+	
+	@Nullable String valueAsString();
 	
 	@Nullable List<Cell> valueList();
 	

@@ -20,6 +20,7 @@ package rocks.gkvs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -132,7 +133,44 @@ public class GKVSClient implements Closeable {
 	}
 
 	public Put put(String tableName, String recordKey) {
-		return new Put(this);
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey));
+	}
+	
+	public Put put(String tableName, String recordKey, String value) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.put(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value);
+	}
+
+	public Put put(String tableName, String recordKey, byte[] value) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.put(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value);
+	}
+
+	public Put put(String tableName, String recordKey, Cell cell) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.put(cell);
+	}
+
+	public Put put(String tableName, String recordKey, Cell... cells) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.putAll(cells);
+	}
+
+	public Put put(String tableName, String recordKey, Iterable<Cell> cells) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.putAll(cells);
+	}
+	
+	public Put put(String tableName, String recordKey, Map<String, byte[]> map) {
+		return new Put(this)
+				.setKey(Key.raw(tableName, recordKey))
+				.putAll(map);
 	}
 	
 	public Remove remove(String tableName, String recordKey) {

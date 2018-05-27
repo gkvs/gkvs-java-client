@@ -19,5 +19,6 @@ package rocks.gkvs;
 
 public abstract class AbstractClientTest {
 
-	
+	protected String TABLE = "TEST";
+			
 }

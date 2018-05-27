@@ -18,7 +18,7 @@
 
 package rocks.gkvs;
 
-public class Exist {
+public final class Exist {
 
 	private final GKVSClient instance;
 	

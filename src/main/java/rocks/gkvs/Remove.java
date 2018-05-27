@@ -18,12 +18,82 @@
 
 package rocks.gkvs;
 
-public class Remove {
+import rocks.gkvs.protos.KeyOperation;
+import rocks.gkvs.protos.OperationOptions;
+import rocks.gkvs.protos.Select;
+import rocks.gkvs.protos.StatusResult;
+
+public final class Remove {
 
 	private final GKVSClient instance;
 	
+	private Key key;
+	private OperationOptions.Builder optionsOrNull;
+	private Select.Builder selectOrNull;
+	
 	public Remove(GKVSClient instance) {
 		this.instance = instance;
+	}
+	
+	public Remove setKey(Key key) {
+		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		
+		this.key = key;
+		return this;
+	}
+	
+	public Remove withTimeout(int timeoutMls) {
+		if (optionsOrNull == null) {
+			optionsOrNull = OperationOptions.newBuilder();
+		}
+		optionsOrNull.setTimeout(timeoutMls);
+		return this;
+	}
+	
+	public Remove withPit(long pit) {
+		if (optionsOrNull == null) {
+			optionsOrNull = OperationOptions.newBuilder();
+		}
+		optionsOrNull.setPit(pit);
+		return this;
+	}
+	
+	public Remove select(String column) {
+		
+		if (column == null) {
+			throw new IllegalArgumentException("column is null");
+		}		
+		
+		if (selectOrNull == null) {
+			selectOrNull = Select.newBuilder();
+		}
+		selectOrNull.addColumn(column);
+		return this;
+	}
+
+	public void sync() {
+		
+		KeyOperation.Builder builder = KeyOperation.newBuilder();
+		
+		builder.setSequenceNum(instance.nextSequenceNum());
+		
+		builder.setKey(key.toProto());
+		
+		if (optionsOrNull != null) {
+			builder.setOptions(optionsOrNull);
+		}
+		
+		if (selectOrNull != null) {
+			builder.setSelect(selectOrNull);
+		}
+		
+		StatusResult result = instance.getBlockingStub().remove(builder.build());
+		
+		instance.postProcess(result.getStatus());
+		
 	}
 	
 }
