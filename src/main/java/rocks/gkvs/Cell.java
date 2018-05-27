@@ -64,6 +64,10 @@ public final class Cell {
 	public byte[] value() {
 		return value.toByteArray();
 	}
+	
+	public String valueAsString() {
+		return value.toString(GKVSConstants.MUTABLE_VALUE_CHARSET);
+	}
 
 	protected ByteString valueBytes() {
 		return value;
