@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import com.google.protobuf.ByteString;
 
-public final class Value implements Valuable {
+public final class Value {
 
 	private final String column;
 	private final ByteString value;

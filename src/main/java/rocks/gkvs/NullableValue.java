@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import javax.annotation.Nullable;
 
-public final class NullableValue implements Valuable {
+public final class NullableValue {
 
 	private final @Nullable Value value;
 	
@@ -30,30 +30,36 @@ public final class NullableValue implements Valuable {
 		this.value = value;
 	}
 
-	@Override
+	public boolean empty() {
+		return value == null;
+	}
+	
+	public Value get() {
+		if (value == null) {
+			throw new IllegalStateException("value is null");
+		}
+		return value;
+	}
+	
 	public String column() {
 		return value != null ? value.column() : null;
 	}
 
-	@Override
 	public byte[] bytes() {
 		return value != null ? value.bytes() : null;
 	}
 
-	@Override
 	public String string() {
 		return value != null ? value.string() : null;
 	}
 
-	@Override
 	public void writeTo(OutputStream out) throws IOException {
-		if (value != null) {
-			value.writeTo(out);
+		if (value == null) {
+			throw new IllegalStateException("value is null");
 		}
-		
+		value.writeTo(out);
 	}
 
-	@Override
 	public long timestamp() {
 		return value != null ? value.timestamp() : null;
 	}
