@@ -17,18 +17,33 @@
  */
 package rocks.gkvs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import com.google.protobuf.ByteString;
 
-public final class Value {
+public final class Value implements Valuable {
 
 	private final String column;
 	private final ByteString value;
 	private final long timestamp;
 	
-	protected Value(String column, ByteString value, long timestamp) {
-		this.column = column;
-		this.value = value;
-		this.timestamp = timestamp;
+	protected Value(rocks.gkvs.protos.Value value) {
+		this.column = value.getColumn();
+		this.value = getValuePayload(value);
+		this.timestamp = value.getTimestamp();
+	}
+	
+	private static ByteString getValuePayload(rocks.gkvs.protos.Value value) {
+
+		switch (value.getValueCase()) {
+		case RAW:
+			return value.getRaw();
+		case DIGEST:
+			return value.getDigest();
+		default:
+			return ByteString.EMPTY;
+		}
 	}
 	
 	public Value(byte[] value) {
@@ -50,11 +65,11 @@ public final class Value {
 	public Value(String column, byte[] value, long timestamp) {
 		
 		if (column == null) {
-			throw new IllegalArgumentException("column is null");
+			throw new IllegalArgumentException("null columns are not allowed");
 		}
 
 		if (value == null) {
-			throw new IllegalArgumentException("value is null");
+			throw new IllegalArgumentException("null values are not allowed");
 		}
 
 		this.column = column;
@@ -105,19 +120,23 @@ public final class Value {
 		return column;
 	}
 
-	public byte[] value() {
+	public byte[] bytes() {
 		return value.toByteArray();
 	}
 	
-	public String valueAsString() {
+	public String string() {
 		return value.toString(GKVSConstants.MUTABLE_VALUE_CHARSET);
+	}
+	
+	public void writeTo(OutputStream out) throws IOException {
+		value.writeTo(out);
 	}
 
 	public long timestamp() {
 		return timestamp;
 	}
 	
-	protected ByteString valueBytes() {
+	protected ByteString byteString() {
 		return value;
 	}
 

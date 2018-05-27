@@ -18,6 +18,7 @@
 
 package rocks.gkvs;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public enum RecordNotFound implements Record {
 	}
 
 	@Override
-	public int leftTtl() {
+	public int ttl() {
 		return 0;
 	}
 
@@ -46,23 +47,18 @@ public enum RecordNotFound implements Record {
 	}
 
 	@Override
-	public byte[] value() {
-		return null;
-	}
-
-	@Override
-	public String valueAsString() {
-		return null;
+	public NullableValue value() {
+		return new NullableValue(null);
 	}
 	
 	@Override
 	public List<Value> valueList() {
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
-	public Map<String, byte[]> valueMap() {
-		return null;
+	public Map<String, Value> valueMap() {
+		return Collections.emptyMap();
 	}
 	
 		

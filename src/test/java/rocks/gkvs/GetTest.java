@@ -27,7 +27,7 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		byte[] result = GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
+		byte[] result = GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value().bytes();
 		
 		Assert.assertNull("expected null result", result);
 		

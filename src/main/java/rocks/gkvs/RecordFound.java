@@ -25,8 +25,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import com.google.protobuf.ByteString;
-
 import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
@@ -49,7 +47,7 @@ public class RecordFound implements Record {
 	}
 	
 	@Override
-	public int leftTtl() {
+	public int ttl() {
 		return result.getMetadata().getTtl();
 	}
 	
@@ -77,70 +75,44 @@ public class RecordFound implements Record {
 	}
 	
 	@Override
-	public @Nullable byte[] value() {
-		
-		if (result.getValueCount() > 1) {
-			throw new GKVSException("expected a single value in result");
-		}
+	public NullableValue value() {
 		
 		if (result.getValueCount() == 0) {
-			return null;
+			return new NullableValue(null);
 		}
 		
-		return getValuePayload(result.getValue(0)).toByteArray();
+		return new NullableValue(new rocks.gkvs.Value(result.getValue(0)));
 	}
 	
 	@Override
-	public @Nullable String valueAsString() {
-		
-		if (result.getValueCount() > 1) {
-			throw new GKVSException("expected a single value in result");
-		}
-		
-		if (result.getValueCount() == 0) {
-			return null;
-		}
-		
-		return getValuePayload(result.getValue(0)).toString(GKVSConstants.MUTABLE_VALUE_CHARSET);
-		
-	}
-	
-	@Override
-	public @Nullable List<rocks.gkvs.Value> valueList() {
+	public List<rocks.gkvs.Value> valueList() {
 		
 		List<rocks.gkvs.Value> list = new ArrayList<>(result.getValueCount());
 		
 		for (Value value : result.getValueList()) {
-			list.add(new rocks.gkvs.Value(value.getColumn(),  getValuePayload(value), 0));
+			list.add(new rocks.gkvs.Value(value));
 		}
 		
 		return list;
 		
 	}
 	
-	
 	@Override
-	public @Nullable  Map<String, byte[]> valueMap() {
+	public Map<String, rocks.gkvs.Value> valueMap() {
 		
-		Map<String, byte[]> map = new HashMap<String, byte[]>();
+		Map<String, rocks.gkvs.Value> map = new HashMap<String, rocks.gkvs.Value>();
 		
 		for (Value value : result.getValueList()) {
-			map.put(value.getColumn(), getValuePayload(value).toByteArray());
+			map.put(value.getColumn(), new rocks.gkvs.Value(value));
 		}
 		
 		return map;
 		
 	}
-	
-	private @Nullable ByteString getValuePayload(Value value) {
 
-		switch (value.getValueCase()) {
-		case RAW:
-			return value.getRaw();
-		case DIGEST:
-			return value.getDigest();
-		default:
-			return ByteString.EMPTY;
-		}
+	@Override
+	public String toString() {
+		return "RECORD_FOUND";
 	}
+
 }

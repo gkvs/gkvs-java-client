@@ -105,7 +105,7 @@ public final class Remove implements Resultable {
 	
 	@Override
 	public String result() {
-		return result.toString();
+		return result != null ? result.toString() : null;
 	}
 	
 }

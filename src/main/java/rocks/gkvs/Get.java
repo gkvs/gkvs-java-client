@@ -132,7 +132,7 @@ public final class Get implements Resultable {
 	
 	@Override
 	public String result() {
-		return result.toString();
+		return result != null ? result.toString() : null;
 	}
 	
 }

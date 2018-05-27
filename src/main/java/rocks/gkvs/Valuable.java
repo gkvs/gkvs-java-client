@@ -15,28 +15,20 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import javax.annotation.Nullable;
+public interface Valuable {
 
-public interface Record {
-
-	boolean exists();
+	String column();
 	
-	long version();
+	byte[] bytes();
 	
-	int ttl();
-
-	@Nullable Key key();
+	String string();
 	
-	NullableValue value();
-		
-	List<Value> valueList();
+	void writeTo(OutputStream out) throws IOException;
 	
-	Map<String, Value> valueMap();
-	
+	long timestamp();
 }

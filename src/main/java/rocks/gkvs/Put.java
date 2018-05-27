@@ -140,7 +140,7 @@ public final class Put implements Resultable {
 
 	@Override
 	public String result() {
-		return result.toString();
+		return result != null ? result.toString() : null;
 	}
 	
 }

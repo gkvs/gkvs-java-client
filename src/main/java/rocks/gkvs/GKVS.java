@@ -57,27 +57,35 @@ public enum GKVS {
 	}
 	
 	public Put put(String tableName, String recordKey, String value) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).put(Value.of(value));
+		return putWithKey(tableName, recordKey).put(Value.of(value));
+	}
+	
+	public Put put(String tableName, String recordKey, String column, String value) {
+		return putWithKey(tableName, recordKey).put(Value.of(column, value));
 	}
 
 	public Put put(String tableName, String recordKey, byte[] value) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).put(Value.of(value));
+		return putWithKey(tableName, recordKey).put(Value.of(value));
+	}
+	
+	public Put put(String tableName, String recordKey, String column, byte[] value) {
+		return putWithKey(tableName, recordKey).put(Value.of(column, value));
 	}
 
-	public Put put(String tableName, String recordKey, Value value) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).put(value);
+	public Put put(Key key, Value value) {
+		return putWithKey(key).put(value);
 	}
 
-	public Put put(String tableName, String recordKey, Value... values) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).putAll(values);
+	public Put put(Key key, Value... values) {
+		return putWithKey(key).putAll(values);
 	}
 
-	public Put put(String tableName, String recordKey, Iterable<Value> cells) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).putAll(cells);
+	public Put put(Key key, Iterable<Value> values) {
+		return putWithKey(key).putAll(values);
 	}
 
-	public Put put(String tableName, String recordKey, Map<String, byte[]> map) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey).putAll(map);
+	public Put put(Key key, Map<String, byte[]> values) {
+		return putWithKey(key).putAll(values);
 	}
 	
 	public Remove remove(String tableName, String recordKey) {

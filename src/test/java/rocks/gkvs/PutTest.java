@@ -17,6 +17,7 @@
  */
 package rocks.gkvs;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -28,7 +29,7 @@ public class PutTest extends AbstractClientTest {
 	public void testPutNull() {
 		
 		/**
-		 * If you want to remove value, please use remove method
+		 * NULL values are not allowed
 		 */
 		
 		GKVS.Client.put(TABLE, UUID.randomUUID().toString(), (String) null).sync();
@@ -42,7 +43,7 @@ public class PutTest extends AbstractClientTest {
 		
 		GKVS.Client.put(TABLE, key, value).sync();
 		
-		String actual = GKVS.Client.get(TABLE, key).sync().valueAsString();
+		String actual = GKVS.Client.get(TABLE, key).sync().value().string();
 
 		Assert.assertEquals(value, actual);
 		
@@ -65,7 +66,7 @@ public class PutTest extends AbstractClientTest {
 		Put put = GKVS.Client.put(TABLE, key, replaceValue);
 		put.compareAndPut(0).sync();
 		
-		System.out.println("result = " + put.result());
+		//System.out.println("result = " + put.result());
 		
 		// try with 0 version
 		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(0).sync());
@@ -79,7 +80,27 @@ public class PutTest extends AbstractClientTest {
 		// check
 		record = GKVS.Client.get(TABLE, key).sync();
 		
-		Assert.assertEquals(replaceValue, record.valueAsString());
+		Assert.assertEquals(replaceValue, record.value().string());
+	}
+	
+	@Test
+	public void testPutSelect() {
+		
+		String key = UUID.randomUUID().toString();
+		String column = "col";
+		String value = "org";
+		
+		GKVS.Client.put(TABLE, key, column, value).sync();
+		
+		Record record = GKVS.Client.get(TABLE, key).sync();
+		Assert.assertTrue(record.exists());
+		
+		Map<String, Value> values = record.valueMap();
+		
+		Assert.assertEquals(1, values.size());
+		Assert.assertEquals(value, values.get(column).string());
+		
+		GKVS.Client.remove(TABLE, key);
 	}
 	
 }

@@ -146,44 +146,39 @@ public class GKVSClient implements Closeable {
 	}
 	
 	public Put putWithKey(Key key) {
-		return new Put(this)
-				.setKey(key);
+		return new Put(this).setKey(key);
 	}
 	
 	public Put put(String tableName, String recordKey, String value) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.put(Value.of(value));
+		return putWithKey(tableName, recordKey).put(Value.of(value));
+	}
+	
+	public Put put(String tableName, String recordKey, String column, String value) {
+		return putWithKey(tableName, recordKey).put(Value.of(column, value));
 	}
 
 	public Put put(String tableName, String recordKey, byte[] value) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.put(Value.of(value));
-	}
-
-	public Put put(String tableName, String recordKey, Value value) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.put(value);
-	}
-
-	public Put put(String tableName, String recordKey, Value... values) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.putAll(values);
-	}
-
-	public Put put(String tableName, String recordKey, Iterable<Value> values) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.putAll(values);
+		return putWithKey(tableName, recordKey).put(Value.of(value));
 	}
 	
-	public Put put(String tableName, String recordKey, Map<String, byte[]> map) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey))
-				.putAll(map);
+	public Put put(String tableName, String recordKey, String column, byte[] value) {
+		return putWithKey(tableName, recordKey).put(Value.of(column, value));
+	}
+
+	public Put put(Key key, Value value) {
+		return putWithKey(key).put(value);
+	}
+
+	public Put put(Key key, Value... values) {
+		return putWithKey(key).putAll(values);
+	}
+
+	public Put put(Key key, Iterable<Value> values) {
+		return putWithKey(key).putAll(values);
+	}
+
+	public Put put(Key key, Map<String, byte[]> values) {
+		return putWithKey(key).putAll(values);
 	}
 	
 	public Remove remove(String tableName, String recordKey) {
