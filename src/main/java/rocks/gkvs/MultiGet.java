@@ -79,6 +79,19 @@ public final class MultiGet implements Resultable {
 		return this;
 	}
 	
+	public MultiGet select(String column) {
+		
+		if (column == null) {
+			throw new IllegalArgumentException("column is null");
+		}		
+		
+		if (selectOrNull == null) {
+			selectOrNull = Select.newBuilder();
+		}
+		selectOrNull.addColumn(column);
+		return this;
+	}
+	
 	private KeyOperation.Builder buildKeyOperation(Key key) {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
