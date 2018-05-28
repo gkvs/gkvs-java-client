@@ -100,7 +100,7 @@ public class PutTest extends AbstractClientTest {
 		Assert.assertEquals(1, values.size());
 		Assert.assertEquals(value, values.get(column).string());
 		
-		GKVS.Client.remove(TABLE, key);
+		GKVS.Client.remove(TABLE, key).sync();
 	}
 	
 }

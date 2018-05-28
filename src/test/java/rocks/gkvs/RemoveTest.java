@@ -17,12 +17,79 @@
  */
 package rocks.gkvs;
 
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 public class RemoveTest extends AbstractClientTest {
-
+	
+	
 	@Test
-	public void testRemoveSelected() {
+	public void testRemoveSelect() {
 		
+		String key = UUID.randomUUID().toString();
+		String column = "col";
+		String value = "org";
+		
+		GKVS.Client.put(TABLE, key, column, value).sync();
+		
+		Record record = GKVS.Client.get(TABLE, key).select(column).sync();
+		Assert.assertTrue(record.exists());
+		
+		Map<String, Value> values = record.valueMap();
+		
+		Assert.assertEquals(1, values.size());
+		Assert.assertEquals(value, values.get(column).string());
+		
+		GKVS.Client.remove(TABLE, key).select(column).sync();
+		
+		
+		Assert.assertFalse(GKVS.Client.get(TABLE, key).sync().exists());
+		
+	}
+	
+	@Test
+	public void testRemoveSelectLeft() {
+		
+		String key = UUID.randomUUID().toString();
+		String column = "col";
+		String value = "org";
+		
+		String column2 = "col2";
+		String value2 = "org2";
+		
+		GKVS.Client.putWithKey(TABLE, key)
+			.put(column, value)
+			.put(column2, value2)
+			.sync();
+		
+		Get get = GKVS.Client.get(TABLE, key);
+		
+		Record record = get.sync();
+		Assert.assertTrue(record.exists());
+		
+		Map<String, Value> values = record.valueMap();
+		
+		Assert.assertEquals(2, values.size());
+		Assert.assertEquals(value, values.get(column).string());
+		Assert.assertEquals(value2, values.get(column2).string());
+		
+		GKVS.Client.remove(TABLE, key).select(column).sync();
+		
+		Assert.assertTrue(GKVS.Client.get(TABLE, key).sync().exists());
+		
+		record = GKVS.Client.get(TABLE, key).sync();
+		Assert.assertTrue(record.exists());
+		
+		values = record.valueMap();
+		
+		Assert.assertEquals(1, values.size());
+		Assert.assertEquals(value2, values.get(column2).string());
+
+		GKVS.Client.remove(TABLE, key).select(column2).sync();
+		
+		Assert.assertFalse(GKVS.Client.get(TABLE, key).sync().exists());
 	}
 }

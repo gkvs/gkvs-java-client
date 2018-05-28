@@ -85,6 +85,16 @@ public final class Put implements Resultable {
 		builder.addValue(value.toProto());
 		return this;
 	}
+	
+	public Put put(String column, String value) {
+		builder.addValue(Value.of(column, value).toProto());
+		return this;
+	}
+
+	public Put put(String column, byte[] value) {
+		builder.addValue(Value.of(column, value).toProto());
+		return this;
+	}
 
 	public Put putAll(Value... cells) {
 		for (Value cell : cells) {
