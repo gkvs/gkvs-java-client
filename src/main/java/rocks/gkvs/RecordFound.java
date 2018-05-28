@@ -23,12 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
-public class RecordFound implements Record {
+public final class RecordFound implements Record {
 
 	private final ValueResult result;
 	

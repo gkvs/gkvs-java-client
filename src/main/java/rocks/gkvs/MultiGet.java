@@ -18,7 +18,7 @@
 
 package rocks.gkvs;
 
-public class MultiGet {
+public final class MultiGet {
 
 	private final GKVSClient instance;
 	

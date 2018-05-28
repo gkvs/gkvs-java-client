@@ -114,16 +114,7 @@ public final class Get implements Resultable {
 		ValueResult result = instance.getBlockingStub().get(builder.build());
 		RESULT_UPDATER.set(this, result);
 		
-		instance.postProcess(result.getStatus(), this);
-		
-		if (result.hasMetadata()) {
-			return new RecordFound(result);
-		}
-		else {
-			// record not found
-			return RecordNotFound.RECORD_NOT_FOUND;
-		}
-		
+		return Transformers.toRecord(result);
 	}
 	
 	//public Future<ValueSet> async() {

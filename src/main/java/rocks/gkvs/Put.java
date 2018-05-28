@@ -134,7 +134,7 @@ public final class Put implements Resultable {
 		
 		RESULT_UPDATER.set(this, instance.getBlockingStub().put(builder.build()));
 		
-		instance.postProcess(result.getStatus(), this);
+		instance.postProcess(result.getStatus());
 		
 		if (result.getStatus().getCode() == StatusCode.SUCCESS) {
 			return true;

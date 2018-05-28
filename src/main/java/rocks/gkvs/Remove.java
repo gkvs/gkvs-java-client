@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
+import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
 
 public final class Remove implements Resultable {
@@ -81,7 +82,7 @@ public final class Remove implements Resultable {
 		return this;
 	}
 
-	public void sync() {
+	public boolean sync() {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
@@ -99,7 +100,17 @@ public final class Remove implements Resultable {
 		
 		RESULT_UPDATER.set(this, instance.getBlockingStub().remove(builder.build()));
 		
-		instance.postProcess(result.getStatus(), this);
+		instance.postProcess(result.getStatus());
+		
+		if (result.getStatus().getCode() == StatusCode.SUCCESS) {
+			return true;
+		}
+		else if (result.getStatus().getCode() == StatusCode.SUCCESS_NOT_UPDATED) {
+			return false;
+		}
+		else {
+			throw new GKVSException("unknown status code: " + result.getStatus());
+		}
 		
 	}
 	

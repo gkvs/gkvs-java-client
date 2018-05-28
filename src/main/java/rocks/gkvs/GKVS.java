@@ -96,4 +96,8 @@ public enum GKVS {
 		return GKVSClient.getDefaultInstance().remove(key);
 	}
 	
+	public Scan scan(String tableName) {
+		return GKVSClient.getDefaultInstance().scan(tableName);
+	}
+	
 }

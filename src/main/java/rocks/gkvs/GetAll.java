@@ -18,7 +18,7 @@
 
 package rocks.gkvs;
 
-public class GetAll {
+public final class GetAll {
 
 	private final GKVSClient instance;
 	

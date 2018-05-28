@@ -18,7 +18,7 @@
 
 package rocks.gkvs;
 
-public class RemoveAll {
+public final class RemoveAll {
 
 	private final GKVSClient instance;
 	

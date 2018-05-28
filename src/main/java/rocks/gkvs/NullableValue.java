@@ -36,7 +36,7 @@ public final class NullableValue {
 	
 	public Value get() {
 		if (value == null) {
-			throw new IllegalStateException("value is null");
+			throw new GKVSException("value is null");
 		}
 		return value;
 	}
@@ -55,7 +55,7 @@ public final class NullableValue {
 
 	public void writeTo(OutputStream out) throws IOException {
 		if (value == null) {
-			throw new IllegalStateException("value is null");
+			throw new GKVSException("value is null");
 		}
 		value.writeTo(out);
 	}

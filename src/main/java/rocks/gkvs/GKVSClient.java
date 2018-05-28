@@ -32,7 +32,7 @@ import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
 import rocks.gkvs.protos.Status;
 import rocks.gkvs.protos.StatusCode;
 
-public class GKVSClient implements Closeable {
+public final class GKVSClient implements Closeable {
 
 	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
 	private static volatile GKVSClient defaultInstance = null;
@@ -94,13 +94,13 @@ public class GKVSClient implements Closeable {
 	    return num;
 	}
 	
-	protected void postProcess(Status status, Resultable result) {
+	protected void postProcess(Status status) {
 		if (!success(status.getCode())) {
-			throw new GKVSResultException(status, result);
+			throw new GKVSResultException(status);
 		}
 	}
 
-	protected boolean success(StatusCode code) {
+	protected static boolean success(StatusCode code) {
 		switch(code) {
 		case SUCCESS:
 		case SUCCESS_NOT_UPDATED:
@@ -187,6 +187,10 @@ public class GKVSClient implements Closeable {
 	
 	public Remove remove(Key key) {
 		return new Remove(this).setKey(key);
+	}
+	
+	public Scan scan(String tableName) {
+		return new Scan(this).table(tableName);
 	}
 	
 }

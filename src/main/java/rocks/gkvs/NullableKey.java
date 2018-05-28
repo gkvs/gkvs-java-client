@@ -33,7 +33,7 @@ public final class NullableKey {
 	
 	public Key get() {
 		if (key == null) {
-			throw new IllegalStateException("key is null");
+			throw new GKVSException("key is null");
 		}
 		return key;
 	}
