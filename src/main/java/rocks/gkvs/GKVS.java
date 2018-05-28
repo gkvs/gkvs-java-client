@@ -57,6 +57,10 @@ public enum GKVS {
 		return GKVSClient.getDefaultInstance().multiGet(keys);
 	}
 	
+	public GetAll getAll() {
+		return GKVSClient.getDefaultInstance().getAll();
+	}
+	
 	public Put putWithKey(String tableName, String recordKey) {
 		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey);
 	}

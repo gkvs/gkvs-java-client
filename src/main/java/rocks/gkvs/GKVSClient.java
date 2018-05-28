@@ -44,12 +44,8 @@ public final class GKVSClient implements Closeable {
 	
 	private final AtomicLong sequenceNum = new AtomicLong(1L);
 	
-	public GKVSClient() {
-		this("localhost", 4040);
-	}
-	
 	public static GKVSClient createFromClasspath() {
-		return new GKVSClient(); 
+		return new GKVSClient("localhost", 4040);
 	}
 	
 	public GKVSClient(String host, int port) {
@@ -69,7 +65,19 @@ public final class GKVSClient implements Closeable {
 		if (defaultInstance == null) {
 			synchronized (GKVS.class) {
 				if (defaultInstance == null) {
+					
 					defaultInstance = GKVSClient.createFromClasspath();
+					
+				     Runtime.getRuntime().addShutdownHook(new Thread() {
+				    	 @Override
+				           public void run() {
+				    		 try {
+								defaultInstance.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+				            }
+				        });
 				}
 			}
 		}
@@ -83,7 +91,7 @@ public final class GKVSClient implements Closeable {
 	protected GenericStoreStub getAsyncStub() {
 		return asyncStub;
 	}
-	
+
 	protected long nextRequestId() {
 		long num = sequenceNum.incrementAndGet();
 		if (num > Long.MAX_VALUE - 100) {
@@ -149,6 +157,10 @@ public final class GKVSClient implements Closeable {
 		return new MultiGet(this).setKeys(keys);
 	}
 
+	public GetAll getAll() {
+		return new GetAll(this);
+	}
+	
 	public Put putWithKey(String tableName, String recordKey) {
 		return new Put(this)
 				.setKey(Key.raw(tableName, recordKey));

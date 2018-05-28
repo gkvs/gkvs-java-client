@@ -22,6 +22,7 @@ import java.util.Iterator;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 
+import io.grpc.stub.StreamObserver;
 import rocks.gkvs.protos.ValueResult;
 
 final class Transformers {
@@ -51,6 +52,35 @@ final class Transformers {
 
 		public Record apply(ValueResult result) {
 			return toRecord(result);
+		}
+		
+	}
+	
+	protected static StreamObserver<ValueResult> observe(RecordObserver recordObserver) {
+		return new StreamObserverAdapter(recordObserver);
+	}
+	
+	protected static final class StreamObserverAdapter implements StreamObserver<ValueResult> {
+
+		private final RecordObserver recordObserver;
+		
+		public StreamObserverAdapter(RecordObserver recordObserver) {
+			this.recordObserver = recordObserver;
+		}
+		
+		@Override
+		public void onNext(ValueResult value) {
+			recordObserver.onNext(Transformers.toRecord(value));
+		}
+
+		@Override
+		public void onError(Throwable t) {
+			recordObserver.onError(t);
+		}
+
+		@Override
+		public void onCompleted() {
+			recordObserver.onCompleted();
 		}
 		
 	}

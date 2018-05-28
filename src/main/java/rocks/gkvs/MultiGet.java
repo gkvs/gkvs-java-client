@@ -50,6 +50,16 @@ public final class MultiGet implements Resultable {
 		this.instance = instance;
 	}
 	
+	public MultiGet withTimeout(int timeoutMls) {
+		options.setTimeout(timeoutMls);
+		return this;
+	}
+	
+	public MultiGet withPit(long pit) {
+		options.setPit(pit);
+		return this;
+	}
+	
 	public MultiGet setKeys(Key...keys) {
 		for (Key key : keys) {
 			this.keys.add(key);
