@@ -20,6 +20,7 @@ package rocks.gkvs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -83,11 +84,11 @@ public final class GKVSClient implements Closeable {
 		return asyncStub;
 	}
 	
-	protected long nextSequenceNum() {
+	protected long nextRequestId() {
 		long num = sequenceNum.incrementAndGet();
 		if (num > Long.MAX_VALUE - 100) {
 			if (!sequenceNum.compareAndSet(num, 1)) {
-				return nextSequenceNum();
+				return nextRequestId();
 			}
 			return 1L;
 		}
@@ -137,6 +138,14 @@ public final class GKVSClient implements Closeable {
 	}
 	
 	public MultiGet multiGet(Key...keys) {
+		return new MultiGet(this).setKeys(keys);
+	}
+	
+	public MultiGet multiGet(Iterator<Key> keys) {
+		return new MultiGet(this).setKeys(keys);
+	}
+	
+	public MultiGet multiGet(Iterable<Key> keys) {
 		return new MultiGet(this).setKeys(keys);
 	}
 

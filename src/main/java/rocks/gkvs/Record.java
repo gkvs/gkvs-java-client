@@ -23,6 +23,8 @@ import java.util.Map;
 
 public interface Record {
 
+	long requestId();
+	
 	boolean exists();
 	
 	long version();

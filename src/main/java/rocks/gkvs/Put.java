@@ -33,7 +33,7 @@ public final class Put implements Resultable {
 	private final PutOperation.Builder builder = PutOperation.newBuilder();
 	
 	private Key key;
-	private RequestOptions.Builder optionsOrNull;
+	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	
 	private final static AtomicReferenceFieldUpdater<Put, StatusResult> RESULT_UPDATER
 	  = AtomicReferenceFieldUpdater.newUpdater(Put.class, StatusResult.class, "result"); 
@@ -45,28 +45,17 @@ public final class Put implements Resultable {
 	}
 	
 	public Put setKey(Key key) {
-		
-		if (key == null) {
-			throw new IllegalArgumentException("key is null");
-		}
-		
 		this.key = key;
 		return this;
 	}
 	
 	public Put withTimeout(int timeoutMls) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setTimeout(timeoutMls);
+		options.setTimeout(timeoutMls);
 		return this;
 	}
 	
 	public Put withPit(long pit) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setPit(pit);
+		options.setPit(pit);
 		return this;
 	}
 
@@ -124,13 +113,14 @@ public final class Put implements Resultable {
 	
 	public boolean sync() {
 		
-		builder.setSequenceNum(instance.nextSequenceNum());
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		
+		options.setRequestId(instance.nextRequestId());
+		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());
-		
-		if (optionsOrNull != null) {
-			builder.setOptions(optionsOrNull);
-		}
 		
 		RESULT_UPDATER.set(this, instance.getBlockingStub().put(builder.build()));
 		

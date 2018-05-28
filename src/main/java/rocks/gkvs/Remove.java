@@ -31,7 +31,7 @@ public final class Remove implements Resultable {
 	private final GKVSClient instance;
 	
 	private Key key;
-	private RequestOptions.Builder optionsOrNull;
+	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	
 	private final static AtomicReferenceFieldUpdater<Remove, StatusResult> RESULT_UPDATER
@@ -44,28 +44,17 @@ public final class Remove implements Resultable {
 	}
 	
 	public Remove setKey(Key key) {
-		
-		if (key == null) {
-			throw new IllegalArgumentException("key is null");
-		}
-		
 		this.key = key;
 		return this;
 	}
 	
 	public Remove withTimeout(int timeoutMls) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setTimeout(timeoutMls);
+		options.setTimeout(timeoutMls);
 		return this;
 	}
 	
 	public Remove withPit(long pit) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setPit(pit);
+		options.setPit(pit);
 		return this;
 	}
 	
@@ -84,15 +73,16 @@ public final class Remove implements Resultable {
 
 	public boolean sync() {
 		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		builder.setSequenceNum(instance.nextSequenceNum());
+		options.setRequestId(instance.nextRequestId());
+		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());
-		
-		if (optionsOrNull != null) {
-			builder.setOptions(optionsOrNull);
-		}
 		
 		if (selectOrNull != null) {
 			builder.setSelect(selectOrNull);

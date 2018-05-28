@@ -51,7 +51,7 @@ public final class NullableKey {
 	}
 	
 	public String getRecordKeyAsString() {
-		return key != null ? key.getRecordKeyAsString() : null;
+		return key != null ? key.getRecordKeyString() : null;
 	}
 	
 	@Override

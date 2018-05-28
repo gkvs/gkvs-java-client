@@ -35,6 +35,11 @@ public final class RecordFound implements Record {
 	}
 	
 	@Override
+	public long requestId() {
+		return result.getRequestId();
+	}
+
+	@Override
 	public boolean exists() {
 		return true;
 	}
@@ -110,7 +115,7 @@ public final class RecordFound implements Record {
 
 	@Override
 	public String toString() {
-		return "RECORD_FOUND";
+		return "RECORD_FOUND [" + requestId() + "]: " + key();
 	}
 
 }

@@ -28,11 +28,11 @@ import rocks.gkvs.protos.ValueResult;
 public final class RecordError implements Record {
 
 	private final Status status;
-	private final long sequenceNum;
+	private final long requestId;
 	
 	protected RecordError(ValueResult valueResult) {
 		this.status = valueResult.getStatus();
-		this.sequenceNum = valueResult.getSequenceNum();
+		this.requestId = valueResult.getRequestId();
 	}
 	
 	protected static boolean isError(ValueResult valueResult) {
@@ -64,8 +64,9 @@ public final class RecordError implements Record {
 		throw new GKVSResultException(status);
 	}
 	
-	public long getSequenceNum() {
-		return sequenceNum;
+	@Override
+	public long requestId() {
+		return requestId;
 	}
 
 	public String getStatus() {
@@ -116,7 +117,7 @@ public final class RecordError implements Record {
 
 	@Override
 	public String toString() {
-		return "RecordError [status=" + status + ", sequenceNum=" + sequenceNum + "]";
+		return "RECORD_ERROR [" + requestId() + "]: " + status.getCode().name();
 	}
 
 }

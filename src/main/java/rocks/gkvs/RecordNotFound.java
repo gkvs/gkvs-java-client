@@ -22,9 +22,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public enum RecordNotFound implements Record {
+import rocks.gkvs.protos.ValueResult;
+
+public final class RecordNotFound implements Record {
+
+	private final ValueResult result;
 	
-	RECORD_NOT_FOUND;
+	public RecordNotFound(ValueResult result) {
+		this.result = result;
+	}
+
+	@Override
+	public long requestId() {
+		return result.getRequestId();
+	}
 
 	@Override
 	public boolean exists() {
@@ -33,12 +44,12 @@ public enum RecordNotFound implements Record {
 	
 	@Override
 	public long version() {
-		return 0;
+		return -1L;
 	}
 
 	@Override
 	public int ttl() {
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -59,6 +70,11 @@ public enum RecordNotFound implements Record {
 	@Override
 	public Map<String, Value> valueMap() {
 		return Collections.emptyMap();
+	}
+
+	@Override
+	public String toString() {
+		return "RECORD_NOT_FOUND [" + requestId() + "]";
 	}
 	
 		

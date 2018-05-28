@@ -37,8 +37,7 @@ final class Transformers {
 			return new RecordFound(result);
 		}
 		else {
-			// record not found
-			return RecordNotFound.RECORD_NOT_FOUND;
+			return new RecordNotFound(result);
 		}
 	}
 	

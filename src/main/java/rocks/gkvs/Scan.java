@@ -36,7 +36,7 @@ public final class Scan {
 	private final GKVSClient instance;
 
 	private String tableName;
-	private RequestOptions.Builder optionsOrNull;
+	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	private Bucket.Builder bucketOrNull;
 	
@@ -55,10 +55,7 @@ public final class Scan {
 	}
 	
 	public Scan withPit(long pit) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setPit(pit);
+		options.setPit(pit);
 		return this;
 	}
 	
@@ -122,12 +119,11 @@ public final class Scan {
 			throw new IllegalArgumentException("table name is null");
 		}
 		
+		options.setRequestId(instance.nextRequestId());
+		builder.setOptions(options);
+		
 		builder.setTableName(tableName);
 		builder.setOutput(output());
-		
-		if (optionsOrNull != null) {
-			builder.setOptions(optionsOrNull);
-		}
 		
 		if (selectOrNull != null) {
 			builder.setSelect(selectOrNull);
@@ -136,8 +132,6 @@ public final class Scan {
 		if (bucketOrNull != null) {
 			builder.setBucket(bucketOrNull);
 		}
-		
-		System.out.println(builder.build());
 		
 		Iterator<ValueResult> results = instance.getBlockingStub().scan(builder.build());
 		return Transformers.toRecords(results);

@@ -18,6 +18,7 @@
 
 package rocks.gkvs;
 
+import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 
 /**
@@ -65,10 +66,18 @@ public final class Key {
 		return recordKey.toByteArray();
 	}
 	
-	public String getRecordKeyAsString() {
+	public String getRecordKeyString() {
 		return new String(recordKey.toByteArray(), GKVSConstants.MUTABLE_KEY_CHARSET);
 	}
 
+	public String getRecordKeyHexString() {
+		return BaseEncoding.base16().upperCase().encode(recordKey.toByteArray());
+	}
+	
+	public String getRecordKeyBase64String() {
+		return BaseEncoding.base64().encode(recordKey.toByteArray());
+	}
+	
 	public static Key raw(String tableName, String recordKey) {
 		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey, GKVSConstants.MUTABLE_KEY_CHARSET));
 	}
@@ -131,7 +140,30 @@ public final class Key {
 
 	@Override
 	public String toString() {
-		return "Key [tableName=" + tableName + ", recordKeyType=" + recordKeyType + ", recordKey=" + recordKey + "]";
+		if (isPrintableKey()) {
+			return "Key [" + tableName + ":" + recordKeyType.name() + ":" + getRecordKeyString() + "]";
+		}
+		else {
+			return "Key [" + tableName + ":" + recordKeyType.name() + ":BASE64:" + getRecordKeyBase64String() + "]";
+		}
 	}
 
+	private boolean isPrintableKey() {
+		if (recordKeyType == KeyType.DIGEST) {
+			return false;
+		}
+		int size = recordKey.size();
+		for (int i = 0; i != size; ++i) {
+			int b = recordKey.byteAt(i);
+			if (!isPrintable(b & 0xFF)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isPrintable(int c) {
+		return c > 31 && c < 127;
+	}
+	
 }

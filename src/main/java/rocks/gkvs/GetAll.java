@@ -26,4 +26,7 @@ public final class GetAll {
 		this.instance = instance;
 	}
 	
+
+	
+	
 }

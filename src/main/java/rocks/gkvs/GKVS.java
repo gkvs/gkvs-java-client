@@ -18,6 +18,7 @@
 
 package rocks.gkvs;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -45,6 +46,14 @@ public enum GKVS {
 	}
 	
 	public MultiGet multiGet(Key...keys) {
+		return GKVSClient.getDefaultInstance().multiGet(keys);
+	}
+	
+	public MultiGet multiGet(Iterator<Key> keys) {
+		return GKVSClient.getDefaultInstance().multiGet(keys);
+	}
+	
+	public MultiGet multiGet(Iterable<Key> keys) {
 		return GKVSClient.getDefaultInstance().multiGet(keys);
 	}
 	

@@ -31,7 +31,7 @@ public final class Get implements Resultable {
 	private final GKVSClient instance;
 
 	private Key key;
-	private RequestOptions.Builder optionsOrNull;
+	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
 	
@@ -45,28 +45,17 @@ public final class Get implements Resultable {
 	}
 	
 	public Get setKey(Key key) {
-		
-		if (key == null) {
-			throw new IllegalArgumentException("key is null");
-		}
-		
 		this.key = key;
 		return this;
 	}
 	
 	public Get withTimeout(int timeoutMls) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setTimeout(timeoutMls);
+		options.setTimeout(timeoutMls);
 		return this;
 	}
 	
 	public Get withPit(long pit) {
-		if (optionsOrNull == null) {
-			optionsOrNull = RequestOptions.newBuilder();
-		}
-		optionsOrNull.setPit(pit);
+		options.setPit(pit);
 		return this;
 	}
 	
@@ -90,9 +79,14 @@ public final class Get implements Resultable {
 	
 	public Record sync() {
 		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		builder.setSequenceNum(instance.nextSequenceNum());
+		options.setRequestId(instance.nextRequestId());
+		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());
 		
@@ -102,11 +96,7 @@ public final class Get implements Resultable {
 		else {
 			builder.setOutput(OutputOptions.VALUE_RAW);
 		}
-		
-		if (optionsOrNull != null) {
-			builder.setOptions(optionsOrNull);
-		}
-		
+				
 		if (selectOrNull != null) {
 			builder.setSelect(selectOrNull);
 		}
