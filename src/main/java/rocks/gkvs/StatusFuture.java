@@ -17,11 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface Resultable {
+public final class StatusFuture {
 
-	/**
-	 * @return result as a string for logging
-	 */
-	String result();
-	
 }

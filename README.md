@@ -42,7 +42,7 @@ GKVS.Client.remove("TEST", "key").sync();
 #### COMPARE_AND_PUT
 ```
 Record record = GKVS.Client.get("TEST", "key").sync();
-boolean updated = GKVS.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync();
+boolean updated = GKVS.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync().updated();
 ```
 
 #### EXISTS

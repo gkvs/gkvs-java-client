@@ -69,13 +69,13 @@ public class PutTest extends AbstractClientTest {
 		//System.out.println("result = " + put.result());
 		
 		// try with 0 version
-		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(0).sync());
+		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(0).sync().updated());
 		
 		// try with unknown version
-		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(435345234).sync());
+		Assert.assertFalse(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(435345234).sync().updated());
 		
 		// try with valid version
-		Assert.assertTrue(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(record.version()).sync());
+		Assert.assertTrue(GKVS.Client.put(TABLE, key, replaceValue).compareAndPut(record.version()).sync().updated());
 		
 		// check
 		record = GKVS.Client.get(TABLE, key).sync();

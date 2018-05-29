@@ -18,8 +18,6 @@
 
 package rocks.gkvs;
 
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.protos.KeyOperation;
@@ -28,7 +26,7 @@ import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.ValueResult;
 
-public final class Get implements Resultable {
+public final class Get {
 
 	private final GKVSClient instance;
 
@@ -36,11 +34,6 @@ public final class Get implements Resultable {
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
-	
-	private final static AtomicReferenceFieldUpdater<Get, ValueResult> RESULT_UPDATER
-	  = AtomicReferenceFieldUpdater.newUpdater(Get.class, ValueResult.class, "result"); 
-	  
-	private volatile ValueResult result;
 	
 	public Get(GKVSClient instance) {
 		this.instance = instance;
@@ -109,7 +102,6 @@ public final class Get implements Resultable {
 	public Record sync() {
 		
 		ValueResult result = instance.getBlockingStub().get(buildRequest());
-		RESULT_UPDATER.set(this, result);
 		
 		return Transformers.toRecord(key, result);
 	}
@@ -121,10 +113,6 @@ public final class Get implements Resultable {
 		return new RecordFuture(Transformers.toRecord(key, result));
 		
 	}
-	
-	@Override
-	public String result() {
-		return result != null ? result.toString() : null;
-	}
+
 	
 }

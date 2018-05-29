@@ -27,6 +27,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import io.grpc.stub.StreamObserver;
+import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
 
 final class Transformers {
@@ -46,12 +47,29 @@ final class Transformers {
 		}
 	}
 	
+	protected static Status toStatus(@Nullable Key requestKey, StatusResult result) {
+		if (StatusError.isError(result)) {
+			return new StatusError(requestKey, result);
+		}
+		else {
+			return new StatusSuccess(requestKey, result);
+		}
+	}
+	
 	protected static ListenableFuture<Record> toRecord(@Nullable Key requestKey, ListenableFuture<ValueResult> result) {
 		return Futures.transform(result, new SimpleKeyRecordFn(requestKey));
 	}
 	
+	protected static ListenableFuture<Status> toStatus(@Nullable Key requestKey, ListenableFuture<StatusResult> result) {
+		return Futures.transform(result, new SimpleKeyStatusFn(requestKey));
+	}
+	
 	protected static Iterator<Record> toRecords(Iterator<ValueResult> iterator) {
 		return Iterators.transform(iterator, SimpleRecordFn.INS);
+	}
+	
+	protected static Iterator<Status> toStatuses(Iterator<StatusResult> iterator) {
+		return Iterators.transform(iterator, SimpleStatusFn.INS);
 	}
 	
 	protected static Iterator<Record> toRecords(Iterator<ValueResult> iterator, KeyResolver keyResolver) {
@@ -78,12 +96,36 @@ final class Transformers {
 		
 	}
 	
+	protected static final class SimpleKeyStatusFn implements Function<StatusResult, Status> {
+
+		private final @Nullable Key requestKey;
+		
+		protected SimpleKeyStatusFn(@Nullable Key requestKey) {
+			this.requestKey = requestKey;
+		}
+		
+		public Status apply(StatusResult result) {
+			return toStatus(requestKey, result);
+		}
+		
+	}
+	
 	protected enum SimpleRecordFn implements Function<ValueResult, Record> {
 
 		INS;
 		
 		public Record apply(ValueResult result) {
 			return toRecord(null, result);
+		}
+		
+	}
+	
+	protected enum SimpleStatusFn implements Function<StatusResult, Status> {
+
+		INS;
+		
+		public Status apply(StatusResult result) {
+			return toStatus(null, result);
 		}
 		
 	}
@@ -98,6 +140,20 @@ final class Transformers {
 
 		public Record apply(ValueResult result) {
 			return toRecord(keyResolver.find(result.getRequestId()), result);
+		}
+		
+	}
+	
+	protected static final class StatusFn implements Function<StatusResult, Status> {
+
+		private final KeyResolver keyResolver;
+		
+		public StatusFn(KeyResolver keyResolver) {
+			this.keyResolver = keyResolver;
+		}
+
+		public Status apply(StatusResult result) {
+			return toStatus(keyResolver.find(result.getRequestId()), result);
 		}
 		
 	}

@@ -17,30 +17,19 @@
  */
 package rocks.gkvs;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
-import rocks.gkvs.protos.ValueResult;
 
-public final class RecordError implements Record {
+public final class StatusError implements Status {
 
 	private final @Nullable Key requestKey;
-	private final ValueResult result;
+	private final StatusResult result;
 	
-	protected RecordError(@Nullable Key requestKey, ValueResult result) {
+	protected StatusError(@Nullable Key requestKey, StatusResult result) {
 		this.requestKey = requestKey;
 		this.result = result;
-	}
-	
-	protected static boolean isError(ValueResult valueResult) {
-		if (valueResult.hasStatus()) {
-			return !isSuccess(valueResult.getStatus().getCode());
-		}
-		return true;
 	}
 	
 	protected static boolean isError(StatusResult statusResult) {
@@ -61,15 +50,26 @@ public final class RecordError implements Record {
 		}
 	}
 	
-	private void throwException() {
-		throw new GKVSResultException(result.getStatus());
-	}
-	
 	@Override
 	public long requestId() {
 		return result.getRequestId();
 	}
 
+	@Override
+	public boolean updated() {
+		throwException();
+		return false;
+	}
+
+	private void throwException() {
+		throw new GKVSResultException(result.getStatus());
+	}
+	
+	@Override
+	public NullableKey key() {
+		return new NullableKey(requestKey);
+	}
+	
 	public String getStatus() {
 		return result.getStatus().getCode().name();
 	}
@@ -77,51 +77,10 @@ public final class RecordError implements Record {
 	public String getStatusDetails() {
 		return result.getStatus().toString();
 	}
-	
-	@Override
-	public boolean exists() {
-		throwException();
-		return false;
-	}
-
-	@Override
-	public long version() {
-		throwException();
-		return 0;
-	}
-
-	@Override
-	public int ttl() {
-		throwException();
-		return 0;
-	}
-
-	@Override
-	public NullableKey key() {
-		return new NullableKey(requestKey);
-	}
-
-	@Override
-	public NullableValue value() {
-		throwException();
-		return null;
-	}
-
-	@Override
-	public List<Value> valueList() {
-		throwException();
-		return null;
-	}
-
-	@Override
-	public Map<String, Value> valueMap() {
-		throwException();
-		return null;
-	}
 
 	@Override
 	public String toString() {
-		return "RECORD_ERROR [" + requestId() + "]: " + getStatus();
+		return "STATUS_ERROR [" + requestId() + "]: " + getStatus();
 	}
-
+	
 }

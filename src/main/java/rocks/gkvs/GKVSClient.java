@@ -131,23 +131,6 @@ public final class GKVSClient implements Closeable {
 		}
 		return key;
 	}
-	
-	protected void postProcess(Status status) {
-		if (!success(status.getCode())) {
-			throw new GKVSResultException(status);
-		}
-	}
-
-	protected static boolean success(StatusCode code) {
-		switch(code) {
-		case SUCCESS:
-		case SUCCESS_NOT_UPDATED:
-		case SUCCESS_END_STREAM:
-			return true;
-		default:
-			return false;
-		}
-	}
 		
 	@Override
 	public void close() throws IOException {

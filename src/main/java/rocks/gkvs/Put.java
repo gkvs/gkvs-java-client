@@ -19,14 +19,12 @@
 package rocks.gkvs;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
-import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
 
-public final class Put implements Resultable {
+public final class Put {
 
 	private final GKVSClient instance;
 
@@ -34,12 +32,7 @@ public final class Put implements Resultable {
 	
 	private Key key;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
-	
-	private final static AtomicReferenceFieldUpdater<Put, StatusResult> RESULT_UPDATER
-	  = AtomicReferenceFieldUpdater.newUpdater(Put.class, StatusResult.class, "result"); 
-	  
-	private volatile StatusResult result;
-	
+		
 	public Put(GKVSClient instance) {
 		this.instance = instance;
 	}
@@ -105,13 +98,8 @@ public final class Put implements Resultable {
 		}
 		return this;
 	}
-	
 
-	/**
-	 * @return true if updated, used only for CompareAndPut operation
-	 */
-	
-	public boolean sync() {
+	private PutOperation buildRequest() {
 		
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
@@ -122,25 +110,16 @@ public final class Put implements Resultable {
 		
 		builder.setKey(key.toProto());
 		
-		RESULT_UPDATER.set(this, instance.getBlockingStub().put(builder.build()));
-		
-		instance.postProcess(result.getStatus());
-		
-		if (result.getStatus().getCode() == StatusCode.SUCCESS) {
-			return true;
-		}
-		else if (result.getStatus().getCode() == StatusCode.SUCCESS_NOT_UPDATED) {
-			return false;
-		}
-		else {
-			throw new GKVSException("unknown status code: " + result.getStatus());
-		}
-		
+		return builder.build();
 	}
 
-	@Override
-	public String result() {
-		return result != null ? result.toString() : null;
+	public Status sync() {
+		
+		final StatusResult result = instance.getBlockingStub().put(buildRequest());
+		
+		return Transformers.toStatus(key, result);
 	}
+
+
 	
 }

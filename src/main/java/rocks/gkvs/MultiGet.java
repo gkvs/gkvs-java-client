@@ -21,7 +21,6 @@ package rocks.gkvs;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.BatchKeyOperation;
@@ -31,7 +30,7 @@ import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 
-public final class MultiGet implements Resultable {
+public final class MultiGet {
 
 	private final GKVSClient instance;
 	
@@ -41,12 +40,7 @@ public final class MultiGet implements Resultable {
 	private boolean metadataOnly = false;
 	private int timeoutMls = 0;
 	private long pit = 0l;
-	
-	private final static AtomicReferenceFieldUpdater<MultiGet, BatchValueResult> RESULT_UPDATER
-	  = AtomicReferenceFieldUpdater.newUpdater(MultiGet.class, BatchValueResult.class, "result"); 
-	  
-	private volatile BatchValueResult result;
-	
+
 	public MultiGet(GKVSClient instance) {
 		this.instance = instance;
 	}
@@ -134,7 +128,6 @@ public final class MultiGet implements Resultable {
 		}
 		
 		final BatchValueResult result = instance.getBlockingStub().multiGet(builder.build());
-		RESULT_UPDATER.set(this, result);
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
@@ -154,11 +147,6 @@ public final class MultiGet implements Resultable {
 			
 		};
 		
-	}
-	
-	@Override
-	public String result() {
-		return result != null ? result.toString() : null;
 	}
 	
 
