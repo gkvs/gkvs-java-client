@@ -17,6 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface RecordObserver extends GKVSObserver<Record> {
-	
+public final class StatusCollector extends BlockingCollector<Status> implements StatusObserver {
+
 }

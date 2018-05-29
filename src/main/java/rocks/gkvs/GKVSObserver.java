@@ -17,6 +17,12 @@
  */
 package rocks.gkvs;
 
-public interface RecordObserver extends GKVSObserver<Record> {
+public interface GKVSObserver<T> {
+
+	void onNext(T record);
+	
+	void onError(Throwable t);
+	
+	void onCompleted();
 	
 }

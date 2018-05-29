@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractClientTest {
 
-	protected String TABLE = "TEST";
+	protected String TABLE = System.getProperty("gkvs.test.table", "TEST");
 
 	protected static ExecutorService executor;
 	

@@ -103,4 +103,33 @@ public class PutTest extends AbstractClientTest {
 		GKVS.Client.remove(TABLE, key).sync();
 	}
 	
+	@Test
+	public void testPutIfAbsent() {
+	
+		
+		String key = UUID.randomUUID().toString();
+		
+		Assert.assertTrue(GKVS.Client.put(TABLE, key, "first").compareAndPut(0).async().getUnchecked().updated());
+		
+		Assert.assertEquals("first", GKVS.Client.get(TABLE, key).async().getUnchecked().value().string());
+		
+		Assert.assertFalse(GKVS.Client.put(TABLE, key, "second").compareAndPut(0).async().getUnchecked().updated());
+		
+		GKVS.Client.remove(TABLE, key).sync();
+		
+	}
+	
+	@Test
+	public void testPutWithTTL() {
+		
+		String key = UUID.randomUUID().toString();
+		
+		GKVS.Client.put(TABLE, key, "value").withTtl(100).sync();
+		
+		Record rec = GKVS.Client.get(TABLE, key).metadataOnly().sync();
+		
+		Assert.assertTrue(rec.ttl() > 0);
+		
+	}
+	
 }

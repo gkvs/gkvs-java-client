@@ -17,6 +17,7 @@
  */
 package rocks.gkvs;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -92,4 +93,32 @@ public class RemoveTest extends AbstractClientTest {
 		
 		Assert.assertFalse(GKVS.Client.get(TABLE, key).sync().exists());
 	}
+	
+	@Test
+	public void testRemoveObserver() {
+		
+		String key = UUID.randomUUID().toString();
+		
+		Assert.assertFalse(remove(key));
+		
+		GKVS.Client.put(TABLE, key, "testRemoveObserver").sync();
+
+		Assert.assertTrue(remove(key));
+		
+	}
+	
+	private boolean remove(String key) {
+		
+		StatusCollector collector = new StatusCollector();
+		
+		GKVS.Client.remove(TABLE, key).async(collector);
+		
+		List<Status> status = collector.awaitUnchecked();
+		
+		Assert.assertEquals(1, status.size());
+		Assert.assertTrue(status.get(0) instanceof StatusSuccess);
+		return status.get(0).updated();
+		
+	}
+	
 }

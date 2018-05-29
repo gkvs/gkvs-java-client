@@ -17,12 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface StatusObserver {
-
-	void onNext(Status status);
-	
-	void onError(Throwable t);
-	
-	void onCompleted();
+public interface StatusObserver extends GKVSObserver<Status> {
 	
 }
