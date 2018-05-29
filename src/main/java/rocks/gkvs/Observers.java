@@ -24,6 +24,10 @@ public final class Observers {
 	private Observers() {		
 	}
 	
+	public static <T> BlockingCollector<T> collector() {
+		return new BlockingCollector<T>();
+	}
+	
 	public static <T> Observer<T> empty() {
 		
 		return new Observer<T>() {
