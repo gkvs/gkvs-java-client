@@ -17,12 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface KeyObserver {
-
-	void onNext(Key key);
-	
-	void onError(Throwable t);
-	
-	void onCompleted();
+public interface KeyObserver extends GObserver<Key> {
 	
 }

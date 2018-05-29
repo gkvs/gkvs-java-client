@@ -17,6 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface StatusObserver extends GKVSObserver<Status> {
+public interface StatusObserver extends GObserver<Status> {
 	
 }

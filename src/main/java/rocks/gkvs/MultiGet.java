@@ -152,7 +152,7 @@ public final class MultiGet {
 		
 	}
 	
-	public GKVSFuture<Iterable<Record>> async() {
+	public GFuture<Iterable<Record>> async() {
 		
 		ListenableFuture<BatchValueResult> result = instance.getFutureStub().multiGet(buildRequest());
 		
@@ -165,7 +165,7 @@ public final class MultiGet {
 			
 		});
 		
-		return new GKVSFuture<Iterable<Record>>(transformedResult);
+		return new GFuture<Iterable<Record>>(transformedResult);
 	}
 	
 }

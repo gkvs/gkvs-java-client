@@ -17,12 +17,12 @@
  */
 package rocks.gkvs;
 
-import com.google.common.util.concurrent.ListenableFuture;
+public interface GObserver<T> {
 
-public final class StatusFuture extends GFuture<Status> { 
-
-	protected StatusFuture(ListenableFuture<Status> delegate) {
-		super(delegate);
-	}
+	void onNext(T record);
+	
+	void onError(Throwable t);
+	
+	void onCompleted();
 	
 }

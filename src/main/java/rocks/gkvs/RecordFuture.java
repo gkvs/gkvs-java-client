@@ -19,7 +19,7 @@ package rocks.gkvs;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-public final class RecordFuture extends GKVSFuture<Record> {
+public final class RecordFuture extends GFuture<Record> {
 	
 	protected RecordFuture(ListenableFuture<Record> delegate) {
 		super(delegate);

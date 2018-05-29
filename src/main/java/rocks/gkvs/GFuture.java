@@ -26,11 +26,11 @@ import java.util.concurrent.TimeoutException;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-public class GKVSFuture<T> implements Future<T> {
+public class GFuture<T> implements Future<T> {
 
 	private final ListenableFuture<T> delegate; 
 	
-	protected GKVSFuture(ListenableFuture<T> delegate) {
+	protected GFuture(ListenableFuture<T> delegate) {
 		this.delegate = delegate;
 	}
 	

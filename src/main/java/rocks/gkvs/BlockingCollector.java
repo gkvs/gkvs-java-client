@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.collect.Iterators;
 
-public class BlockingCollector<T> implements GKVSObserver<T> {
+public class BlockingCollector<T> implements GObserver<T> {
 
 	private final Queue<T> collector = new ConcurrentLinkedQueue<>();
 	private final CountDownLatch done = new CountDownLatch(1);

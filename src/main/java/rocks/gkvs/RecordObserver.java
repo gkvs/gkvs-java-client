@@ -17,6 +17,6 @@
  */
 package rocks.gkvs;
 
-public interface RecordObserver extends GKVSObserver<Record> {
+public interface RecordObserver extends GObserver<Record> {
 	
 }

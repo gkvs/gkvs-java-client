@@ -17,12 +17,37 @@
  */
 package rocks.gkvs;
 
-import com.google.common.util.concurrent.ListenableFuture;
+public final class KeyValue {
 
-public final class StatusFuture extends GFuture<Status> { 
+	private final Key key;
+	private final Iterable<Value> cells;
+	
+	public KeyValue(Key key, Iterable<Value> cells) {
+		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
 
-	protected StatusFuture(ListenableFuture<Status> delegate) {
-		super(delegate);
+		if (cells == null) {
+			throw new IllegalArgumentException("cells is null");
+		}
+
+		this.key = key;
+		this.cells = cells;
 	}
+	
+	public Key key() {
+		return key;
+	}
+	
+	public Iterable<Value> cells() {
+		return cells;
+	}
+
+	@Override
+	public String toString() {
+		return "KeyValue [key=" + key + "]";
+	}
+
 	
 }

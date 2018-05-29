@@ -18,12 +18,115 @@
 
 package rocks.gkvs;
 
+import io.grpc.stub.StreamObserver;
+import rocks.gkvs.Transformers.KeyResolver;
+import rocks.gkvs.protos.PutOperation;
+import rocks.gkvs.protos.RequestOptions;
+
 public final class PutAll {
 
 	private final GKVSClient instance;
 	
+	private int timeoutMls;
+	private long pit;
+	private int ttlSec;
+	
 	public PutAll(GKVSClient instance) {
 		this.instance = instance;
+	}
+	
+	public PutAll withTimeout(int timeoutMls) {
+		this.timeoutMls = timeoutMls;
+		return this;
+	}
+	
+	public PutAll withPit(long pit) {
+		this.pit = pit;
+		return this;
+	}
+	
+	public PutAll withTtl(int ttlSec) {
+		this.ttlSec = ttlSec;
+		return this;
+	}
+	
+	private PutOperation.Builder buildRequest(KeyValue keyValue) {
+		
+		if (keyValue == null) {
+			throw new IllegalArgumentException("keyValue is null");
+		}
+		
+		PutOperation.Builder builder = PutOperation.newBuilder();
+		
+		RequestOptions.Builder options = RequestOptions.newBuilder();
+		
+		options.setRequestId(instance.nextRequestId());
+		options.setTimeout(timeoutMls);
+		options.setPit(pit);
+		
+		builder.setOptions(options);
+		
+		builder.setKey(keyValue.key().toProto());
+		builder.setTtl(ttlSec);
+		
+		for (Value value : keyValue.cells()) {
+			builder.addValue(value.toProto());
+		}
+
+		builder.setTtl(ttlSec);
+
+		return builder;
+	}
+	
+	public Iterable<Status> sync(Iterable<KeyValue> keyValues) {
+		
+		StatusCollector collector = new StatusCollector();
+		
+		KeyValueObserver keyChannel = async(collector);
+		
+		for (KeyValue keyValue : keyValues) {
+			keyChannel.onNext(keyValue);
+		}
+		
+		keyChannel.onCompleted();
+		
+		return collector.awaitUnchecked();
+	}
+	
+	public KeyValueObserver async(StatusObserver statusObserver) {
+		
+		final KeyResolver keyResolver = new KeyResolver() {
+
+			@Override
+			public Key find(long requestId) {
+				return instance.popWaitingQueue(requestId);
+			}
+			
+		};
+		
+		final StreamObserver<PutOperation> streamIn = instance.getAsyncStub().putAll(Transformers.observe(statusObserver, keyResolver));
+		
+		return new KeyValueObserver() {
+
+			@Override
+			public void onNext(KeyValue keyValue) {
+				PutOperation op = buildRequest(keyValue).build();
+				instance.pushWaitingQueue(op.getOptions().getRequestId(), keyValue.key());
+				streamIn.onNext(op);
+			}
+
+			@Override
+			public void onError(Throwable t) {
+				streamIn.onError(t);
+			}
+
+			@Override
+			public void onCompleted() {
+				streamIn.onCompleted();
+			}
+			
+		};
+		
 	}
 	
 }

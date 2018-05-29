@@ -17,9 +17,9 @@
  */
 package rocks.gkvs;
 
-public interface GKVSObserver<T> {
-
-	void onNext(T record);
+public interface KeyValueObserver {
+	
+	void onNext(KeyValue keyValue);
 	
 	void onError(Throwable t);
 	
