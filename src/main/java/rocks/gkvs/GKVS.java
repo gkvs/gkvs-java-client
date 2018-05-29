@@ -117,12 +117,20 @@ public enum GKVS {
 		return putWithKey(key).putAll(values);
 	}
 	
+	public PutAll putAll() {
+		return GKVSClient.getDefaultInstance().putAll();
+	}
+	
 	public Remove remove(String tableName, String recordKey) {
 		return GKVSClient.getDefaultInstance().remove(tableName, recordKey);
 	}
 	
 	public Remove remove(Key key) {
 		return GKVSClient.getDefaultInstance().remove(key);
+	}
+	
+	public RemoveAll removeAll() {
+		return GKVSClient.getDefaultInstance().removeAll();
 	}
 	
 	public Scan scan(String tableName) {

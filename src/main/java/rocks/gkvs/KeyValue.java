@@ -17,6 +17,10 @@
  */
 package rocks.gkvs;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public final class KeyValue {
 
 	private final Key key;
@@ -34,6 +38,53 @@ public final class KeyValue {
 
 		this.key = key;
 		this.cells = cells;
+	}
+	
+	public static KeyValue of(Key key, Iterable<Value> cells) {
+		return new KeyValue(key, cells);
+	}
+	
+	public KeyValue(Key key, Value value) {
+		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+
+		if (value == null) {
+			throw new IllegalArgumentException("value is null");
+		}
+
+		this.key = key;
+		this.cells = Collections.singleton(value);
+	}
+	
+	public static KeyValue of(Key key, Value value) {
+		return new KeyValue(key, value);
+	}
+	
+	public KeyValue(Key key, Value... value) {
+		
+		if (key == null) {
+			throw new IllegalArgumentException("key is null");
+		}
+
+		if (value == null) {
+			throw new IllegalArgumentException("value is null");
+		}
+
+		this.key = key;
+		
+		List<Value> list = new ArrayList<Value>(value.length);
+		for (Value v : value) {
+			list.add(v);
+		}
+		
+		this.cells = list;
+		
+	}
+	
+	public static KeyValue of(Key key, Value... value) {
+		return new KeyValue(key, value);
 	}
 	
 	public Key key() {

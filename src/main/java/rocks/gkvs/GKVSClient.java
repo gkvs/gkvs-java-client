@@ -269,12 +269,20 @@ public final class GKVSClient implements Closeable {
 		return putWithKey(key).putAll(values);
 	}
 	
+	public PutAll putAll() {
+		return new PutAll(this);
+	}
+	
 	public Remove remove(String tableName, String recordKey) {
 		return new Remove(this).setKey(Key.raw(tableName, recordKey));
 	}
 	
 	public Remove remove(Key key) {
 		return new Remove(this).setKey(key);
+	}
+	
+	public RemoveAll removeAll() {
+		return new RemoveAll(this);
 	}
 	
 	public Scan scan(String tableName) {
