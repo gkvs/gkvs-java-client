@@ -82,13 +82,13 @@ public final class PutAll {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
-		GObserver<KeyValue> keyChannel = async(collector);
+		GObserver<KeyValue> keyValueChannel = async(collector);
 		
 		for (KeyValue keyValue : keyValues) {
-			keyChannel.onNext(keyValue);
+			keyValueChannel.onNext(keyValue);
 		}
 		
-		keyChannel.onCompleted();
+		keyValueChannel.onCompleted();
 		
 		return collector.awaitUnchecked();
 	}
