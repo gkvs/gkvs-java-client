@@ -76,6 +76,18 @@ final class Transformers {
 		return Iterators.transform(iterator, new RecordFn(keyResolver));
 	}
 	
+	protected static Iterable<Record> toRecords(final Iterable<ValueResult> iter, final KeyResolver keyResolver) {
+		
+		return new Iterable<Record>() {
+
+			@Override
+			public Iterator<Record> iterator() {
+				return toRecords(iter.iterator(), keyResolver);
+			}
+			
+		};
+	}
+	
 	protected interface KeyResolver {
 		
 		@Nullable Key find(long requestId);

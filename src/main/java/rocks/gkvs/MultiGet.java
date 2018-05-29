@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.BatchKeyOperation;
 import rocks.gkvs.protos.BatchValueResult;
@@ -41,6 +45,15 @@ public final class MultiGet {
 	private int timeoutMls = 0;
 	private long pit = 0l;
 
+	final KeyResolver keyResolver = new KeyResolver() {
+
+		@Override
+		public Key find(long requestId) {
+			return keys.get(requestId);
+		}
+		
+	};
+	
 	public MultiGet(GKVSClient instance) {
 		this.instance = instance;
 	}
@@ -119,7 +132,7 @@ public final class MultiGet {
 		
 	}
 	
-	public Iterable<Record> sync() {
+	private BatchKeyOperation buildRequest() {
 		
 		BatchKeyOperation.Builder builder = BatchKeyOperation.newBuilder();
 		
@@ -127,28 +140,32 @@ public final class MultiGet {
 			builder.addOperation(buildRequest(entry.getKey(), entry.getValue()));
 		}
 		
-		final BatchValueResult result = instance.getBlockingStub().multiGet(builder.build());
-		
-		final KeyResolver keyResolver = new KeyResolver() {
-
-			@Override
-			public Key find(long requestId) {
-				return keys.get(requestId);
-			}
-			
-		};
-				
-		return new Iterable<Record>() {
-
-			@Override
-			public Iterator<Record> iterator() {
-				return Transformers.toRecords(result.getResultList().iterator(), keyResolver);
-			}
-			
-		};
+		return builder.build();
 		
 	}
 	
+	public Iterable<Record> sync() {
+		
+		final BatchValueResult result = instance.getBlockingStub().multiGet(buildRequest());
+				
+		return Transformers.toRecords(result.getResultList(), keyResolver);
+		
+	}
+	
+	public GKVSFuture<Iterable<Record>> async() {
+		
+		ListenableFuture<BatchValueResult> result = instance.getFutureStub().multiGet(buildRequest());
+		
+		ListenableFuture<Iterable<Record>> transformedResult = Futures.transform(result, new Function<BatchValueResult, Iterable<Record>>() {
 
+			@Override
+			public Iterable<Record> apply(BatchValueResult input) {
+				return Transformers.toRecords(input.getResultList(), keyResolver);
+			}
+			
+		});
+		
+		return new GKVSFuture<Iterable<Record>>(transformedResult);
+	}
 	
 }
