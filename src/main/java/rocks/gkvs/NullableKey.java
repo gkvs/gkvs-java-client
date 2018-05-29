@@ -50,8 +50,16 @@ public final class NullableKey {
 		return key != null ? key.getRecordKeyBytes() : null;
 	}
 	
-	public String getRecordKeyAsString() {
+	public String getRecordKeyString() {
 		return key != null ? key.getRecordKeyString() : null;
+	}
+	
+	public String getRecordKeyHexString() {
+		return key != null ? key.getRecordKeyHexString() : null;
+	}
+	
+	public String getRecordKeyBase64String() {
+		return key != null ? key.getRecordKeyBase64String() : null;
 	}
 	
 	@Override

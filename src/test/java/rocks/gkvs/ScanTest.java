@@ -64,7 +64,7 @@ public class ScanTest extends AbstractClientTest {
 			Record rec = records.next();
 			
 			try {
-				String key = rec.key().getRecordKeyAsString();
+				String key = rec.key().getRecordKeyString();
 				notFoundKeys.remove(key);
 				//System.out.println("scan: " + rec);
 			}
@@ -109,7 +109,7 @@ public class ScanTest extends AbstractClientTest {
 			Record rec = records.next();
 			
 			try {
-				String key = rec.key().getRecordKeyAsString();
+				String key = rec.key().getRecordKeyString();
 				set.add(key);
 			}
 			catch(GkvsException e) {
