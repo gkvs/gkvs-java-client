@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import io.grpc.stub.StreamObserver;
 import rocks.gkvs.protos.ValueResult;
@@ -44,6 +46,10 @@ final class Transformers {
 		}
 	}
 	
+	protected static ListenableFuture<Record> toRecord(@Nullable Key requestKey, ListenableFuture<ValueResult> result) {
+		return Futures.transform(result, new SimpleKeyRecordFn(requestKey));
+	}
+	
 	protected static Iterator<Record> toRecords(Iterator<ValueResult> iterator) {
 		return Iterators.transform(iterator, SimpleRecordFn.INS);
 	}
@@ -55,6 +61,20 @@ final class Transformers {
 	protected interface KeyResolver {
 		
 		@Nullable Key find(long requestId);
+		
+	}
+	
+	protected static final class SimpleKeyRecordFn implements Function<ValueResult, Record> {
+
+		private final @Nullable Key requestKey;
+		
+		protected SimpleKeyRecordFn(@Nullable Key requestKey) {
+			this.requestKey = requestKey;
+		}
+		
+		public Record apply(ValueResult result) {
+			return toRecord(requestKey, result);
+		}
 		
 	}
 	

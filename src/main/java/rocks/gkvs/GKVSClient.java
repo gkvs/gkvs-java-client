@@ -34,6 +34,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
+import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
 import rocks.gkvs.protos.Status;
 import rocks.gkvs.protos.StatusCode;
@@ -46,6 +47,7 @@ public final class GKVSClient implements Closeable {
 	private final ManagedChannel channel;
 	private final GenericStoreBlockingStub blockingStub;
 	private final GenericStoreStub asyncStub;
+	private final GenericStoreFutureStub futureStub;
 	
     private final Cache<Long, Key> waitingQueue = CacheBuilder.newBuilder()
     		.expireAfterWrite(20, TimeUnit.MINUTES)
@@ -66,6 +68,7 @@ public final class GKVSClient implements Closeable {
 		channel = channelBuilder.build();
 		blockingStub = GenericStoreGrpc.newBlockingStub(channel);
 		asyncStub = GenericStoreGrpc.newStub(channel);
+		futureStub = GenericStoreGrpc.newFutureStub(channel);
 	}
 	
 	public static GKVSClient getDefaultInstance() {
@@ -100,6 +103,10 @@ public final class GKVSClient implements Closeable {
 
 	protected GenericStoreStub getAsyncStub() {
 		return asyncStub;
+	}
+
+	protected GenericStoreFutureStub getFutureStub() {
+		return futureStub;
 	}
 
 	protected long nextRequestId() {

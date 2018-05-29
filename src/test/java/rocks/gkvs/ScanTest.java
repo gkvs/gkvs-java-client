@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class ScanTest extends AbstractClientTest {
 
-	private final static Set<String> LOAD_KEYS = new HashSet<>();
+	private final Set<String> LOAD_KEYS = new HashSet<>();
 	
 	@Before
 	public void setup() {

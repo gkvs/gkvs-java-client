@@ -17,8 +17,29 @@
  */
 package rocks.gkvs;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
 public abstract class AbstractClientTest {
 
 	protected String TABLE = "TEST";
-			
+
+	protected static ExecutorService executor;
+	
+	@BeforeClass
+	public static void setupClass() {
+		
+		executor = Executors.newCachedThreadPool();
+		
+	}
+	
+	@AfterClass
+	public static void teardownClass() {
+				
+		executor.shutdownNow();
+		
+	}
 }

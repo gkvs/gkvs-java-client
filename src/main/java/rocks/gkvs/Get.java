@@ -20,6 +20,8 @@ package rocks.gkvs;
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
@@ -77,7 +79,7 @@ public final class Get implements Resultable {
 		return this;
 	}
 	
-	public Record sync() {
+	private KeyOperation buildRequest() {
 		
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
@@ -101,15 +103,24 @@ public final class Get implements Resultable {
 			builder.setSelect(selectOrNull);
 		}
 		
-		ValueResult result = instance.getBlockingStub().get(builder.build());
+		return builder.build();
+	}
+	
+	public Record sync() {
+		
+		ValueResult result = instance.getBlockingStub().get(buildRequest());
 		RESULT_UPDATER.set(this, result);
 		
 		return Transformers.toRecord(key, result);
 	}
 	
-	//public Future<ValueSet> async() {
-	//	return null;
-	//}
+	public RecordFuture async() {
+		
+		ListenableFuture<ValueResult> result = instance.getFutureStub().get(buildRequest());
+		
+		return new RecordFuture(Transformers.toRecord(key, result));
+		
+	}
 	
 	@Override
 	public String result() {

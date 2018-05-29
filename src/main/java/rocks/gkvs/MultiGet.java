@@ -98,7 +98,7 @@ public final class MultiGet implements Resultable {
 		return this;
 	}
 	
-	private KeyOperation.Builder buildKeyOperation(long requestId, Key key) {
+	private KeyOperation.Builder buildRequest(long requestId, Key key) {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
@@ -130,7 +130,7 @@ public final class MultiGet implements Resultable {
 		BatchKeyOperation.Builder builder = BatchKeyOperation.newBuilder();
 		
 		for (Map.Entry<Long, Key> entry : keys.entrySet()) {
-			builder.addOperation(buildKeyOperation(entry.getKey(), entry.getValue()));
+			builder.addOperation(buildRequest(entry.getKey(), entry.getValue()));
 		}
 		
 		final BatchValueResult result = instance.getBlockingStub().multiGet(builder.build());

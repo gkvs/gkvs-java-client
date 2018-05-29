@@ -67,7 +67,7 @@ public final class GetAll {
 		return this;
 	}
 
-	private KeyOperation.Builder buildKeyOperation(Key key) {
+	private KeyOperation.Builder buildRequest(Key key) {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
@@ -115,7 +115,7 @@ public final class GetAll {
 
 			@Override
 			public void onNext(Key key) {
-				KeyOperation op = buildKeyOperation(key).build();
+				KeyOperation op = buildRequest(key).build();
 				streamOut.onNext(op);
 			}
 

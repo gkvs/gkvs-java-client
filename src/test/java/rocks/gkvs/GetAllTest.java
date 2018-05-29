@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class GetAllTest extends AbstractClientTest {
 
-	private final static Set<Key> LOAD_KEYS = new HashSet<>();
+	private final Set<Key> LOAD_KEYS = new HashSet<>();
 	
 	@Before
 	public void setup() {
@@ -41,7 +41,7 @@ public class GetAllTest extends AbstractClientTest {
 		for (int i = 0; i != 10; ++i) {
 			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
 			
-			GKVS.Client.put(key, Value.of("testScan")).sync();
+			GKVS.Client.put(key, Value.of("GetAllTest")).sync();
 			LOAD_KEYS.add(key);
 		}
 		

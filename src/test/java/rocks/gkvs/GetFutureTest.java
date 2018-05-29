@@ -17,54 +17,54 @@
  */
 package rocks.gkvs;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GetAllCollectorTest extends AbstractClientTest {
+public class GetFutureTest extends AbstractClientTest {
 
-	private final Set<Key> LOAD_KEYS = new HashSet<>();
+	private Key KEY = Key.raw(TABLE, UUID.randomUUID().toString());
+	
 	
 	@Before
 	public void setup() {
-		
-		for (int i = 0; i != 10; ++i) {
-			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
-			
-			GKVS.Client.put(key, Value.of("GetAllCollectorTest")).sync();
-			LOAD_KEYS.add(key);
-		}
+
+		GKVS.Client.put(KEY, Value.of("GetFutureTest")).sync();
 		
 	}
 	
 	@After
 	public void teardown() {
 		
-		for (Key key : LOAD_KEYS) {
-			GKVS.Client.remove(key).sync();
-		}
+		GKVS.Client.remove(KEY).sync();
 		
 	}
 	
 	@Test
-	public void testGetAllCollector() {
-	
-		RecordCollector collector = new RecordCollector();
-		KeyObserver keys = GKVS.Client.getAll().async(collector);
+	public void testGetFuture() {
 		
-		for (Key key : LOAD_KEYS) {
-			keys.onNext(key);
-		}	
-		keys.onCompleted();
+		final AtomicBoolean triggered = new AtomicBoolean(false);
+		RecordFuture future = GKVS.Client.get(KEY).async();
+
+		future.addListener(new Runnable() {
+
+			@Override
+			public void run() {
+				triggered.set(true);
+			}
+			
+		}, executor);
 		
+		Record rec = future.getUnchecked();
 		
-		List<Record> list = collector.awaitUnchecked();
-		Assert.assertEquals(list.size(), LOAD_KEYS.size());
+		Assert.assertNotNull(rec);
+		Assert.assertEquals("GetFutureTest", rec.value().string());
+		Assert.assertTrue(triggered.get());
 	}
+	
+	
 }
