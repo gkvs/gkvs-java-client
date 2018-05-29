@@ -36,8 +36,6 @@ import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
-import rocks.gkvs.protos.Status;
-import rocks.gkvs.protos.StatusCode;
 
 public final class GKVSClient implements Closeable {
 
@@ -186,16 +184,32 @@ public final class GKVSClient implements Closeable {
 		return putWithKey(tableName, recordKey).put(Value.of(value));
 	}
 	
+	public Put put(Key key, String value) {
+		return putWithKey(key).put(Value.of(value));
+	}
+	
 	public Put put(String tableName, String recordKey, String column, String value) {
 		return putWithKey(tableName, recordKey).put(Value.of(column, value));
+	}
+	
+	public Put put(Key key, String column, String value) {
+		return putWithKey(key).put(Value.of(column, value));
 	}
 
 	public Put put(String tableName, String recordKey, byte[] value) {
 		return putWithKey(tableName, recordKey).put(Value.of(value));
 	}
 	
+	public Put put(Key key, byte[] value) {
+		return putWithKey(key).put(Value.of(value));
+	}
+	
 	public Put put(String tableName, String recordKey, String column, byte[] value) {
 		return putWithKey(tableName, recordKey).put(Value.of(column, value));
+	}
+	
+	public Put put(Key key, String column, byte[] value) {
+		return putWithKey(key).put(Value.of(column, value));
 	}
 
 	public Put put(Key key, Value value) {

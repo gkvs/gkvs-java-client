@@ -17,65 +17,12 @@
  */
 package rocks.gkvs;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
-public final class RecordFuture implements Future<Record>{
-
-	private final ListenableFuture<Record> delegate; 
+public final class RecordFuture extends GKVSFuture<Record> {
 	
 	protected RecordFuture(ListenableFuture<Record> delegate) {
-		this.delegate = delegate;
-	}
-	
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return delegate.cancel(mayInterruptIfRunning);
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return delegate.isCancelled();
-	}
-
-	@Override
-	public boolean isDone() {
-		return delegate.isDone();
-	}
-
-	@Override
-	public Record get() throws InterruptedException, ExecutionException {
-		return delegate.get();
-	}
-	
-	public Record getUnchecked() {
-		try {
-			return delegate.get();
-		} catch (InterruptedException | ExecutionException e) {
-			throw new GKVSException("future exception", e);
-		}
-	}
-
-	@Override
-	public Record get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		return delegate.get(timeout, unit);
-	}
-	
-	public Record getUnchecked(long timeout, TimeUnit unit) {
-		try {
-			return delegate.get(timeout, unit);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			throw new GKVSException("future exception", e);
-		}
-	}
-	
-	public void addListener(Runnable listener, Executor executor) {
-		delegate.addListener(listener, executor);	
+		super(delegate);
 	}
 
 }

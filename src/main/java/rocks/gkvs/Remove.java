@@ -18,6 +18,8 @@
 
 package rocks.gkvs;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
@@ -88,6 +90,14 @@ public final class Remove {
 		StatusResult result = instance.getBlockingStub().remove(buildRequest());
 		
 		return Transformers.toStatus(key, result);
+		
+	}
+	
+	public StatusFuture async() {
+		
+		ListenableFuture<StatusResult> result = instance.getFutureStub().remove(buildRequest());
+		
+		return new StatusFuture(Transformers.toStatus(key, result));
 		
 	}
 	

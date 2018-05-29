@@ -20,6 +20,8 @@ package rocks.gkvs;
 
 import java.util.Map;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusResult;
@@ -118,6 +120,14 @@ public final class Put {
 		final StatusResult result = instance.getBlockingStub().put(buildRequest());
 		
 		return Transformers.toStatus(key, result);
+	}
+	
+	public StatusFuture async() {
+		
+		ListenableFuture<StatusResult> result = instance.getFutureStub().put(buildRequest());
+		
+		return new StatusFuture(Transformers.toStatus(key, result));
+		
 	}
 
 

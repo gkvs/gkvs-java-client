@@ -17,6 +17,12 @@
  */
 package rocks.gkvs;
 
-public final class StatusFuture {
+import com.google.common.util.concurrent.ListenableFuture;
 
+public final class StatusFuture extends GKVSFuture<Status> { 
+
+	protected StatusFuture(ListenableFuture<Status> delegate) {
+		super(delegate);
+	}
+	
 }
