@@ -37,7 +37,7 @@ public class GetAllCollectorTest extends AbstractClientTest {
 		for (int i = 0; i != 10; ++i) {
 			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
 			
-			GKVS.Client.put(key, Value.of("GetAllCollectorTest")).sync();
+			Gkvs.Client.put(key, Value.of("GetAllCollectorTest")).sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -47,7 +47,7 @@ public class GetAllCollectorTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (Key key : LOAD_KEYS) {
-			GKVS.Client.remove(key).sync();
+			Gkvs.Client.remove(key).sync();
 		}
 		
 	}
@@ -56,7 +56,7 @@ public class GetAllCollectorTest extends AbstractClientTest {
 	public void testGetAllCollector() {
 	
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
-		Observer<Key> keys = GKVS.Client.getAll().async(collector);
+		Observer<Key> keys = Gkvs.Client.getAll().async(collector);
 		
 		for (Key key : LOAD_KEYS) {
 			keys.onNext(key);

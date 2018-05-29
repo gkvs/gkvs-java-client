@@ -36,7 +36,7 @@ import rocks.gkvs.protos.Select;
 
 public final class MultiGet {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 	
 	private final Map<Long, Key> keys = new HashMap<>();
 	
@@ -54,7 +54,7 @@ public final class MultiGet {
 		
 	};
 	
-	public MultiGet(GKVSClient instance) {
+	public MultiGet(GkvsClient instance) {
 		this.instance = instance;
 	}
 	
@@ -152,7 +152,7 @@ public final class MultiGet {
 		
 	}
 	
-	public GenericFuture<Iterable<Record>> async() {
+	public GkvsFuture<Iterable<Record>> async() {
 		
 		ListenableFuture<BatchValueResult> result = instance.getFutureStub().multiGet(buildRequest());
 		
@@ -165,7 +165,7 @@ public final class MultiGet {
 			
 		});
 		
-		return new GenericFuture<Iterable<Record>>(transformedResult);
+		return new GkvsFuture<Iterable<Record>>(transformedResult);
 	}
 	
 }

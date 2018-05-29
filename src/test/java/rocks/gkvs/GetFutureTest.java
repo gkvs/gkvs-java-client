@@ -33,14 +33,14 @@ public class GetFutureTest extends AbstractClientTest {
 	@Before
 	public void setup() {
 
-		GKVS.Client.put(KEY, Value.of("GetFutureTest")).sync();
+		Gkvs.Client.put(KEY, Value.of("GetFutureTest")).sync();
 		
 	}
 	
 	@After
 	public void teardown() {
 		
-		GKVS.Client.remove(KEY).sync();
+		Gkvs.Client.remove(KEY).sync();
 		
 	}
 	
@@ -48,7 +48,7 @@ public class GetFutureTest extends AbstractClientTest {
 	public void testGetFuture() {
 		
 		final AtomicBoolean triggered = new AtomicBoolean(false);
-		GenericFuture<Record> future = GKVS.Client.get(KEY).async();
+		GkvsFuture<Record> future = Gkvs.Client.get(KEY).async();
 
 		future.addListener(new Runnable() {
 

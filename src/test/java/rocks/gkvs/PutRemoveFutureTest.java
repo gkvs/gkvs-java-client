@@ -31,19 +31,19 @@ public class PutRemoveFutureTest extends AbstractClientTest {
 	@Test
 	public void testPutFuture() {
 		
-		Assert.assertFalse(GKVS.Client.get(KEY).metadataOnly().sync().exists());
+		Assert.assertFalse(Gkvs.Client.get(KEY).metadataOnly().sync().exists());
 		
-		GenericFuture<Status> future = GKVS.Client.put(KEY, "val").async();
-		
-		Assert.assertTrue(future.getUnchecked().updated());
-		
-		Assert.assertTrue(GKVS.Client.get(KEY).metadataOnly().sync().exists());
-		
-		future = GKVS.Client.remove(KEY).async();
+		GkvsFuture<Status> future = Gkvs.Client.put(KEY, "val").async();
 		
 		Assert.assertTrue(future.getUnchecked().updated());
 		
-		Assert.assertFalse(GKVS.Client.get(KEY).metadataOnly().sync().exists());
+		Assert.assertTrue(Gkvs.Client.get(KEY).metadataOnly().sync().exists());
+		
+		future = Gkvs.Client.remove(KEY).async();
+		
+		Assert.assertTrue(future.getUnchecked().updated());
+		
+		Assert.assertFalse(Gkvs.Client.get(KEY).metadataOnly().sync().exists());
 		
 	}
 }

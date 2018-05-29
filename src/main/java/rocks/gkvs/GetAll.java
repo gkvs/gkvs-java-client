@@ -27,7 +27,7 @@ import rocks.gkvs.protos.Select;
 
 public final class GetAll {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 	
 	private int timeoutMls;
 	private long pit;
@@ -35,7 +35,7 @@ public final class GetAll {
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
 		
-	public GetAll(GKVSClient instance) {
+	public GetAll(GkvsClient instance) {
 		this.instance = instance;
 	}
 	

@@ -59,7 +59,7 @@ public class BlockingCollector<T> implements Observer<T> {
 		try {
 			done.await();
 		} catch (InterruptedException e) {
-			throw new GenericException("interrupted await", e);
+			throw new GkvsException("interrupted await", e);
 		}
 		return result();
 	}
@@ -73,7 +73,7 @@ public class BlockingCollector<T> implements Observer<T> {
 		try {
 			done.await(timeout, unit);
 		} catch (InterruptedException e) {
-			throw new GenericException("interrupted await", e);
+			throw new GkvsException("interrupted await", e);
 		}
 		return result();
 	}
@@ -81,7 +81,7 @@ public class BlockingCollector<T> implements Observer<T> {
 	private List<T> result() {
 		Throwable t = exception.get();
 		if (t != null) {
-			throw new GenericException("result error", t);
+			throw new GkvsException("result error", t);
 		}
 		
 		List<T> list = new ArrayList<T>(collector.size());

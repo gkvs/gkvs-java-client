@@ -47,7 +47,7 @@ public final class Value {
 	}
 	
 	public Value(byte[] value) {
-		this(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value, 0L);
+		this(GkvsConstants.DEFAULT_SINGLE_VALUE_COLUMN, value, 0L);
 	}
 	
 	public static Value of(byte[] value) {
@@ -82,7 +82,7 @@ public final class Value {
 	}
 	
 	public Value(String value) {
-		this(GKVSConstants.DEFAULT_SINGLE_VALUE_COLUMN, value, 0L);
+		this(GkvsConstants.DEFAULT_SINGLE_VALUE_COLUMN, value, 0L);
 	}
 	
 	public static Value of(String value) {
@@ -108,7 +108,7 @@ public final class Value {
 		}
 		
 		this.column = column;
-		this.value = ByteString.copyFrom(value, GKVSConstants.MUTABLE_VALUE_CHARSET);
+		this.value = ByteString.copyFrom(value, GkvsConstants.MUTABLE_VALUE_CHARSET);
 		this.timestamp = timestamp;
 	}
 	
@@ -125,7 +125,7 @@ public final class Value {
 	}
 	
 	public String string() {
-		return value.toString(GKVSConstants.MUTABLE_VALUE_CHARSET);
+		return value.toString(GkvsConstants.MUTABLE_VALUE_CHARSET);
 	}
 	
 	public void writeTo(OutputStream out) throws IOException {

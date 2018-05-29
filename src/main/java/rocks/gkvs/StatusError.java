@@ -43,7 +43,18 @@ public final class StatusError implements Status {
 	}
 
 	private void throwException() {
-		throw new GKVSResultException(result.getStatus());
+		
+		rocks.gkvs.protos.Status status = result.getStatus();
+		StringBuilder message = new StringBuilder();
+		message.append(status.getCode().name());
+		message.append(", errorCode=");
+		message.append(status.getErrorCode());
+		message.append(", errorMessage=");
+		message.append(status.getErrorMessage());
+		
+		byte[] payload = result.toByteArray();
+		
+		throw new ResultException(message.toString(), status.getErrorDetails(), payload);
 	}
 	
 	@Override

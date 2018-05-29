@@ -39,10 +39,10 @@ import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
 
-public final class GKVSClient implements Closeable {
+public final class GkvsClient implements Closeable {
 
 	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
-	private static volatile GKVSClient defaultInstance = null;
+	private static volatile GkvsClient defaultInstance = null;
 	
 	private final ManagedChannel channel;
 	private final GenericStoreBlockingStub blockingStub;
@@ -56,11 +56,11 @@ public final class GKVSClient implements Closeable {
     
 	private final AtomicLong sequenceNum = new AtomicLong(1L);
 	
-	public static GKVSClient createFromClasspath() {
-		return createFromClasspath(GKVSClient.class.getClassLoader());
+	public static GkvsClient createFromClasspath() {
+		return createFromClasspath(GkvsClient.class.getClassLoader());
 	}
 	
-	public static GKVSClient createFromClasspath(ClassLoader classLoader) {
+	public static GkvsClient createFromClasspath(ClassLoader classLoader) {
 		
 		InputStream in = classLoader.getResourceAsStream("gkvs-override.properties");
 		if (in == null) {
@@ -87,7 +87,7 @@ public final class GKVSClient implements Closeable {
 		return createFromProperties(props);
 	}
 	
-	public static GKVSClient createFromProperties(Properties props) {
+	public static GkvsClient createFromProperties(Properties props) {
 		String host = props.getProperty("gkvs.host", "localhost");
 		int port;
 		try {
@@ -96,29 +96,29 @@ public final class GKVSClient implements Closeable {
 		catch(NumberFormatException e) {
 			throw new IllegalStateException("unable parse gkvs.port property", e);
 		}
-		return new GKVSClient(host, port);
+		return new GkvsClient(host, port);
 	}
 	
-	public GKVSClient(String host, int port) {
+	public GkvsClient(String host, int port) {
 		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
 	}
 	
-	public GKVSClient(ManagedChannelBuilder<?> channelBuilder) {
+	public GkvsClient(ManagedChannelBuilder<?> channelBuilder) {
 		channel = channelBuilder.build();
 		blockingStub = GenericStoreGrpc.newBlockingStub(channel);
 		asyncStub = GenericStoreGrpc.newStub(channel);
 		futureStub = GenericStoreGrpc.newFutureStub(channel);
 	}
 	
-	public static GKVSClient getDefaultInstance() {
+	public static GkvsClient getDefaultInstance() {
 		if (NO_SINGLTON) {
 			throw new IllegalStateException("gKVS singleton is not allowed");
 		}
 		if (defaultInstance == null) {
-			synchronized (GKVS.class) {
+			synchronized (Gkvs.class) {
 				if (defaultInstance == null) {
 					
-					defaultInstance = GKVSClient.createFromClasspath();
+					defaultInstance = GkvsClient.createFromClasspath();
 					
 				     Runtime.getRuntime().addShutdownHook(new Thread() {
 				    	 @Override

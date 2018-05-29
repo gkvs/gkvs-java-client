@@ -30,7 +30,7 @@ import rocks.gkvs.protos.ValueResult;
 
 public final class Scan {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 
 	private String tableName;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
@@ -42,7 +42,7 @@ public final class Scan {
 	private ValueType valueType = ValueType.RAW;
 	
 	
-	public Scan(GKVSClient instance) {
+	public Scan(GkvsClient instance) {
 		this.instance = instance;
 	}
 	

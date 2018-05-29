@@ -29,7 +29,7 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		byte[] result = GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value().bytes();
+		byte[] result = Gkvs.Client.get(TABLE, UUID.randomUUID().toString()).sync().value().bytes();
 		
 		Assert.assertNull("expected null result", result);
 		
@@ -42,9 +42,9 @@ public class GetTest extends AbstractClientTest {
 		String column = "col";
 		String value = "org";
 		
-		GKVS.Client.put(TABLE, key, column, value).sync();
+		Gkvs.Client.put(TABLE, key, column, value).sync();
 		
-		Record record = GKVS.Client.get(TABLE, key).select(column).sync();
+		Record record = Gkvs.Client.get(TABLE, key).select(column).sync();
 		Assert.assertTrue(record.exists());
 		
 		Map<String, Value> values = record.valueMap();
@@ -52,7 +52,7 @@ public class GetTest extends AbstractClientTest {
 		Assert.assertEquals(1, values.size());
 		Assert.assertEquals(value, values.get(column).string());
 		
-		GKVS.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(TABLE, key).sync();
 	}
 	
 	@Test
@@ -60,18 +60,18 @@ public class GetTest extends AbstractClientTest {
 		
 		String key = UUID.randomUUID().toString();
 		
-		GKVS.Client.put(TABLE, key, "column", "value").sync();
+		Gkvs.Client.put(TABLE, key, "column", "value").sync();
 		
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
 		
-		GKVS.Client.get(TABLE, key).select("column").async(collector);
+		Gkvs.Client.get(TABLE, key).select("column").async(collector);
 		
 		List<Record> list = collector.awaitUnchecked();
 		
 		Assert.assertEquals(1, list.size());
 		Assert.assertEquals("value", list.get(0).value().string());
 		
-		GKVS.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(TABLE, key).sync();
 	}
 	
 	//@Test
@@ -80,7 +80,7 @@ public class GetTest extends AbstractClientTest {
 		long t0 = System.currentTimeMillis();
 		
 		for (int i = 0; i != 10000; ++i) {
-			GKVS.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
+			Gkvs.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
 		}
 		
 		long diff = System.currentTimeMillis() - t0;

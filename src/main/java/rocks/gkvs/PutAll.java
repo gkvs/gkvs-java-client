@@ -25,13 +25,13 @@ import rocks.gkvs.protos.RequestOptions;
 
 public final class PutAll {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 	
 	private int timeoutMls;
 	private long pit;
 	private int ttlSec;
 	
-	public PutAll(GKVSClient instance) {
+	public PutAll(GkvsClient instance) {
 		this.instance = instance;
 	}
 	

@@ -36,7 +36,7 @@ public class MultiGetSelectTest extends AbstractClientTest {
 		for (int i = 0; i != 10; ++i) {
 			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
 			
-			GKVS.Client.put(key, Value.of("col", "MultiGetSelectTest")).sync();
+			Gkvs.Client.put(key, Value.of("col", "MultiGetSelectTest")).sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -46,7 +46,7 @@ public class MultiGetSelectTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (Key key : LOAD_KEYS) {
-			GKVS.Client.remove(key).sync();
+			Gkvs.Client.remove(key).sync();
 		}
 		
 	}
@@ -56,7 +56,7 @@ public class MultiGetSelectTest extends AbstractClientTest {
 
 		Set<Key> notFoundKeys = new HashSet<>(LOAD_KEYS);
 		
-		Iterable<Record> records = GKVS.Client.multiGet(LOAD_KEYS).select("col").sync();
+		Iterable<Record> records = Gkvs.Client.multiGet(LOAD_KEYS).select("col").sync();
 		
 		for (Record rec : records) {
 			notFoundKeys.remove(rec.key().get());

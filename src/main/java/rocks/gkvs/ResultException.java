@@ -18,22 +18,25 @@
 
 package rocks.gkvs;
 
-import rocks.gkvs.protos.Status;
-
-
-public class GKVSResultException extends GenericException {
+public class ResultException extends GkvsException {
 
 	private static final long serialVersionUID = -4698988155155482009L;
 	
 	private final String errorDetails;
+	private final byte[] payload;
 	
-	public GKVSResultException(Status status) {
-		super(status.getCode().name() + ", errorCode=" + status.getErrorCode() + ", errorMessage=" + status.getErrorMessage());
-		this.errorDetails = status.getErrorDetails();
+	protected ResultException(String message, String errorDetails, byte[] payload) {
+		super(message);
+		this.errorDetails = errorDetails;
+		this.payload = payload;
 	}
 
 	public String getErrorDetails() {
 		return errorDetails;
 	}
 
+	public byte[] getPayload() {
+		return payload;
+	}
+	
 }

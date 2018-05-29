@@ -33,15 +33,15 @@ public class TruncateTableTest extends AbstractClientTest {
 	//@Test
 	public void cleanUp() {
 		
-		Iterator<Record> i = GKVS.Client.scan(TABLE)
+		Iterator<Record> i = Gkvs.Client.scan(TABLE)
 				.sync();
 		
 		while(i.hasNext()) {
 			
 			try {
-				GKVS.Client.remove(i.next().key().get()).sync();
+				Gkvs.Client.remove(i.next().key().get()).sync();
 			}
-			catch(GenericException e) {
+			catch(GkvsException e) {
 				e.printStackTrace();
 			}
 			
@@ -54,16 +54,16 @@ public class TruncateTableTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10; ++i) {
 			String key = UUID.randomUUID().toString();
-			GKVS.Client.put(TABLE, key, "TruncateTableTest").sync();
+			Gkvs.Client.put(TABLE, key, "TruncateTableTest").sync();
 		}
 		
 		CountDownLatch done = new CountDownLatch(1);
 		
-		Observer<Key> key = GKVS.Client.removeAll().async(Observers.<Status>console(done));
+		Observer<Key> key = Gkvs.Client.removeAll().async(Observers.<Status>console(done));
 				
 		Observer<Record> record = Observers.transform(key, Observers.GET_KEY_FN);
 		
-		GKVS.Client.scan(TABLE).async(record);
+		Gkvs.Client.scan(TABLE).async(record);
 		
 		// await tota async process
 		done.await();

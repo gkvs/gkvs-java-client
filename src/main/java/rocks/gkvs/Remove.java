@@ -28,13 +28,13 @@ import rocks.gkvs.protos.StatusResult;
 
 public final class Remove {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 	
 	private Key key;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	
-	public Remove(GKVSClient instance) {
+	public Remove(GkvsClient instance) {
 		this.instance = instance;
 	}
 	
@@ -94,11 +94,11 @@ public final class Remove {
 		
 	}
 	
-	public GenericFuture<Status> async() {
+	public GkvsFuture<Status> async() {
 		
 		ListenableFuture<StatusResult> result = instance.getFutureStub().remove(buildRequest());
 		
-		return new GenericFuture<Status>(Transformers.toStatus(key, result));
+		return new GkvsFuture<Status>(Transformers.toStatus(key, result));
 		
 	}
 	

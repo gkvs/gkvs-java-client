@@ -29,14 +29,14 @@ import rocks.gkvs.protos.ValueResult;
 
 public final class Get {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 
 	private Key key;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
 	
-	public Get(GKVSClient instance) {
+	public Get(GkvsClient instance) {
 		this.instance = instance;
 	}
 	
@@ -107,11 +107,11 @@ public final class Get {
 		return Transformers.toRecord(key, result);
 	}
 	
-	public GenericFuture<Record> async() {
+	public GkvsFuture<Record> async() {
 		
 		ListenableFuture<ValueResult> result = instance.getFutureStub().get(buildRequest());
 		
-		return new GenericFuture<Record>(Transformers.toRecord(key, result));
+		return new GkvsFuture<Record>(Transformers.toRecord(key, result));
 		
 	}
 	

@@ -44,7 +44,7 @@ public final class StatusSuccess implements Status {
 		case SUCCESS_NOT_UPDATED:
 			return false;
 		default:
-			throw new GenericException("invalid status code: " + result);
+			throw new GkvsException("invalid status code: " + result);
 		}
 	}
 

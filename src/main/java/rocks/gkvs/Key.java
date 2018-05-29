@@ -67,7 +67,7 @@ public final class Key {
 	}
 	
 	public String getRecordKeyString() {
-		return new String(recordKey.toByteArray(), GKVSConstants.MUTABLE_KEY_CHARSET);
+		return new String(recordKey.toByteArray(), GkvsConstants.MUTABLE_KEY_CHARSET);
 	}
 
 	public String getRecordKeyHexString() {
@@ -79,7 +79,7 @@ public final class Key {
 	}
 	
 	public static Key raw(String tableName, String recordKey) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey, GKVSConstants.MUTABLE_KEY_CHARSET));
+		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey, GkvsConstants.MUTABLE_KEY_CHARSET));
 	}
 
 	public static Key raw(String tableName, byte[] recordKey) {

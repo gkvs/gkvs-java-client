@@ -26,13 +26,13 @@ import rocks.gkvs.protos.Select;
 
 public final class RemoveAll {
 
-	private final GKVSClient instance;
+	private final GkvsClient instance;
 	
 	private Select.Builder selectOrNull;
 	private int timeoutMls;
 	private long pit;
 	
-	public RemoveAll(GKVSClient instance) {
+	public RemoveAll(GkvsClient instance) {
 		this.instance = instance;
 	}
 	

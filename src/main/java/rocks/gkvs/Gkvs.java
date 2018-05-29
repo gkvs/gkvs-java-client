@@ -25,48 +25,48 @@ import java.util.Map;
  *  GKVS singleton class is visible from scala 
  */
 
-public enum GKVS {
+public enum Gkvs {
 
 	Client;
 	
 	public Get exists(String tableName, String recordKey) {
-		return GKVSClient.getDefaultInstance().exists(tableName, recordKey);
+		return GkvsClient.getDefaultInstance().exists(tableName, recordKey);
 	}
 	
 	public Get exists(Key key) {
-		return GKVSClient.getDefaultInstance().exists(key);
+		return GkvsClient.getDefaultInstance().exists(key);
 	}
 	
 	public Get get(String tableName, String recordKey) {
-		return GKVSClient.getDefaultInstance().get(tableName, recordKey);
+		return GkvsClient.getDefaultInstance().get(tableName, recordKey);
 	}
 	
 	public Get get(Key key) {
-		return GKVSClient.getDefaultInstance().get(key);
+		return GkvsClient.getDefaultInstance().get(key);
 	}
 	
 	public MultiGet multiGet(Key...keys) {
-		return GKVSClient.getDefaultInstance().multiGet(keys);
+		return GkvsClient.getDefaultInstance().multiGet(keys);
 	}
 	
 	public MultiGet multiGet(Iterator<Key> keys) {
-		return GKVSClient.getDefaultInstance().multiGet(keys);
+		return GkvsClient.getDefaultInstance().multiGet(keys);
 	}
 	
 	public MultiGet multiGet(Iterable<Key> keys) {
-		return GKVSClient.getDefaultInstance().multiGet(keys);
+		return GkvsClient.getDefaultInstance().multiGet(keys);
 	}
 	
 	public GetAll getAll() {
-		return GKVSClient.getDefaultInstance().getAll();
+		return GkvsClient.getDefaultInstance().getAll();
 	}
 	
 	public Put putWithKey(String tableName, String recordKey) {
-		return GKVSClient.getDefaultInstance().putWithKey(tableName, recordKey);
+		return GkvsClient.getDefaultInstance().putWithKey(tableName, recordKey);
 	}
 	
 	public Put putWithKey(Key key) {
-		return GKVSClient.getDefaultInstance().putWithKey(key);
+		return GkvsClient.getDefaultInstance().putWithKey(key);
 	}
 	
 	public Put put(String tableName, String recordKey, String value) {
@@ -118,23 +118,23 @@ public enum GKVS {
 	}
 	
 	public PutAll putAll() {
-		return GKVSClient.getDefaultInstance().putAll();
+		return GkvsClient.getDefaultInstance().putAll();
 	}
 	
 	public Remove remove(String tableName, String recordKey) {
-		return GKVSClient.getDefaultInstance().remove(tableName, recordKey);
+		return GkvsClient.getDefaultInstance().remove(tableName, recordKey);
 	}
 	
 	public Remove remove(Key key) {
-		return GKVSClient.getDefaultInstance().remove(key);
+		return GkvsClient.getDefaultInstance().remove(key);
 	}
 	
 	public RemoveAll removeAll() {
-		return GKVSClient.getDefaultInstance().removeAll();
+		return GkvsClient.getDefaultInstance().removeAll();
 	}
 	
 	public Scan scan(String tableName) {
-		return GKVSClient.getDefaultInstance().scan(tableName);
+		return GkvsClient.getDefaultInstance().scan(tableName);
 	}
 	
 }

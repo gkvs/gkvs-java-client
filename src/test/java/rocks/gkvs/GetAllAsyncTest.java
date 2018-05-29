@@ -41,7 +41,7 @@ public class GetAllAsyncTest extends AbstractClientTest {
 		for (int i = 0; i != 10; ++i) {
 			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
 			
-			GKVS.Client.put(key, Value.of("GetAllTest")).sync();
+			Gkvs.Client.put(key, Value.of("GetAllTest")).sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -51,7 +51,7 @@ public class GetAllAsyncTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (Key key : LOAD_KEYS) {
-			GKVS.Client.remove(key).sync();
+			Gkvs.Client.remove(key).sync();
 		}
 		
 	}
@@ -62,7 +62,7 @@ public class GetAllAsyncTest extends AbstractClientTest {
 		final List<Record> list = new CopyOnWriteArrayList<>();
 
 		final CountDownLatch done = new CountDownLatch(1);
-		Observer<Key> keys = GKVS.Client.getAll().async(new Observer<Record>() {
+		Observer<Key> keys = Gkvs.Client.getAll().async(new Observer<Record>() {
 			
 			@Override
 			public void onNext(Record record) {

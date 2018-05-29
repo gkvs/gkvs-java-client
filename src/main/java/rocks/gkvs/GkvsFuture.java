@@ -31,11 +31,11 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  */
 
-public class GenericFuture<T> implements Future<T> {
+public class GkvsFuture<T> implements Future<T> {
 
 	private final ListenableFuture<T> delegate; 
 	
-	protected GenericFuture(ListenableFuture<T> delegate) {
+	protected GkvsFuture(ListenableFuture<T> delegate) {
 		this.delegate = delegate;
 	}
 	
@@ -63,7 +63,7 @@ public class GenericFuture<T> implements Future<T> {
 		try {
 			return delegate.get();
 		} catch (InterruptedException | ExecutionException e) {
-			throw new GenericException("future exception", e);
+			throw new GkvsException("future exception", e);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class GenericFuture<T> implements Future<T> {
 		try {
 			return delegate.get(timeout, unit);
 		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			throw new GenericException("future exception", e);
+			throw new GkvsException("future exception", e);
 		}
 	}
 	

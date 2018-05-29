@@ -26,28 +26,28 @@ Two types of API are supported: sync and async
 
 #### GET
 ```
-byte[] value = GKVS.Client.get("TEST", "key").sync().value().bytes();
+byte[] value = Gkvs.Client.get("TEST", "key").sync().value().bytes();
 ```
 
 #### PUT
 ```
-GKVS.Client.put("TEST", "key", "value").sync();
+Gkvs.Client.put("TEST", "key", "value").sync();
 ```
 
 #### REMOVE
 ```
-GKVS.Client.remove("TEST", "key").sync();
+Gkvs.Client.remove("TEST", "key").sync();
 ```
 
 #### COMPARE_AND_PUT
 ```
-Record record = GKVS.Client.get("TEST", "key").sync();
-boolean updated = GKVS.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync().updated();
+Record record = Gkvs.Client.get("TEST", "key").sync();
+boolean updated = Gkvs.Client.put("TEST", "key", "replace_value").compareAndPut(record.version()).sync().updated();
 ```
 
 #### EXISTS
 ```
-boolean exists = GKVS.Client.exists("TEST", "key").sync().exists();
+boolean exists = Gkvs.Client.exists("TEST", "key").sync().exists();
 ```
 
 ### Maven

@@ -18,21 +18,19 @@
 
 package rocks.gkvs;
 
-/**
- * Generic Exception for GKVS
- *
- */
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-public class GenericException extends RuntimeException {
+public final class GkvsConstants {
 
-	private static final long serialVersionUID = 5573528917974940776L;
-
-	public GenericException(String msg) {
-		super(msg);
+	private GkvsConstants() {
 	}
 
-	public GenericException(String msg, Throwable t) {
-		super(msg, t);
-	}
+	public static volatile Charset MUTABLE_KEY_CHARSET = StandardCharsets.US_ASCII;
+	
+	public static volatile Charset MUTABLE_VALUE_CHARSET = StandardCharsets.UTF_8;
+	
+	public static volatile String DEFAULT_SINGLE_VALUE_COLUMN = "";
 
+	
 }

@@ -39,7 +39,7 @@ public class GetAllTest extends AbstractClientTest {
 		for (int i = 0; i != 10; ++i) {
 			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
 			
-			GKVS.Client.put(key, Value.of("GetAllTest")).sync();
+			Gkvs.Client.put(key, Value.of("GetAllTest")).sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -49,7 +49,7 @@ public class GetAllTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (Key key : LOAD_KEYS) {
-			GKVS.Client.remove(key).sync();
+			Gkvs.Client.remove(key).sync();
 		}
 		
 	}
@@ -57,7 +57,7 @@ public class GetAllTest extends AbstractClientTest {
 	@Test
 	public void testGetAll() {
 
-		Iterable<Record> actual = GKVS.Client.getAll().sync(LOAD_KEYS);
+		Iterable<Record> actual = Gkvs.Client.getAll().sync(LOAD_KEYS);
 
 		List<Record> list = (List<Record>) actual;
 		

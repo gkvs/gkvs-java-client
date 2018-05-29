@@ -37,7 +37,7 @@ public class PutRemoveAllTest extends AbstractClientTest {
 		list.add(KeyValue.of(Key.raw(TABLE, UUID.randomUUID().toString()), def));
 		list.add(KeyValue.of(Key.raw(TABLE, UUID.randomUUID().toString()), def));
 		
-		Iterable<Status> result = GKVS.Client.putAll().withTtl(10000).sync(list);
+		Iterable<Status> result = Gkvs.Client.putAll().withTtl(10000).sync(list);
 		
 		for (Status status : result) {
 			Assert.assertTrue(status.updated());
@@ -45,17 +45,17 @@ public class PutRemoveAllTest extends AbstractClientTest {
 		
 		List<Key> keys = new ArrayList<Key>(list.size());
 		for (KeyValue kv : list) {
-			Assert.assertTrue(GKVS.Client.exists(kv.key()).sync().exists());
+			Assert.assertTrue(Gkvs.Client.exists(kv.key()).sync().exists());
 			keys.add(kv.key());
 		}
 
-		result = GKVS.Client.removeAll().sync(keys);
+		result = Gkvs.Client.removeAll().sync(keys);
 		
 		for (Status status : result) {
 			Assert.assertTrue(status.updated());
 		}
 		
-		Iterable<Record> recs = GKVS.Client.getAll().sync(keys);
+		Iterable<Record> recs = Gkvs.Client.getAll().sync(keys);
 		
 		for (Record rec : recs) {
 			Assert.assertTrue(rec instanceof RecordNotFound);

@@ -38,7 +38,7 @@ public class ScanTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10; ++i) {
 			String key = UUID.randomUUID().toString();
-			GKVS.Client.put(TABLE, key, "testScan").sync();
+			Gkvs.Client.put(TABLE, key, "testScan").sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -48,7 +48,7 @@ public class ScanTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (String key : LOAD_KEYS) {
-			GKVS.Client.remove(TABLE, key).sync();
+			Gkvs.Client.remove(TABLE, key).sync();
 		}
 		
 	}
@@ -58,7 +58,7 @@ public class ScanTest extends AbstractClientTest {
 		
 		Set<String> notFoundKeys = new HashSet<>(LOAD_KEYS);
 		
-		Iterator<Record> records = GKVS.Client.scan(TABLE).sync();
+		Iterator<Record> records = Gkvs.Client.scan(TABLE).sync();
 		
 		while(records.hasNext()) {
 			Record rec = records.next();
@@ -68,7 +68,7 @@ public class ScanTest extends AbstractClientTest {
 				notFoundKeys.remove(key);
 				//System.out.println("scan: " + rec);
 			}
-			catch(GenericException e) {
+			catch(GkvsException e) {
 				e.printStackTrace();
 			}
 		}
@@ -80,13 +80,13 @@ public class ScanTest extends AbstractClientTest {
 	@Test
 	public void testBucket() {
 		
-		Set<String> all = collectKeys(GKVS.Client.scan(TABLE)
+		Set<String> all = collectKeys(Gkvs.Client.scan(TABLE)
 				.sync());
 		
-		Set<String> odd = collectKeys(GKVS.Client.scan(TABLE)
+		Set<String> odd = collectKeys(Gkvs.Client.scan(TABLE)
 				.withBucket(0, 2).sync());
 		
-		Set<String> even = collectKeys(GKVS.Client.scan(TABLE)
+		Set<String> even = collectKeys(Gkvs.Client.scan(TABLE)
 				.withBucket(1, 2).sync());
 		
 		//System.out.println("all = " + all);
@@ -112,7 +112,7 @@ public class ScanTest extends AbstractClientTest {
 				String key = rec.key().getRecordKeyAsString();
 				set.add(key);
 			}
-			catch(GenericException e) {
+			catch(GkvsException e) {
 				e.printStackTrace();
 			}
 		}
