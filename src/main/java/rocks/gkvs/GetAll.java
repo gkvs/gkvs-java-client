@@ -19,6 +19,7 @@
 package rocks.gkvs;
 
 import io.grpc.stub.StreamObserver;
+import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
@@ -28,10 +29,11 @@ public final class GetAll {
 
 	private final GKVSClient instance;
 	
-	private final RequestOptions.Builder options = RequestOptions.newBuilder();
+	private int timeoutMls;
+	private long pit;
+	
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
-	private boolean includeKey = true;
 	
 	public GetAll(GKVSClient instance) {
 		this.instance = instance;
@@ -50,18 +52,13 @@ public final class GetAll {
 		return this;
 	}
 	
-	public GetAll includeKey(boolean flag) {
-		this.includeKey = flag;
-		return this;
-	}
-	
 	public GetAll withTimeout(int timeoutMls) {
-		options.setTimeout(timeoutMls);
+		this.timeoutMls = timeoutMls;
 		return this;
 	}
 	
 	public GetAll withPit(long pit) {
-		options.setPit(pit);
+		this.pit = pit;
 		return this;
 	}
 	
@@ -74,16 +71,20 @@ public final class GetAll {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		options.setRequestId(instance.nextRequestId());
+		long requestId = instance.nextRequestId();
+		
+		instance.pushWaitingQueue(requestId, key);
+		
+		RequestOptions.Builder options = RequestOptions.newBuilder();
+		options.setRequestId(requestId);
+		options.setTimeout(timeoutMls);
+		options.setPit(pit);
 		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());
 		
 		if (metadataOnly) {
 			builder.setOutput(OutputOptions.METADATA_ONLY);
-		}
-		else if (includeKey) {
-			builder.setOutput(OutputOptions.KEY_VALUE_RAW);
 		}
 		else {
 			builder.setOutput(OutputOptions.VALUE_RAW);
@@ -99,7 +100,16 @@ public final class GetAll {
 	
 	public KeyObserver async(final RecordObserver recordObserver) {
 		
-		final StreamObserver<KeyOperation> streamOut = instance.getAsyncStub().getAll(Transformers.observe(recordObserver));
+		final KeyResolver keyResolver = new KeyResolver() {
+
+			@Override
+			public Key find(long requestId) {
+				return instance.popWaitingQueue(requestId);
+			}
+			
+		};
+		
+		final StreamObserver<KeyOperation> streamOut = instance.getAsyncStub().getAll(Transformers.observe(recordObserver, keyResolver));
 		
 		return new KeyObserver() {
 

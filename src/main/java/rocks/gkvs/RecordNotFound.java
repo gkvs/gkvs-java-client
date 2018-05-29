@@ -22,13 +22,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import rocks.gkvs.protos.ValueResult;
 
 public final class RecordNotFound implements Record {
 
+	private final @Nullable Key requestKey;
 	private final ValueResult result;
 	
-	public RecordNotFound(ValueResult result) {
+	public RecordNotFound(@Nullable Key requestKey, ValueResult result) {
+		this.requestKey = requestKey;
 		this.result = result;
 	}
 
@@ -54,7 +58,7 @@ public final class RecordNotFound implements Record {
 
 	@Override
 	public NullableKey key() {
-		return new NullableKey(null);
+		return new NullableKey(requestKey);
 	}
 
 	@Override

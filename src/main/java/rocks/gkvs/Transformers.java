@@ -19,6 +19,8 @@ package rocks.gkvs;
 
 import java.util.Iterator;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 
@@ -30,47 +32,73 @@ final class Transformers {
 	private Transformers() {
 	}
 	
-	protected static Record toRecord(ValueResult result) {
+	protected static Record toRecord(@Nullable Key requestKey, ValueResult result) {
 		if (RecordError.isError(result)) {
-			return new RecordError(result);
+			return new RecordError(requestKey, result);
 		}
 		else if (result.hasMetadata()) {
-			return new RecordFound(result);
+			return new RecordFound(requestKey, result);
 		}
 		else {
-			return new RecordNotFound(result);
+			return new RecordNotFound(requestKey, result);
 		}
 	}
 	
 	protected static Iterator<Record> toRecords(Iterator<ValueResult> iterator) {
-		return Iterators.transform(iterator, ToRecordFn.INS);
+		return Iterators.transform(iterator, SimpleRecordFn.INS);
 	}
 	
-	private enum ToRecordFn implements Function<ValueResult, Record> {
+	protected static Iterator<Record> toRecords(Iterator<ValueResult> iterator, KeyResolver keyResolver) {
+		return Iterators.transform(iterator, new RecordFn(keyResolver));
+	}
+	
+	protected interface KeyResolver {
+		
+		@Nullable Key find(long requestId);
+		
+	}
+	
+	protected enum SimpleRecordFn implements Function<ValueResult, Record> {
 
 		INS;
-
+		
 		public Record apply(ValueResult result) {
-			return toRecord(result);
+			return toRecord(null, result);
 		}
 		
 	}
 	
-	protected static StreamObserver<ValueResult> observe(RecordObserver recordObserver) {
-		return new StreamObserverAdapter(recordObserver);
+	protected static final class RecordFn implements Function<ValueResult, Record> {
+
+		private final KeyResolver keyResolver;
+		
+		public RecordFn(KeyResolver keyResolver) {
+			this.keyResolver = keyResolver;
+		}
+
+		public Record apply(ValueResult result) {
+			return toRecord(keyResolver.find(result.getRequestId()), result);
+		}
+		
+	}
+	
+	protected static StreamObserver<ValueResult> observe(RecordObserver recordObserver, KeyResolver keyResolver) {
+		return new StreamObserverAdapter(recordObserver, keyResolver);
 	}
 	
 	protected static final class StreamObserverAdapter implements StreamObserver<ValueResult> {
 
 		private final RecordObserver recordObserver;
+		private final KeyResolver keyResolver;
 		
-		public StreamObserverAdapter(RecordObserver recordObserver) {
+		public StreamObserverAdapter(RecordObserver recordObserver, KeyResolver keyResolver) {
 			this.recordObserver = recordObserver;
+			this.keyResolver = keyResolver;
 		}
 		
 		@Override
 		public void onNext(ValueResult value) {
-			recordObserver.onNext(Transformers.toRecord(value));
+			recordObserver.onNext(Transformers.toRecord(keyResolver.find(value.getRequestId()), value));
 		}
 
 		@Override

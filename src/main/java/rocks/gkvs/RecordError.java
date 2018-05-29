@@ -20,6 +20,8 @@ package rocks.gkvs;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import rocks.gkvs.protos.Status;
 import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
@@ -27,10 +29,12 @@ import rocks.gkvs.protos.ValueResult;
 
 public final class RecordError implements Record {
 
+	private final @Nullable Key requestKey;
 	private final Status status;
 	private final long requestId;
 	
-	protected RecordError(ValueResult valueResult) {
+	protected RecordError(@Nullable Key requestKey, ValueResult valueResult) {
+		this.requestKey = requestKey;
 		this.status = valueResult.getStatus();
 		this.requestId = valueResult.getRequestId();
 	}
@@ -93,8 +97,7 @@ public final class RecordError implements Record {
 
 	@Override
 	public NullableKey key() {
-		throwException();
-		return null;
+		return new NullableKey(requestKey);
 	}
 
 	@Override

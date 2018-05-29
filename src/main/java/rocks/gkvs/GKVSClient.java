@@ -25,6 +25,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.annotation.Nullable;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import rocks.gkvs.protos.GenericStoreGrpc;
@@ -42,6 +47,11 @@ public final class GKVSClient implements Closeable {
 	private final GenericStoreBlockingStub blockingStub;
 	private final GenericStoreStub asyncStub;
 	
+    private final Cache<Long, Key> waitingQueue = CacheBuilder.newBuilder()
+    		.expireAfterWrite(20, TimeUnit.MINUTES)
+    		.concurrencyLevel(16)
+    		.build();
+    
 	private final AtomicLong sequenceNum = new AtomicLong(1L);
 	
 	public static GKVSClient createFromClasspath() {
@@ -101,6 +111,18 @@ public final class GKVSClient implements Closeable {
 			return 1L;
 		}
 	    return num;
+	}
+	
+	protected void pushWaitingQueue(long requestId, Key key) {
+		waitingQueue.put(requestId, key);
+	}
+	
+	protected @Nullable Key popWaitingQueue(long requestId) {
+		Key key =  waitingQueue.getIfPresent(requestId);
+		if (key != null) {
+			waitingQueue.invalidate(requestId);
+		}
+		return key;
 	}
 	
 	protected void postProcess(Status status) {

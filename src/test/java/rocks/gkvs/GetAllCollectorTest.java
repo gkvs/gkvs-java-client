@@ -21,17 +21,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
-public class GetAllTest extends AbstractClientTest {
+public class GetAllCollectorTest extends AbstractClientTest {
 
 	private final static Set<Key> LOAD_KEYS = new HashSet<>();
 	
@@ -57,49 +53,18 @@ public class GetAllTest extends AbstractClientTest {
 	}
 	
 	@Test
-	public void testGetAll() {
-
-		final List<Record> list = new CopyOnWriteArrayList<>();
-
-		final CountDownLatch done = new CountDownLatch(1);
-		KeyObserver keys = GKVS.Client.getAll().async(new RecordObserver() {
-			
-			@Override
-			public void onNext(Record record) {
-				list.add(record);
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				t.printStackTrace();
-				done.countDown();
-			}
-
-			@Override
-			public void onCompleted() {
-				done.countDown();
-			}
-			
-		});
+	public void testGetAllCollector() {
+	
+		RecordCollector collector = new RecordCollector();
+		KeyObserver keys = GKVS.Client.getAll().async(collector);
 		
 		for (Key key : LOAD_KEYS) {
 			keys.onNext(key);
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}	
 		keys.onCompleted();
-
-		try {
-			done.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
+		
+		List<Record> list = collector.awaitUnchecked();
 		Assert.assertEquals(list.size(), LOAD_KEYS.size());
-		
 	}
-	
 }

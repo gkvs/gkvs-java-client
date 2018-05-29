@@ -104,7 +104,7 @@ public final class Get implements Resultable {
 		ValueResult result = instance.getBlockingStub().get(builder.build());
 		RESULT_UPDATER.set(this, result);
 		
-		return Transformers.toRecord(result);
+		return Transformers.toRecord(key, result);
 	}
 	
 	//public Future<ValueSet> async() {

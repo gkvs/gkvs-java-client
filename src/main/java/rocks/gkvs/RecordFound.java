@@ -23,14 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
 public final class RecordFound implements Record {
-
+	
+	private final @Nullable Key requestKey;
 	private final ValueResult result;
 	
-	protected RecordFound(ValueResult result) {
+	protected RecordFound(@Nullable Key requestKey, ValueResult result) {
+		this.requestKey = requestKey;
 		this.result = result;
 	}
 	
@@ -74,7 +78,7 @@ public final class RecordFound implements Record {
 			
 		}
 		
-		return new NullableKey(null);
+		return new NullableKey(requestKey);
 	}
 	
 	@Override
