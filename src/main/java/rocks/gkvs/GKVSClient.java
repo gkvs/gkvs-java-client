@@ -20,8 +20,10 @@ package rocks.gkvs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -55,7 +57,46 @@ public final class GKVSClient implements Closeable {
 	private final AtomicLong sequenceNum = new AtomicLong(1L);
 	
 	public static GKVSClient createFromClasspath() {
-		return new GKVSClient("localhost", 4040);
+		return createFromClasspath(GKVSClient.class.getClassLoader());
+	}
+	
+	public static GKVSClient createFromClasspath(ClassLoader classLoader) {
+		
+		InputStream in = classLoader.getResourceAsStream("gkvs-override.properties");
+		if (in == null) {
+			in = classLoader.getResourceAsStream("gkvs-default.properties");
+			if (in == null) {
+				throw new IllegalStateException("expected gkvs-override.properties or gkvs-default.properties in classpath");
+			}
+		}
+		
+		Properties props = new Properties();
+
+		try {
+			props.load(in);
+		} catch (IOException e) {
+			throw new IllegalStateException("unable to load properties");
+		}
+		finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+			}
+		}
+
+		return createFromProperties(props);
+	}
+	
+	public static GKVSClient createFromProperties(Properties props) {
+		String host = props.getProperty("gkvs.host", "localhost");
+		int port;
+		try {
+			port = Integer.parseInt(props.getProperty("gkvs.port", "4040"));
+		}
+		catch(NumberFormatException e) {
+			throw new IllegalStateException("unable parse gkvs.port property", e);
+		}
+		return new GKVSClient(host, port);
 	}
 	
 	public GKVSClient(String host, int port) {
