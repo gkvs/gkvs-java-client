@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusResult;
@@ -128,6 +129,25 @@ public final class Put {
 		
 		return new StatusFuture(Transformers.toStatus(key, result));
 		
+	}
+	
+	public void async(final StatusObserver statusObserver) {
+		
+		PutOperation request = buildRequest();
+		
+		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		
+		final KeyResolver keyResolver = new KeyResolver() {
+
+			@Override
+			public Key find(long requestId) {
+				return instance.popWaitingQueue(requestId);
+			}
+			
+		};
+		
+		instance.getAsyncStub().put(request, Transformers.observe(statusObserver, keyResolver));
+	
 	}
 
 

@@ -17,6 +17,7 @@
  */
 package rocks.gkvs;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,6 +51,25 @@ public class GetTest extends AbstractClientTest {
 		
 		Assert.assertEquals(1, values.size());
 		Assert.assertEquals(value, values.get(column).string());
+		
+		GKVS.Client.remove(TABLE, key).sync();
+	}
+	
+	@Test
+	public void testGetSelectObserver() {
+		
+		String key = UUID.randomUUID().toString();
+		
+		GKVS.Client.put(TABLE, key, "column", "value").sync();
+		
+		RecordCollector collector = new RecordCollector();
+		
+		GKVS.Client.get(TABLE, key).select("column").async(collector);
+		
+		List<Record> list = collector.awaitUnchecked();
+		
+		Assert.assertEquals(1, list.size());
+		Assert.assertEquals("value", list.get(0).value().string());
 		
 		GKVS.Client.remove(TABLE, key).sync();
 	}

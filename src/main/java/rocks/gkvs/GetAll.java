@@ -34,7 +34,7 @@ public final class GetAll {
 	
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
-	
+		
 	public GetAll(GKVSClient instance) {
 		this.instance = instance;
 	}
@@ -71,12 +71,8 @@ public final class GetAll {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		long requestId = instance.nextRequestId();
-		
-		instance.pushWaitingQueue(requestId, key);
-		
 		RequestOptions.Builder options = RequestOptions.newBuilder();
-		options.setRequestId(requestId);
+		options.setRequestId(instance.nextRequestId());
 		options.setTimeout(timeoutMls);
 		options.setPit(pit);
 		builder.setOptions(options);
@@ -131,6 +127,7 @@ public final class GetAll {
 			@Override
 			public void onNext(Key key) {
 				KeyOperation op = buildRequest(key).build();
+				instance.pushWaitingQueue(op.getOptions().getRequestId(), key);
 				streamOut.onNext(op);
 			}
 

@@ -20,6 +20,7 @@ package rocks.gkvs;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
@@ -112,6 +113,25 @@ public final class Get {
 		
 		return new RecordFuture(Transformers.toRecord(key, result));
 		
+	}
+	
+	public void async(final RecordObserver recordObserver) {
+		
+		KeyOperation request = buildRequest();
+				
+		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		
+		final KeyResolver keyResolver = new KeyResolver() {
+
+			@Override
+			public Key find(long requestId) {
+				return instance.popWaitingQueue(requestId);
+			}
+			
+		};
+		
+		instance.getAsyncStub().get(request, Transformers.observe(recordObserver, keyResolver));
+	
 	}
 
 	

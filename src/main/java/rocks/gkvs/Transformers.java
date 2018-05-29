@@ -171,15 +171,19 @@ final class Transformers {
 	}
 	
 	protected static StreamObserver<ValueResult> observe(RecordObserver recordObserver, KeyResolver keyResolver) {
-		return new StreamObserverAdapter(recordObserver, keyResolver);
+		return new StreamRecordObserverAdapter(recordObserver, keyResolver);
 	}
 	
-	protected static final class StreamObserverAdapter implements StreamObserver<ValueResult> {
+	protected static StreamObserver<StatusResult> observe(StatusObserver statusObserver, KeyResolver keyResolver) {
+		return new StreamStatusObserverAdapter(statusObserver, keyResolver);
+	}
+	
+	protected static final class StreamRecordObserverAdapter implements StreamObserver<ValueResult> {
 
 		private final RecordObserver recordObserver;
 		private final KeyResolver keyResolver;
 		
-		public StreamObserverAdapter(RecordObserver recordObserver, KeyResolver keyResolver) {
+		public StreamRecordObserverAdapter(RecordObserver recordObserver, KeyResolver keyResolver) {
 			this.recordObserver = recordObserver;
 			this.keyResolver = keyResolver;
 		}
@@ -197,6 +201,33 @@ final class Transformers {
 		@Override
 		public void onCompleted() {
 			recordObserver.onCompleted();
+		}
+		
+	}
+	
+	protected static final class StreamStatusObserverAdapter implements StreamObserver<StatusResult> {
+
+		private final StatusObserver statusObserver;
+		private final KeyResolver keyResolver;
+		
+		public StreamStatusObserverAdapter(StatusObserver statusObserver, KeyResolver keyResolver) {
+			this.statusObserver = statusObserver;
+			this.keyResolver = keyResolver;
+		}
+		
+		@Override
+		public void onNext(StatusResult value) {
+			statusObserver.onNext(Transformers.toStatus(keyResolver.find(value.getRequestId()), value));
+		}
+
+		@Override
+		public void onError(Throwable t) {
+			statusObserver.onError(t);
+		}
+
+		@Override
+		public void onCompleted() {
+			statusObserver.onCompleted();
 		}
 		
 	}

@@ -20,6 +20,7 @@ package rocks.gkvs;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
@@ -99,6 +100,25 @@ public final class Remove {
 		
 		return new StatusFuture(Transformers.toStatus(key, result));
 		
+	}
+	
+	public void async(final StatusObserver statusObserver) {
+		
+		KeyOperation request = buildRequest();
+		
+		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		
+		final KeyResolver keyResolver = new KeyResolver() {
+
+			@Override
+			public Key find(long requestId) {
+				return instance.popWaitingQueue(requestId);
+			}
+			
+		};
+		
+		instance.getAsyncStub().remove(request, Transformers.observe(statusObserver, keyResolver));
+	
 	}
 	
 }
