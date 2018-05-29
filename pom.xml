@@ -16,6 +16,7 @@
     <protoc.artifact>com.google.protobuf:protoc:3.5.1</protoc.artifact>
     <grpc.version>1.12.0</grpc.version>
     <grpc.artifact>io.grpc:protoc-gen-grpc-java:1.12.0</grpc.artifact>
+    <jsr305.version>3.0.0</jsr305.version>
   </properties>
   
   <scm>
@@ -37,6 +38,16 @@
 
      <profile>
         <id>release</id>
+        
+		<dependencies>
+		
+		   <dependency>
+		      <groupId>com.google.code.findbugs</groupId>
+		      <artifactId>jsr305</artifactId>
+		      <version>${jsr305.version}</version>
+		   </dependency>
+		
+		</dependencies>
         
         <build>
         
