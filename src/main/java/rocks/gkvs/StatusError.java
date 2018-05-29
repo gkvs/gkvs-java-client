@@ -19,7 +19,6 @@ package rocks.gkvs;
 
 import javax.annotation.Nullable;
 
-import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
 
 public final class StatusError implements Status {
@@ -30,24 +29,6 @@ public final class StatusError implements Status {
 	protected StatusError(@Nullable Key requestKey, StatusResult result) {
 		this.requestKey = requestKey;
 		this.result = result;
-	}
-	
-	protected static boolean isError(StatusResult statusResult) {
-		if (statusResult.hasStatus()) {
-			return !isSuccess(statusResult.getStatus().getCode());
-		}
-		return true;
-	}
-	
-	public static boolean isSuccess(StatusCode code) {
-		switch(code) {
-		case SUCCESS:
-		case SUCCESS_NOT_UPDATED:
-		case SUCCESS_END_STREAM:
-			return true;
-		default:
-			return false;
-		}
 	}
 	
 	@Override

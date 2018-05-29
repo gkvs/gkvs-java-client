@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import rocks.gkvs.protos.StatusCode;
-import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
 
 public final class RecordError implements Record {
@@ -34,31 +32,6 @@ public final class RecordError implements Record {
 	protected RecordError(@Nullable Key requestKey, ValueResult result) {
 		this.requestKey = requestKey;
 		this.result = result;
-	}
-	
-	protected static boolean isError(ValueResult valueResult) {
-		if (valueResult.hasStatus()) {
-			return !isSuccess(valueResult.getStatus().getCode());
-		}
-		return true;
-	}
-	
-	protected static boolean isError(StatusResult statusResult) {
-		if (statusResult.hasStatus()) {
-			return !isSuccess(statusResult.getStatus().getCode());
-		}
-		return true;
-	}
-	
-	public static boolean isSuccess(StatusCode code) {
-		switch(code) {
-		case SUCCESS:
-		case SUCCESS_NOT_UPDATED:
-		case SUCCESS_END_STREAM:
-			return true;
-		default:
-			return false;
-		}
 	}
 	
 	private void throwException() {

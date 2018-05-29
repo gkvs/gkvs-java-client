@@ -36,7 +36,7 @@ final class Transformers {
 	}
 	
 	protected static Record toRecord(@Nullable Key requestKey, ValueResult result) {
-		if (RecordError.isError(result)) {
+		if (ProtocolUtils.isError(result)) {
 			return new RecordError(requestKey, result);
 		}
 		else if (result.hasMetadata()) {
@@ -48,7 +48,7 @@ final class Transformers {
 	}
 	
 	protected static Status toStatus(@Nullable Key requestKey, StatusResult result) {
-		if (StatusError.isError(result)) {
+		if (ProtocolUtils.isError(result)) {
 			return new StatusError(requestKey, result);
 		}
 		else {

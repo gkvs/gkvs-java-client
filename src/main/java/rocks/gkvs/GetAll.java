@@ -98,6 +98,21 @@ public final class GetAll {
 		
 	}
 	
+	public Iterable<Record> sync(Iterable<Key> keys) {
+		
+		RecordCollector collector = new RecordCollector();
+		
+		KeyObserver keyChannel = async(collector);
+		
+		for (Key key : keys) {
+			keyChannel.onNext(key);
+		}
+		
+		keyChannel.onCompleted();
+		
+		return collector.awaitUnchecked();
+	}
+	
 	public KeyObserver async(final RecordObserver recordObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {

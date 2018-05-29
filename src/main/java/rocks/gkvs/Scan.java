@@ -20,8 +20,8 @@ package rocks.gkvs;
 
 import java.util.Iterator;
 
+import rocks.gkvs.ProtocolUtils.ValueType;
 import rocks.gkvs.protos.Bucket;
-import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.ScanOperation;
 import rocks.gkvs.protos.Select;
@@ -29,10 +29,6 @@ import rocks.gkvs.protos.ValueResult;
 
 public final class Scan {
 
-	private enum ValueType {
-		RAW, DIGEST, MAP;
-	}
-	
 	private final GKVSClient instance;
 
 	private String tableName;
@@ -111,7 +107,7 @@ public final class Scan {
 		return this;
 	}
 	
-	public Iterator<Record> sync() {
+	private ScanOperation buildRequest() {
 		
 		ScanOperation.Builder builder = ScanOperation.newBuilder();
 		
@@ -123,7 +119,7 @@ public final class Scan {
 		builder.setOptions(options);
 		
 		builder.setTableName(tableName);
-		builder.setOutput(output());
+		builder.setOutput(ProtocolUtils.getOutput(includeKey, includeValue, valueType));
 		
 		if (selectOrNull != null) {
 			builder.setSelect(selectOrNull);
@@ -133,50 +129,15 @@ public final class Scan {
 			builder.setBucket(bucketOrNull);
 		}
 		
-		Iterator<ValueResult> results = instance.getBlockingStub().scan(builder.build());
-		return Transformers.toRecords(results);
+		return builder.build();
 		
 	}
 	
-	private OutputOptions output() {
+	public Iterator<Record> sync() {
 		
-		if (includeKey) {
-			
-			if (includeValue) {
-				switch(valueType) {
-				case RAW:
-					return OutputOptions.KEY_VALUE_RAW;
-				case DIGEST:
-					return OutputOptions.KEY_VALUE_DIGEST;
-				case MAP:
-					return OutputOptions.KEY_VALUE_MAP;
-				}
-				return OutputOptions.KEY_VALUE_RAW;
-			}
-			else {
-				return OutputOptions.KEY;
-			}
-			
-		}
-		else {
-			if (includeValue) {
-				switch(valueType) {
-					case RAW:
-						return OutputOptions.VALUE_RAW;
-					case DIGEST:
-						return OutputOptions.VALUE_DIGEST;
-					case MAP:
-						return OutputOptions.VALUE_MAP;
-					}
-				return OutputOptions.VALUE_RAW;
-			}
-			else {
-				return OutputOptions.METADATA_ONLY;
-			}
-			
-		}
+		Iterator<ValueResult> results = instance.getBlockingStub().scan(buildRequest());
+		return Transformers.toRecords(results);
 		
 	}
-
 	
 }

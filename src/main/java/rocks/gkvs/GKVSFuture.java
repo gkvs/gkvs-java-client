@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 public class GKVSFuture<T> implements Future<T> {
 
@@ -72,6 +73,10 @@ public class GKVSFuture<T> implements Future<T> {
 		} catch (InterruptedException | ExecutionException | TimeoutException e) {
 			throw new GKVSException("future exception", e);
 		}
+	}
+	
+	public void addListener(Runnable listener) {
+		delegate.addListener(listener, MoreExecutors.directExecutor());	
 	}
 	
 	public void addListener(Runnable listener, Executor executor) {

@@ -17,22 +17,26 @@
  */
 package rocks.gkvs;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.google.common.collect.Iterators;
+
 public final class RecordCollector implements RecordObserver {
 
-	private final List<Record> list = new CopyOnWriteArrayList<>();
+	private final Queue<Record> collector = new ConcurrentLinkedQueue<>();
 	private final CountDownLatch done = new CountDownLatch(1);
 	
 	private final AtomicReference<Throwable> exception = new AtomicReference<>(null);
 	
 	@Override
 	public void onNext(Record record) {
-		list.add(record);
+		collector.add(record);
 	}
 	
 	@Override
@@ -79,6 +83,9 @@ public final class RecordCollector implements RecordObserver {
 		if (t != null) {
 			throw new GKVSException("result error", t);
 		}
+		
+		List<Record> list = new ArrayList<Record>(collector.size());
+		Iterators.addAll(list, collector.iterator());
 		return list;
 	}
 }
