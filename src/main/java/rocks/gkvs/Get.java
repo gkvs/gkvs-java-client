@@ -115,7 +115,7 @@ public final class Get {
 		
 	}
 	
-	public void async(final RecordObserver recordObserver) {
+	public void async(final GObserver<Record> recordObserver) {
 		
 		KeyOperation request = buildRequest();
 				
@@ -130,7 +130,7 @@ public final class Get {
 			
 		};
 		
-		instance.getAsyncStub().get(request, Transformers.observe(recordObserver, keyResolver));
+		instance.getAsyncStub().get(request, Transformers.observeRecords(recordObserver, keyResolver));
 	
 	}
 

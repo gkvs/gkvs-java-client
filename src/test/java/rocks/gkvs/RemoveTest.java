@@ -109,7 +109,7 @@ public class RemoveTest extends AbstractClientTest {
 	
 	private boolean remove(String key) {
 		
-		StatusCollector collector = new StatusCollector();
+		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
 		GKVS.Client.remove(TABLE, key).async(collector);
 		

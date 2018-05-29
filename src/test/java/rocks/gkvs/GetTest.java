@@ -62,7 +62,7 @@ public class GetTest extends AbstractClientTest {
 		
 		GKVS.Client.put(TABLE, key, "column", "value").sync();
 		
-		RecordCollector collector = new RecordCollector();
+		BlockingCollector<Record> collector = new BlockingCollector<Record>();
 		
 		GKVS.Client.get(TABLE, key).select("column").async(collector);
 		

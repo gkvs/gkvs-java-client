@@ -131,7 +131,7 @@ public final class Put {
 		
 	}
 	
-	public void async(final StatusObserver statusObserver) {
+	public void async(final GObserver<Status> statusObserver) {
 		
 		PutOperation request = buildRequest();
 		
@@ -146,7 +146,7 @@ public final class Put {
 			
 		};
 		
-		instance.getAsyncStub().put(request, Transformers.observe(statusObserver, keyResolver));
+		instance.getAsyncStub().put(request, Transformers.observeStatuses(statusObserver, keyResolver));
 	
 	}
 

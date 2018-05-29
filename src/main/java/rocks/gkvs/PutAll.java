@@ -80,9 +80,9 @@ public final class PutAll {
 	
 	public Iterable<Status> sync(Iterable<KeyValue> keyValues) {
 		
-		StatusCollector collector = new StatusCollector();
+		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
-		KeyValueObserver keyChannel = async(collector);
+		GObserver<KeyValue> keyChannel = async(collector);
 		
 		for (KeyValue keyValue : keyValues) {
 			keyChannel.onNext(keyValue);
@@ -93,7 +93,7 @@ public final class PutAll {
 		return collector.awaitUnchecked();
 	}
 	
-	public KeyValueObserver async(StatusObserver statusObserver) {
+	public GObserver<KeyValue> async(GObserver<Status> statusObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
@@ -104,9 +104,9 @@ public final class PutAll {
 			
 		};
 		
-		final StreamObserver<PutOperation> streamIn = instance.getAsyncStub().putAll(Transformers.observe(statusObserver, keyResolver));
+		final StreamObserver<PutOperation> streamIn = instance.getAsyncStub().putAll(Transformers.observeStatuses(statusObserver, keyResolver));
 		
-		return new KeyValueObserver() {
+		return new GObserver<KeyValue>() {
 
 			@Override
 			public void onNext(KeyValue keyValue) {

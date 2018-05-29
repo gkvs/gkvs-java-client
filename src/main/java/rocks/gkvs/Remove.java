@@ -102,7 +102,7 @@ public final class Remove {
 		
 	}
 	
-	public void async(final StatusObserver statusObserver) {
+	public void async(final GObserver<Status> statusObserver) {
 		
 		KeyOperation request = buildRequest();
 		
@@ -117,7 +117,7 @@ public final class Remove {
 			
 		};
 		
-		instance.getAsyncStub().remove(request, Transformers.observe(statusObserver, keyResolver));
+		instance.getAsyncStub().remove(request, Transformers.observeStatuses(statusObserver, keyResolver));
 	
 	}
 	

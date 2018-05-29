@@ -170,20 +170,20 @@ final class Transformers {
 		
 	}
 	
-	protected static StreamObserver<ValueResult> observe(RecordObserver recordObserver, KeyResolver keyResolver) {
+	protected static StreamObserver<ValueResult> observeRecords(GObserver<Record> recordObserver, KeyResolver keyResolver) {
 		return new StreamRecordObserverAdapter(recordObserver, keyResolver);
 	}
 	
-	protected static StreamObserver<StatusResult> observe(StatusObserver statusObserver, KeyResolver keyResolver) {
+	protected static StreamObserver<StatusResult> observeStatuses(GObserver<Status> statusObserver, KeyResolver keyResolver) {
 		return new StreamStatusObserverAdapter(statusObserver, keyResolver);
 	}
 	
 	protected static final class StreamRecordObserverAdapter implements StreamObserver<ValueResult> {
 
-		private final RecordObserver recordObserver;
+		private final GObserver<Record> recordObserver;
 		private final KeyResolver keyResolver;
 		
-		public StreamRecordObserverAdapter(RecordObserver recordObserver, KeyResolver keyResolver) {
+		public StreamRecordObserverAdapter(GObserver<Record> recordObserver, KeyResolver keyResolver) {
 			this.recordObserver = recordObserver;
 			this.keyResolver = keyResolver;
 		}
@@ -207,10 +207,10 @@ final class Transformers {
 	
 	protected static final class StreamStatusObserverAdapter implements StreamObserver<StatusResult> {
 
-		private final StatusObserver statusObserver;
+		private final GObserver<Status> statusObserver;
 		private final KeyResolver keyResolver;
 		
-		public StreamStatusObserverAdapter(StatusObserver statusObserver, KeyResolver keyResolver) {
+		public StreamStatusObserverAdapter(GObserver<Status> statusObserver, KeyResolver keyResolver) {
 			this.statusObserver = statusObserver;
 			this.keyResolver = keyResolver;
 		}
