@@ -71,7 +71,7 @@ public class MultiGetTest extends AbstractClientTest {
 
 		Set<Key> notFoundKeys = new HashSet<>(LOAD_KEYS);
 		
-		GFuture<Iterable<Record>> records = GKVS.Client.multiGet(LOAD_KEYS).async();
+		GenericFuture<Iterable<Record>> records = GKVS.Client.multiGet(LOAD_KEYS).async();
 		
 		for (Record rec : records.getUnchecked()) {
 			notFoundKeys.remove(rec.key().get());

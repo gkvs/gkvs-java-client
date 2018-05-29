@@ -56,7 +56,7 @@ public class GetAllCollectorTest extends AbstractClientTest {
 	public void testGetAllCollector() {
 	
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
-		GObserver<Key> keys = GKVS.Client.getAll().async(collector);
+		Observer<Key> keys = GKVS.Client.getAll().async(collector);
 		
 		for (Key key : LOAD_KEYS) {
 			keys.onNext(key);

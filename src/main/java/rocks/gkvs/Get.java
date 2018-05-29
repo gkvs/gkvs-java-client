@@ -107,15 +107,15 @@ public final class Get {
 		return Transformers.toRecord(key, result);
 	}
 	
-	public RecordFuture async() {
+	public GenericFuture<Record> async() {
 		
 		ListenableFuture<ValueResult> result = instance.getFutureStub().get(buildRequest());
 		
-		return new RecordFuture(Transformers.toRecord(key, result));
+		return new GenericFuture<Record>(Transformers.toRecord(key, result));
 		
 	}
 	
-	public void async(final GObserver<Record> recordObserver) {
+	public void async(final Observer<Record> recordObserver) {
 		
 		KeyOperation request = buildRequest();
 				

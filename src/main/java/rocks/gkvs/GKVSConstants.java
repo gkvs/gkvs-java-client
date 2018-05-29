@@ -31,5 +31,6 @@ public final class GKVSConstants {
 	public static volatile Charset MUTABLE_VALUE_CHARSET = StandardCharsets.UTF_8;
 	
 	public static volatile String DEFAULT_SINGLE_VALUE_COLUMN = "";
+
 	
 }

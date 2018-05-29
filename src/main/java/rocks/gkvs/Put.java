@@ -123,15 +123,15 @@ public final class Put {
 		return Transformers.toStatus(key, result);
 	}
 	
-	public StatusFuture async() {
+	public GenericFuture<Status> async() {
 		
 		ListenableFuture<StatusResult> result = instance.getFutureStub().put(buildRequest());
 		
-		return new StatusFuture(Transformers.toStatus(key, result));
+		return new GenericFuture<Status>(Transformers.toStatus(key, result));
 		
 	}
 	
-	public void async(final GObserver<Status> statusObserver) {
+	public void async(final Observer<Status> statusObserver) {
 		
 		PutOperation request = buildRequest();
 		

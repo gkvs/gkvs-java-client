@@ -15,24 +15,14 @@
  * limitations under the License.
  *
  */
-
 package rocks.gkvs;
 
-/**
- * Generic Exception for GKVS
- *
- */
-
-public class GKVSException extends RuntimeException {
-
-	private static final long serialVersionUID = 5573528917974940776L;
-
-	public GKVSException(String msg) {
-		super(msg);
-	}
-
-	public GKVSException(String msg, Throwable t) {
-		super(msg, t);
-	}
-
+public interface Observer<T> {
+	
+	void onNext(T item);
+	
+	void onError(Throwable t);
+	
+	void onCompleted();
+	
 }

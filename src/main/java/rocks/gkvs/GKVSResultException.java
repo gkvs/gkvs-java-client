@@ -21,7 +21,7 @@ package rocks.gkvs;
 import rocks.gkvs.protos.Status;
 
 
-public class GKVSResultException extends GKVSException {
+public class GKVSResultException extends GenericException {
 
 	private static final long serialVersionUID = -4698988155155482009L;
 	

@@ -82,7 +82,7 @@ public final class PutAll {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
-		GObserver<KeyValue> keyValueChannel = async(collector);
+		Observer<KeyValue> keyValueChannel = async(collector);
 		
 		for (KeyValue keyValue : keyValues) {
 			keyValueChannel.onNext(keyValue);
@@ -93,7 +93,7 @@ public final class PutAll {
 		return collector.awaitUnchecked();
 	}
 	
-	public GObserver<KeyValue> async(GObserver<Status> statusObserver) {
+	public Observer<KeyValue> async(Observer<Status> statusObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
@@ -106,7 +106,7 @@ public final class PutAll {
 		
 		final StreamObserver<PutOperation> streamIn = instance.getAsyncStub().putAll(Transformers.observeStatuses(statusObserver, keyResolver));
 		
-		return new GObserver<KeyValue>() {
+		return new Observer<KeyValue>() {
 
 			@Override
 			public void onNext(KeyValue keyValue) {

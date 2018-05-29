@@ -98,7 +98,7 @@ public final class GetAll {
 		
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
 		
-		GObserver<Key> keyChannel = async(collector);
+		Observer<Key> keyChannel = async(collector);
 		
 		for (Key key : keys) {
 			keyChannel.onNext(key);
@@ -109,7 +109,7 @@ public final class GetAll {
 		return collector.awaitUnchecked();
 	}
 	
-	public GObserver<Key> async(final GObserver<Record> recordObserver) {
+	public Observer<Key> async(final Observer<Record> recordObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
@@ -122,7 +122,7 @@ public final class GetAll {
 		
 		final StreamObserver<KeyOperation> streamOut = instance.getAsyncStub().getAll(Transformers.observeRecords(recordObserver, keyResolver));
 		
-		return new GObserver<Key>() {
+		return new Observer<Key>() {
 
 			@Override
 			public void onNext(Key key) {

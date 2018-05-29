@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.collect.Iterators;
 
-public class BlockingCollector<T> implements GObserver<T> {
+public class BlockingCollector<T> implements Observer<T> {
 
 	private final Queue<T> collector = new ConcurrentLinkedQueue<>();
 	private final CountDownLatch done = new CountDownLatch(1);
@@ -59,7 +59,7 @@ public class BlockingCollector<T> implements GObserver<T> {
 		try {
 			done.await();
 		} catch (InterruptedException e) {
-			throw new GKVSException("interrupted await", e);
+			throw new GenericException("interrupted await", e);
 		}
 		return result();
 	}
@@ -73,7 +73,7 @@ public class BlockingCollector<T> implements GObserver<T> {
 		try {
 			done.await(timeout, unit);
 		} catch (InterruptedException e) {
-			throw new GKVSException("interrupted await", e);
+			throw new GenericException("interrupted await", e);
 		}
 		return result();
 	}
@@ -81,7 +81,7 @@ public class BlockingCollector<T> implements GObserver<T> {
 	private List<T> result() {
 		Throwable t = exception.get();
 		if (t != null) {
-			throw new GKVSException("result error", t);
+			throw new GenericException("result error", t);
 		}
 		
 		List<T> list = new ArrayList<T>(collector.size());

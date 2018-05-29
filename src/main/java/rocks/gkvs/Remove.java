@@ -94,15 +94,15 @@ public final class Remove {
 		
 	}
 	
-	public StatusFuture async() {
+	public GenericFuture<Status> async() {
 		
 		ListenableFuture<StatusResult> result = instance.getFutureStub().remove(buildRequest());
 		
-		return new StatusFuture(Transformers.toStatus(key, result));
+		return new GenericFuture<Status>(Transformers.toStatus(key, result));
 		
 	}
 	
-	public void async(final GObserver<Status> statusObserver) {
+	public void async(final Observer<Status> statusObserver) {
 		
 		KeyOperation request = buildRequest();
 		

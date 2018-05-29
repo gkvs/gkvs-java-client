@@ -48,7 +48,7 @@ public class GetFutureTest extends AbstractClientTest {
 	public void testGetFuture() {
 		
 		final AtomicBoolean triggered = new AtomicBoolean(false);
-		RecordFuture future = GKVS.Client.get(KEY).async();
+		GenericFuture<Record> future = GKVS.Client.get(KEY).async();
 
 		future.addListener(new Runnable() {
 

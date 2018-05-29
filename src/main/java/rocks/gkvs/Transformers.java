@@ -94,6 +94,16 @@ final class Transformers {
 		
 	}
 	
+	protected enum NullKeyResolver implements KeyResolver {
+		
+		INS;
+		
+		public Key find(long requestId) {
+			return null;
+		}
+		
+	}
+	
 	protected static final class SimpleKeyRecordFn implements Function<ValueResult, Record> {
 
 		private final @Nullable Key requestKey;
@@ -170,20 +180,20 @@ final class Transformers {
 		
 	}
 	
-	protected static StreamObserver<ValueResult> observeRecords(GObserver<Record> recordObserver, KeyResolver keyResolver) {
+	protected static StreamObserver<ValueResult> observeRecords(Observer<Record> recordObserver, KeyResolver keyResolver) {
 		return new StreamRecordObserverAdapter(recordObserver, keyResolver);
 	}
 	
-	protected static StreamObserver<StatusResult> observeStatuses(GObserver<Status> statusObserver, KeyResolver keyResolver) {
+	protected static StreamObserver<StatusResult> observeStatuses(Observer<Status> statusObserver, KeyResolver keyResolver) {
 		return new StreamStatusObserverAdapter(statusObserver, keyResolver);
 	}
 	
 	protected static final class StreamRecordObserverAdapter implements StreamObserver<ValueResult> {
 
-		private final GObserver<Record> recordObserver;
+		private final Observer<Record> recordObserver;
 		private final KeyResolver keyResolver;
 		
-		public StreamRecordObserverAdapter(GObserver<Record> recordObserver, KeyResolver keyResolver) {
+		public StreamRecordObserverAdapter(Observer<Record> recordObserver, KeyResolver keyResolver) {
 			this.recordObserver = recordObserver;
 			this.keyResolver = keyResolver;
 		}
@@ -207,10 +217,10 @@ final class Transformers {
 	
 	protected static final class StreamStatusObserverAdapter implements StreamObserver<StatusResult> {
 
-		private final GObserver<Status> statusObserver;
+		private final Observer<Status> statusObserver;
 		private final KeyResolver keyResolver;
 		
-		public StreamStatusObserverAdapter(GObserver<Status> statusObserver, KeyResolver keyResolver) {
+		public StreamStatusObserverAdapter(Observer<Status> statusObserver, KeyResolver keyResolver) {
 			this.statusObserver = statusObserver;
 			this.keyResolver = keyResolver;
 		}

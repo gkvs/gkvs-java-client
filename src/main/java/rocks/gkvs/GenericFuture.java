@@ -26,11 +26,16 @@ import java.util.concurrent.TimeoutException;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-public class GFuture<T> implements Future<T> {
+/**
+ * Generic Future for GKVS
+ * 
+ */
+
+public class GenericFuture<T> implements Future<T> {
 
 	private final ListenableFuture<T> delegate; 
 	
-	protected GFuture(ListenableFuture<T> delegate) {
+	protected GenericFuture(ListenableFuture<T> delegate) {
 		this.delegate = delegate;
 	}
 	
@@ -58,7 +63,7 @@ public class GFuture<T> implements Future<T> {
 		try {
 			return delegate.get();
 		} catch (InterruptedException | ExecutionException e) {
-			throw new GKVSException("future exception", e);
+			throw new GenericException("future exception", e);
 		}
 	}
 
@@ -71,7 +76,7 @@ public class GFuture<T> implements Future<T> {
 		try {
 			return delegate.get(timeout, unit);
 		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			throw new GKVSException("future exception", e);
+			throw new GenericException("future exception", e);
 		}
 	}
 	

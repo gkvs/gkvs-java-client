@@ -21,6 +21,7 @@ package rocks.gkvs;
 import java.util.Iterator;
 
 import rocks.gkvs.ProtocolUtils.ValueType;
+import rocks.gkvs.Transformers.NullKeyResolver;
 import rocks.gkvs.protos.Bucket;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.ScanOperation;
@@ -137,6 +138,12 @@ public final class Scan {
 		
 		Iterator<ValueResult> results = instance.getBlockingStub().scan(buildRequest());
 		return Transformers.toRecords(results);
+		
+	}
+	
+	public void async(Observer<Record> recordObserver) {
+		
+		instance.getAsyncStub().scan(buildRequest(), Transformers.observeRecords(recordObserver, NullKeyResolver.INS));
 		
 	}
 	

@@ -73,7 +73,7 @@ public final class RecordFound implements Record {
 				return new NullableKey(Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
 			
 			default:
-				throw new GKVSException("unknown key type: " + protoKey);
+				throw new GenericException("unknown key type: " + protoKey);
 			}
 			
 		}

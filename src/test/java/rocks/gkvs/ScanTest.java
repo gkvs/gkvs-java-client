@@ -68,7 +68,7 @@ public class ScanTest extends AbstractClientTest {
 				notFoundKeys.remove(key);
 				//System.out.println("scan: " + rec);
 			}
-			catch(GKVSException e) {
+			catch(GenericException e) {
 				e.printStackTrace();
 			}
 		}
@@ -112,7 +112,7 @@ public class ScanTest extends AbstractClientTest {
 				String key = rec.key().getRecordKeyAsString();
 				set.add(key);
 			}
-			catch(GKVSException e) {
+			catch(GenericException e) {
 				e.printStackTrace();
 			}
 		}
@@ -121,25 +121,5 @@ public class ScanTest extends AbstractClientTest {
 		
 	}
 	
-	//@Test
-	public void cleanUp() {
-		
-		Iterator<Record> i = GKVS.Client.scan(TABLE)
-				.includeKey(true)
-				.includeValue(false)
-				.sync();
-		
-		while(i.hasNext()) {
-			
-			try {
-				GKVS.Client.remove(i.next().key().get()).sync();
-			}
-			catch(GKVSException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
 	
 }

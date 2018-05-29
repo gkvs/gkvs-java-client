@@ -62,7 +62,7 @@ public class GetAllAsyncTest extends AbstractClientTest {
 		final List<Record> list = new CopyOnWriteArrayList<>();
 
 		final CountDownLatch done = new CountDownLatch(1);
-		GObserver<Key> keys = GKVS.Client.getAll().async(new GObserver<Record>() {
+		Observer<Key> keys = GKVS.Client.getAll().async(new Observer<Record>() {
 			
 			@Override
 			public void onNext(Record record) {

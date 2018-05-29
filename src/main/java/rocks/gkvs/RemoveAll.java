@@ -87,7 +87,7 @@ public final class RemoveAll {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
-		GObserver<Key> keyChannel = async(collector);
+		Observer<Key> keyChannel = async(collector);
 		
 		for (Key key : keys) {
 			keyChannel.onNext(key);
@@ -98,7 +98,7 @@ public final class RemoveAll {
 		return collector.awaitUnchecked();
 	}
 	
-	public GObserver<Key> async(GObserver<Status> statusObserver) {
+	public Observer<Key> async(Observer<Status> statusObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
@@ -111,7 +111,7 @@ public final class RemoveAll {
 		
 		final StreamObserver<KeyOperation> streamIn = instance.getAsyncStub().removeAll(Transformers.observeStatuses(statusObserver, keyResolver));
 		
-		return new GObserver<Key>() {
+		return new Observer<Key>() {
 
 			@Override
 			public void onNext(Key key) {

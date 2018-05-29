@@ -15,14 +15,24 @@
  * limitations under the License.
  *
  */
+
 package rocks.gkvs;
 
-import com.google.common.util.concurrent.ListenableFuture;
+/**
+ * Generic Exception for GKVS
+ *
+ */
 
-public final class StatusFuture extends GFuture<Status> { 
+public class GenericException extends RuntimeException {
 
-	protected StatusFuture(ListenableFuture<Status> delegate) {
-		super(delegate);
+	private static final long serialVersionUID = 5573528917974940776L;
+
+	public GenericException(String msg) {
+		super(msg);
 	}
-	
+
+	public GenericException(String msg, Throwable t) {
+		super(msg, t);
+	}
+
 }
