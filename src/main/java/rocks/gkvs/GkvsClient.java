@@ -42,7 +42,7 @@ import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
+import io.netty.handler.ssl.SupportedCipherSuiteFilter;
 import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
@@ -338,14 +338,16 @@ public final class GkvsClient implements Closeable {
 
 	}
 	
-
 	private static SslContext buildSslContext(String gkvsKeys) {
 
 		SslContextBuilder builder = GrpcSslContexts.forClient();
 		builder.trustManager(getCertAuthFile(gkvsKeys));
 		
+		builder.ciphers(SslUtils.preferredCiphers(), SupportedCipherSuiteFilter.INSTANCE);
+		builder.sslProvider(SslUtils.getSslProvider(GkvsConstants.SSL_PROVIDER));
+		 
 		try {
-			return builder.sslProvider(SslProvider.OPENSSL).build();
+			return builder.build();
 		} catch (SSLException e) {
 			throw new GkvsException("ssl init fail", e);
 		}

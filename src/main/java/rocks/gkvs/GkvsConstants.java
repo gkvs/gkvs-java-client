@@ -49,5 +49,14 @@ public final class GkvsConstants {
 	
 	public static final int CLASSPATH_PREFIX_LENGTH = CLASSPATH_PREFIX.length();
 
+	public enum SslProviderLib {
+		
+		JDK,
+		OPENSSL,
+		OPENSSL_REFCNT;
+		
+	}
+	
+	public static volatile SslProviderLib SSL_PROVIDER = SslProviderLib.OPENSSL;
 	
 }
