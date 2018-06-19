@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class PerformanceTest extends AbstractClientTest {
 
-	private boolean enabled = Boolean.getBoolean("gkvs.tests.performance");
+	private boolean enabled = Boolean.getBoolean("perfTests");
 	
 	@Test
 	public void runTests() {

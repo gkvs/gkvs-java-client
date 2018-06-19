@@ -70,3 +70,8 @@ How to build regular simple jar
 ```
 mvn clean install
 ```
+
+How to run performance tests on build
+```
+mvn clean install -DperfTests=true
+```
