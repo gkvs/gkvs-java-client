@@ -86,7 +86,7 @@
 	                        <artifactSet>
 	                            <excludes>
 	                               <exclude>com.google.code.findbugs:jsr305</exclude>
-	                               <!-- <exclude>io.netty:netty-tcnative-boringssl-static</exclude> -->
+	                               <exclude>io.netty:netty-tcnative-boringssl-static</exclude>
 	                            </excludes>
 	                        </artifactSet>                            
                             <relocations>
@@ -101,6 +101,10 @@
                                 <relocation>
                                     <pattern>io</pattern>
                                     <shadedPattern>${project.groupId}.shaded.io</shadedPattern>
+				                    <excludes>
+				                      <exclude>io.netty.internal.tcnative.*</exclude>
+				                      <exclude>org.eclipse.jetty.alpn.*</exclude>
+				                    </excludes>                                    
                                 </relocation>                                
                             </relocations>
                             <transformers>
