@@ -30,6 +30,17 @@ import io.grpc.stub.StreamObserver;
 import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
 
+/**
+ * 
+ * Transformers
+ *
+ * Utils
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 final class Transformers {
 
 	private Transformers() {

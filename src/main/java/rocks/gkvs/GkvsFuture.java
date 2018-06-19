@@ -27,8 +27,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * Generic Future for GKVS
  * 
+ * GkvsFuture
+ *
+ * Extended future class for GKVS needs 
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ * @param <T>
  */
 
 public class GkvsFuture<T> implements Future<T> {

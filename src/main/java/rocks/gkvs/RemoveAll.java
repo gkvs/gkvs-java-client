@@ -24,6 +24,17 @@ import rocks.gkvs.protos.KeyOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 
+/**
+ * 
+ * RemoveAll
+ * 
+ * Operation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class RemoveAll {
 
 	private final GkvsClient instance;

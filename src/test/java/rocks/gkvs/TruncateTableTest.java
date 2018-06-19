@@ -23,6 +23,15 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
+/**
+ * 
+ * TruncateTableTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class TruncateTableTest extends AbstractClientTest {
 
 	@Test

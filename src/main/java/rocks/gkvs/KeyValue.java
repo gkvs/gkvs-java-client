@@ -21,27 +21,38 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 
+ * KeyValue
+ * 
+ * Each key-value has key and value / list of values
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class KeyValue {
 
 	private final Key key;
-	private final Iterable<Value> cells;
+	private final Iterable<Value> values;
 	
-	public KeyValue(Key key, Iterable<Value> cells) {
+	public KeyValue(Key key, Iterable<Value> vals) {
 		
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
 		}
 
-		if (cells == null) {
-			throw new IllegalArgumentException("cells is null");
+		if (vals == null) {
+			throw new IllegalArgumentException("vals is null");
 		}
 
 		this.key = key;
-		this.cells = cells;
+		this.values = vals;
 	}
 	
-	public static KeyValue of(Key key, Iterable<Value> cells) {
-		return new KeyValue(key, cells);
+	public static KeyValue of(Key key, Iterable<Value> vals) {
+		return new KeyValue(key, vals);
 	}
 	
 	public KeyValue(Key key, Value value) {
@@ -55,44 +66,44 @@ public final class KeyValue {
 		}
 
 		this.key = key;
-		this.cells = Collections.singleton(value);
+		this.values = Collections.singleton(value);
 	}
 	
 	public static KeyValue of(Key key, Value value) {
 		return new KeyValue(key, value);
 	}
 	
-	public KeyValue(Key key, Value... value) {
+	public KeyValue(Key key, Value... vals) {
 		
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
 		}
 
-		if (value == null) {
-			throw new IllegalArgumentException("value is null");
+		if (vals == null) {
+			throw new IllegalArgumentException("vals is null");
 		}
 
 		this.key = key;
 		
-		List<Value> list = new ArrayList<Value>(value.length);
-		for (Value v : value) {
+		List<Value> list = new ArrayList<Value>(vals.length);
+		for (Value v : vals) {
 			list.add(v);
 		}
 		
-		this.cells = list;
+		this.values = list;
 		
 	}
 	
-	public static KeyValue of(Key key, Value... value) {
-		return new KeyValue(key, value);
+	public static KeyValue of(Key key, Value... vals) {
+		return new KeyValue(key, vals);
 	}
 	
 	public Key key() {
 		return key;
 	}
 	
-	public Iterable<Value> cells() {
-		return cells;
+	public Iterable<Value> values() {
+		return values;
 	}
 
 	@Override

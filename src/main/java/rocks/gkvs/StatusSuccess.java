@@ -21,6 +21,17 @@ import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.StatusResult;
 
+/**
+ * 
+ * StatusSuccess
+ *
+ * Successful operation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class StatusSuccess implements Status {
 
 	private final @Nullable Key requestKey;

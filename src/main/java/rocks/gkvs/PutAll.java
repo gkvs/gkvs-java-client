@@ -23,6 +23,17 @@ import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
 
+/**
+ * 
+ * PutAll
+ * 
+ * Operation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class PutAll {
 
 	private final GkvsClient instance;
@@ -69,7 +80,7 @@ public final class PutAll {
 		builder.setKey(keyValue.key().toProto());
 		builder.setTtl(ttlSec);
 		
-		for (Value value : keyValue.cells()) {
+		for (Value value : keyValue.values()) {
 			builder.addValue(value.toProto());
 		}
 

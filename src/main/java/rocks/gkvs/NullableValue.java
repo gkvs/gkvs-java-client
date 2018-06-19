@@ -22,6 +22,17 @@ import java.io.OutputStream;
 
 import javax.annotation.Nullable;
 
+/**
+ * 
+ * NullableValue
+ * 
+ * Wrapper class on top of Value
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class NullableValue {
 
 	private final @Nullable Value value;

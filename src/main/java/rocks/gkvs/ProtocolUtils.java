@@ -22,6 +22,17 @@ import rocks.gkvs.protos.StatusCode;
 import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
 
+/**
+ * 
+ * ProtocolUtils
+ *
+ * Serialization utils
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 final class ProtocolUtils {
 
 	private ProtocolUtils() {

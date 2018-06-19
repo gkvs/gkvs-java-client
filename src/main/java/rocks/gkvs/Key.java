@@ -22,7 +22,14 @@ import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 
 /**
- * Immutable key definition
+ * 
+ * Key
+ * 
+ * Immutable GKVS key
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
  */
 
 public final class Key {

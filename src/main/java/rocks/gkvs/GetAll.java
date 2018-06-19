@@ -25,6 +25,17 @@ import rocks.gkvs.protos.OutputOptions;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 
+/**
+ * 
+ * GetAll
+ * 
+ * Operation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class GetAll {
 
 	private final GkvsClient instance;

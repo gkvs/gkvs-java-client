@@ -22,7 +22,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- *  GKVS singleton class is visible from scala 
+ * 
+ * Gkvs
+ * 
+ * Singleton class is visible from scala 
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
  */
 
 public enum Gkvs {

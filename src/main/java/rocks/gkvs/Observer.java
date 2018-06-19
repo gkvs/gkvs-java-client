@@ -17,6 +17,18 @@
  */
 package rocks.gkvs;
 
+/**
+ * 
+ * Observer
+ *
+ * Interface, used for async and sync communication between layers
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ * @param <T>
+ */
+
 public interface Observer<T> {
 	
 	void onNext(T item);

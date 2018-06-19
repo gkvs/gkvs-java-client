@@ -28,6 +28,17 @@ import javax.annotation.Nullable;
 import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
+/**
+ * 
+ * RecordFound
+ *
+ * Record implementation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class RecordFound implements Record {
 	
 	private final @Nullable Key requestKey;

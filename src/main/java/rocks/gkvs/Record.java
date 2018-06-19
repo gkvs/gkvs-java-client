@@ -21,6 +21,17 @@ package rocks.gkvs;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * Record
+ *
+ * Base interface for returned data entry for particular request
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public interface Record {
 
 	long requestId();

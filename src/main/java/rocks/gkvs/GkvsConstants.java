@@ -21,16 +21,33 @@ package rocks.gkvs;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * 
+ * GkvsConstants
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class GkvsConstants {
 
 	private GkvsConstants() {
 	}
 
+	public static volatile boolean USE_SINGLTON = true;
+	
 	public static volatile Charset MUTABLE_KEY_CHARSET = StandardCharsets.US_ASCII;
 	
 	public static volatile Charset MUTABLE_VALUE_CHARSET = StandardCharsets.UTF_8;
 	
 	public static volatile String DEFAULT_SINGLE_VALUE_COLUMN = "";
+	
+	public static volatile String GKVS_AUTH_CRT = "GkvsAuth.crt";
+	
+	public static final String CLASSPATH_PREFIX = "classpath:/";
+	
+	public static final int CLASSPATH_PREFIX_LENGTH = CLASSPATH_PREFIX.length();
 
 	
 }

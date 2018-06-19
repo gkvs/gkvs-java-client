@@ -26,6 +26,17 @@ import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
 
+/**
+ * 
+ * RecordNotFound
+ *
+ * This is not an error, it is the null record
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class RecordNotFound implements Record {
 
 	private final @Nullable Key requestKey;

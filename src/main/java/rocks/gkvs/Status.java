@@ -17,6 +17,17 @@
  */
 package rocks.gkvs;
 
+/**
+ * 
+ * Status
+ * 
+ * Base interface for all responses that has a status
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public interface Status {
 
 	long requestId();

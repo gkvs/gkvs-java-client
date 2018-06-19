@@ -18,6 +18,17 @@
 
 package rocks.gkvs;
 
+/**
+ * 
+ * ResultException
+ * 
+ * Exception happened if server returned an error
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class ResultException extends GkvsException {
 
 	private static final long serialVersionUID = -4698988155155482009L;

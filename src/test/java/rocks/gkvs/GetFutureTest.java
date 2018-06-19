@@ -25,6 +25,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ * GetFutureTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class GetFutureTest extends AbstractClientTest {
 
 	private Key KEY = Key.raw(TABLE, UUID.randomUUID().toString());

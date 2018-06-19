@@ -48,13 +48,19 @@ import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
 
-public final class GkvsClient implements Closeable {
+/**
+ * 
+ * GkvsClient
+ *
+ * Instance of the GKVS
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
 
-	private static final String GKVS_AUTH_CRT = "GkvsAuth.crt";
-	public static final String CLASSPATH_PREFIX = "classpath:/";
-	public static final int CLASSPATH_PREFIX_LENGTH = CLASSPATH_PREFIX.length();
+public final class GkvsClient implements Closeable {
 	
-	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
 	private static volatile GkvsClient defaultInstance = null;
 	
 	private final ManagedChannel channel;
@@ -117,7 +123,7 @@ public final class GkvsClient implements Closeable {
 			keys = System.getenv("GKVS_KEYS");
 		}
 		if (keys == null) {
-			keys = CLASSPATH_PREFIX;
+			keys = GkvsConstants.CLASSPATH_PREFIX;
 		}
 		return new GkvsClient(host, port, keys);
 	}
@@ -136,8 +142,8 @@ public final class GkvsClient implements Closeable {
 	}
 	
 	public static GkvsClient getDefaultInstance() {
-		if (NO_SINGLTON) {
-			throw new IllegalStateException("gKVS singleton is not allowed");
+		if (!GkvsConstants.USE_SINGLTON) {
+			throw new IllegalStateException("GKVS singleton is not allowed");
 		}
 		if (defaultInstance == null) {
 			synchronized (Gkvs.class) {
@@ -316,10 +322,10 @@ public final class GkvsClient implements Closeable {
 	
 	private static File getCertAuthFile(String gkvsKeys) {
 		
-		if (gkvsKeys.startsWith(CLASSPATH_PREFIX)) {
+		if (gkvsKeys.startsWith(GkvsConstants.CLASSPATH_PREFIX)) {
 			
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			URL url = classLoader.getResource(gkvsKeys.substring(CLASSPATH_PREFIX_LENGTH) + GKVS_AUTH_CRT);
+			URL url = classLoader.getResource(gkvsKeys.substring(GkvsConstants.CLASSPATH_PREFIX_LENGTH) + GkvsConstants.GKVS_AUTH_CRT);
 			if (url == null) {
 				throw new IllegalArgumentException("GkvsAuth.crt resource not found in " + gkvsKeys);
 			}
@@ -327,7 +333,7 @@ public final class GkvsClient implements Closeable {
 			return new File(url.getPath());
 		}
 		else {
-			return new File(gkvsKeys + File.separator + GKVS_AUTH_CRT);
+			return new File(gkvsKeys + File.separator + GkvsConstants.GKVS_AUTH_CRT);
 		}
 
 	}

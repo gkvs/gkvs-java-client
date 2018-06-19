@@ -19,6 +19,17 @@ package rocks.gkvs;
 
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * 
+ * Observers
+ *
+ * Utils
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class Observers {
 
 	private Observers() {		

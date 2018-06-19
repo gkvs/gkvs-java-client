@@ -24,6 +24,15 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * 
+ * RemoveTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class RemoveTest extends AbstractClientTest {
 	
 	

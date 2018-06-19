@@ -27,7 +27,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
+/**
+ * 
+ * GetAllTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
 
 public class GetAllTest extends AbstractClientTest {
 

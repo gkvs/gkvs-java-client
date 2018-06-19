@@ -29,7 +29,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
+/**
+ * 
+ * GetAllAsyncTest
+ *
+ * Load keys 
+ * Gets all keys
+ * Remove keys
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
 
 public class GetAllAsyncTest extends AbstractClientTest {
 

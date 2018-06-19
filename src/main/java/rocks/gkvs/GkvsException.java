@@ -19,7 +19,13 @@
 package rocks.gkvs;
 
 /**
- * Generic Exception for GKVS
+ * 
+ * GkvsException
+ * 
+ * Generic Runtime Exception for GKVS
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
  *
  */
 

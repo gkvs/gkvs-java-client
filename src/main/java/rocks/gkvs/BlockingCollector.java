@@ -27,6 +27,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.collect.Iterators;
 
+/**
+ * 
+ * BlockingCollector
+ *
+ * Util class to collect results
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ * @param <T>
+ */
+
 public class BlockingCollector<T> implements Observer<T> {
 
 	private final Queue<T> collector = new ConcurrentLinkedQueue<>();

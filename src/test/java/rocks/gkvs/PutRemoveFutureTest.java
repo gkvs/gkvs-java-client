@@ -22,7 +22,14 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
-
+/**
+ * 
+ * PutRemoveFutureTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
 
 public class PutRemoveFutureTest extends AbstractClientTest {
 

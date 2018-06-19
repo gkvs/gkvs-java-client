@@ -18,6 +18,18 @@
 
 package rocks.gkvs;
 
+/**
+ * 
+ * KeyType
+ *
+ * GKVS key could be raw or hash. Both types are supported.
+ * Hash is more compact and safe, and derived from the raw key.
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public enum KeyType {
 	RAW, DIGEST;
 }

@@ -19,6 +19,17 @@ package rocks.gkvs;
 
 import javax.annotation.Nullable;
 
+/**
+ * 
+ * NullableKey
+ *
+ * Wrapper class on top of Key
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class NullableKey {
 
 	private final @Nullable Key key;

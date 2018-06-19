@@ -22,6 +22,17 @@ import java.io.OutputStream;
 
 import com.google.protobuf.ByteString;
 
+/**
+ * 
+ * Value
+ *
+ * Cell class
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class Value {
 
 	private final String column;

@@ -26,6 +26,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ * MultiGetSelectTest
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class MultiGetSelectTest extends AbstractClientTest {
 
 	private final Set<Key> LOAD_KEYS = new HashSet<>();

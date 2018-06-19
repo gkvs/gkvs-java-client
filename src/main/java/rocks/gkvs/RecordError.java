@@ -24,6 +24,17 @@ import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
 
+/**
+ * 
+ * RecordError
+ *
+ * In case of returned error instead of Record
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class RecordError implements Record {
 
 	private final @Nullable Key requestKey;

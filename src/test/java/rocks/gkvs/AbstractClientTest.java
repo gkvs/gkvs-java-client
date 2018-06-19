@@ -17,29 +17,25 @@
  */
 package rocks.gkvs;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import com.google.common.util.concurrent.MoreExecutors;
+
+/**
+ * 
+ * AbstractClientTest
+ *
+ * Defines common variables for tests
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
 
 public abstract class AbstractClientTest {
 
 	protected String TABLE = System.getProperty("gkvs.test.table", "TEST");
 
-	protected static ExecutorService executor;
+	protected static Executor executor = MoreExecutors.directExecutor();
 	
-	@BeforeClass
-	public static void setupClass() {
-		
-		executor = Executors.newCachedThreadPool();
-		
-	}
-	
-	@AfterClass
-	public static void teardownClass() {
-				
-		executor.shutdownNow();
-		
-	}
 }

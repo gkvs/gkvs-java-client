@@ -27,6 +27,17 @@ import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusResult;
 
+/**
+ * 
+ * Put
+ * 
+ * Operation
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class Put {
 
 	private final GkvsClient instance;

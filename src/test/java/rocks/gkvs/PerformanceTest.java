@@ -4,6 +4,17 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+/**
+ * 
+ * PerformanceTest
+ * 
+ * To enable performance tests build with -DperfTests=true param
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public class PerformanceTest extends AbstractClientTest {
 
 	private boolean enabled = Boolean.getBoolean("perfTests");

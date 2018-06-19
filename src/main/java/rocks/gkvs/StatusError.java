@@ -21,6 +21,15 @@ import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.StatusResult;
 
+/**
+ * 
+ * StatusError
+ *
+ * @author Alex Shvid
+ * @date Jun 18, 2018 
+ *
+ */
+
 public final class StatusError implements Status {
 
 	private final @Nullable Key requestKey;
