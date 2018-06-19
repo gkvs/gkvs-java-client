@@ -102,9 +102,20 @@ public final class Get {
 	
 	public Record sync() {
 		
+		try {
+			return doSync();
+		}
+		catch(RuntimeException e) {
+			throw new GkvsException("sync fail " + this, e);
+		}
+	}
+	
+	private Record doSync() {
+		
 		ValueResult result = instance.getBlockingStub().get(buildRequest());
 		
 		return Transformers.toRecord(key, result);
+		
 	}
 	
 	public GkvsFuture<Record> async() {
@@ -132,6 +143,11 @@ public final class Get {
 		
 		instance.getAsyncStub().get(request, Transformers.observeRecords(recordObserver, keyResolver));
 	
+	}
+
+	@Override
+	public String toString() {
+		return "Get " + key;
 	}
 
 	

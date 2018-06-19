@@ -88,6 +88,17 @@ public final class Remove {
 	
 	public Status sync() {
 		
+		try {
+			return doSync();
+		}
+		catch(RuntimeException e) {
+			throw new GkvsException("sync fail " + this, e);
+		}
+		
+	}
+	
+	private Status doSync() {
+		
 		StatusResult result = instance.getBlockingStub().remove(buildRequest());
 		
 		return Transformers.toStatus(key, result);
@@ -119,6 +130,11 @@ public final class Remove {
 		
 		instance.getAsyncStub().remove(request, Transformers.observeStatuses(statusObserver, keyResolver));
 	
+	}
+
+	@Override
+	public String toString() {
+		return "Remove " + key;
 	}
 	
 }

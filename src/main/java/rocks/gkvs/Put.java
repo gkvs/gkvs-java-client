@@ -118,9 +118,21 @@ public final class Put {
 
 	public Status sync() {
 		
+		try {
+			return doSync();
+		}
+		catch(RuntimeException e) {
+			throw new GkvsException("sync fail " + this, e);
+		}
+		
+	}
+	
+	private Status doSync() {
+		
 		final StatusResult result = instance.getBlockingStub().put(buildRequest());
 		
 		return Transformers.toStatus(key, result);
+		
 	}
 	
 	public GkvsFuture<Status> async() {
@@ -150,6 +162,10 @@ public final class Put {
 	
 	}
 
+	@Override
+	public String toString() {
+		return "Put " + key;
+	}
 
 	
 }

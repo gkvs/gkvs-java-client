@@ -133,5 +133,10 @@ public final class RemoveAll {
 		};
 		
 	}
+
+	@Override
+	public String toString() {
+		return "RemoveAll";
+	}
 	
 }

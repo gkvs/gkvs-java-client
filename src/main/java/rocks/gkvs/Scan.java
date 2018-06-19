@@ -146,5 +146,10 @@ public final class Scan {
 		instance.getAsyncStub().scan(buildRequest(), Transformers.observeRecords(recordObserver, NullKeyResolver.INS));
 		
 	}
+
+	@Override
+	public String toString() {
+		return "Scan [tableName=" + tableName + "]";
+	}
 	
 }

@@ -19,8 +19,10 @@
 package rocks.gkvs;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -28,12 +30,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nullable;
+import javax.net.ssl.SSLException;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NegotiationType;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
@@ -41,6 +50,10 @@ import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
 
 public final class GkvsClient implements Closeable {
 
+	private static final String GKVS_AUTH_CRT = "GkvsAuth.crt";
+	public static final String CLASSPATH_PREFIX = "classpath:/";
+	public static final int CLASSPATH_PREFIX_LENGTH = CLASSPATH_PREFIX.length();
+	
 	private static final boolean NO_SINGLTON = Boolean.getBoolean("gkvs.no_singleton"); 
 	private static volatile GkvsClient defaultInstance = null;
 	
@@ -96,11 +109,23 @@ public final class GkvsClient implements Closeable {
 		catch(NumberFormatException e) {
 			throw new IllegalStateException("unable parse gkvs.port property", e);
 		}
-		return new GkvsClient(host, port);
+		String keys = props.getProperty("gkvs.keys");
+		if (keys == null) {
+			keys = System.getProperty("GKVS_KEYS");			
+		}
+		if (keys == null) {
+			keys = System.getenv("GKVS_KEYS");
+		}
+		if (keys == null) {
+			keys = CLASSPATH_PREFIX;
+		}
+		return new GkvsClient(host, port, keys);
 	}
 	
-	public GkvsClient(String host, int port) {
-		this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
+	public GkvsClient(String host, int port, String keys) {
+		this(NettyChannelBuilder.forAddress(host, port)
+			.negotiationType(NegotiationType.TLS)
+            .sslContext(buildSslContext(keys)));
 	}
 	
 	public GkvsClient(ManagedChannelBuilder<?> channelBuilder) {
@@ -287,6 +312,38 @@ public final class GkvsClient implements Closeable {
 	
 	public Scan scan(String tableName) {
 		return new Scan(this).table(tableName);
+	}
+	
+	private static File getCertAuthFile(String gkvsKeys) {
+		
+		if (gkvsKeys.startsWith(CLASSPATH_PREFIX)) {
+			
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			URL url = classLoader.getResource(gkvsKeys.substring(CLASSPATH_PREFIX_LENGTH) + GKVS_AUTH_CRT);
+			if (url == null) {
+				throw new IllegalArgumentException("GkvsAuth.crt resource not found in " + gkvsKeys);
+			}
+			
+			return new File(url.getPath());
+		}
+		else {
+			return new File(gkvsKeys + File.separator + GKVS_AUTH_CRT);
+		}
+
+	}
+	
+
+	private static SslContext buildSslContext(String gkvsKeys) {
+
+		SslContextBuilder builder = GrpcSslContexts.forClient();
+		builder.trustManager(getCertAuthFile(gkvsKeys));
+		
+		try {
+			return builder.sslProvider(SslProvider.OPENSSL).build();
+		} catch (SSLException e) {
+			throw new GkvsException("ssl init fail", e);
+		}
+		
 	}
 	
 }

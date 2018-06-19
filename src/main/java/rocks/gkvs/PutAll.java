@@ -128,5 +128,10 @@ public final class PutAll {
 		};
 		
 	}
+
+	@Override
+	public String toString() {
+		return "PutAll";
+	}
 	
 }

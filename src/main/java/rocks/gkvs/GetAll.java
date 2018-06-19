@@ -143,5 +143,10 @@ public final class GetAll {
 			
 		};
 	}
+
+	@Override
+	public String toString() {
+		return "GetAll";
+	}
 	
 }

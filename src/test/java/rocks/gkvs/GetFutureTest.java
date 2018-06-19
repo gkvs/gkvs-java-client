@@ -57,7 +57,7 @@ public class GetFutureTest extends AbstractClientTest {
 				triggered.set(true);
 			}
 			
-		}, executor);
+		});
 		
 		Record rec = future.getUnchecked();
 		
