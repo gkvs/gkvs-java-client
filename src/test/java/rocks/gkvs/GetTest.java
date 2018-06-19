@@ -74,20 +74,5 @@ public class GetTest extends AbstractClientTest {
 		Gkvs.Client.remove(TABLE, key).sync();
 	}
 	
-	//@Test
-	public void testPerformanceGet() {
-	
-		long t0 = System.currentTimeMillis();
-		
-		for (int i = 0; i != 10000; ++i) {
-			Gkvs.Client.get(TABLE, UUID.randomUUID().toString()).sync().value();
-		}
-		
-		long diff = System.currentTimeMillis() - t0;
-		
-		System.out.println("10000 get requests in " + diff + " milliseconds");
-	}
-	
-	
 	
 }
