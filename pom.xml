@@ -86,7 +86,7 @@
 	                        <artifactSet>
 	                            <excludes>
 	                               <exclude>com.google.code.findbugs:jsr305</exclude>
-	                               <exclude>io.netty:netty-tcnative-boringssl-static</exclude>
+	                               <!-- <exclude>io.netty:netty-tcnative-boringssl-static</exclude> -->
 	                            </excludes>
 	                        </artifactSet>                            
                             <relocations>
