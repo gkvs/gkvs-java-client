@@ -17,10 +17,6 @@
  */
 package rocks.gkvs;
 
-import java.util.concurrent.Executor;
-
-import com.google.common.util.concurrent.MoreExecutors;
-
 /**
  * 
  * AbstractClientTest
@@ -34,8 +30,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 public abstract class AbstractClientTest {
 
-	protected String TABLE = System.getProperty("gkvs.test.table", "TEST");
-
-	protected static Executor executor = MoreExecutors.directExecutor();
+	protected String TABLE = System.getProperty("testTable", "TEST");
 	
 }
