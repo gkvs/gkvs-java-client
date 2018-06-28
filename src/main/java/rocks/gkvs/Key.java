@@ -34,14 +34,14 @@ import com.google.protobuf.ByteString;
 
 public final class Key {
 
-	private final String tableName;
+	private final String storeName;
 	private final KeyType recordKeyType;
 	private final ByteString recordKey;
 
-	public Key(String tableName, KeyType recordKeyType, ByteString recordKey) {
+	public Key(String storeName, KeyType recordKeyType, ByteString recordKey) {
 		
-		if (tableName == null) {
-			throw new IllegalArgumentException("tableName is null");
+		if (storeName == null) {
+			throw new IllegalArgumentException("storeName is null");
 		}		
 
 		if (recordKeyType == null) {
@@ -52,13 +52,13 @@ public final class Key {
 			throw new IllegalArgumentException("recordKey is null");
 		}		
 
-		this.tableName = tableName;
+		this.storeName = storeName;
 		this.recordKeyType = recordKeyType;
 		this.recordKey = recordKey;
 	}
 
-	public String getTableName() {
-		return tableName;
+	public String getStoreName() {
+		return storeName;
 	}
 
 	public KeyType getRecordKeyType() {
@@ -85,21 +85,21 @@ public final class Key {
 		return BaseEncoding.base64().encode(recordKey.toByteArray());
 	}
 	
-	public static Key raw(String tableName, String recordKey) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey, GkvsConstants.MUTABLE_KEY_CHARSET));
+	public static Key raw(String storeName, String recordKey) {
+		return new Key(storeName, KeyType.RAW, ByteString.copyFrom(recordKey, GkvsConstants.MUTABLE_KEY_CHARSET));
 	}
 
-	public static Key raw(String tableName, byte[] recordKey) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey));
+	public static Key raw(String storeName, byte[] recordKey) {
+		return new Key(storeName, KeyType.RAW, ByteString.copyFrom(recordKey));
 	}
 
-	public static Key digest(String tableName, byte[] recordKeyDigest) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKeyDigest));
+	public static Key digest(String storeName, byte[] recordKeyDigest) {
+		return new Key(storeName, KeyType.RAW, ByteString.copyFrom(recordKeyDigest));
 	}
 
 	protected rocks.gkvs.protos.Key toProto() {
 		rocks.gkvs.protos.Key.Builder b = rocks.gkvs.protos.Key.newBuilder();
-		b.setTableName(tableName);
+		b.setStoreName(storeName);
 		switch (recordKeyType) {
 		case RAW:
 			b.setRaw(recordKey);
@@ -117,7 +117,7 @@ public final class Key {
 		int result = 1;
 		result = prime * result + ((recordKey == null) ? 0 : recordKey.hashCode());
 		result = prime * result + ((recordKeyType == null) ? 0 : recordKeyType.hashCode());
-		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
+		result = prime * result + ((storeName == null) ? 0 : storeName.hashCode());
 		return result;
 	}
 
@@ -137,10 +137,10 @@ public final class Key {
 			return false;
 		if (recordKeyType != other.recordKeyType)
 			return false;
-		if (tableName == null) {
-			if (other.tableName != null)
+		if (storeName == null) {
+			if (other.storeName != null)
 				return false;
-		} else if (!tableName.equals(other.tableName))
+		} else if (!storeName.equals(other.storeName))
 			return false;
 		return true;
 	}
@@ -148,10 +148,10 @@ public final class Key {
 	@Override
 	public String toString() {
 		if (isPrintableKey()) {
-			return "Key [" + tableName + ":" + recordKeyType.name() + ":" + getRecordKeyString() + "]";
+			return "Key [" + storeName + ":" + recordKeyType.name() + ":" + getRecordKeyString() + "]";
 		}
 		else {
-			return "Key [" + tableName + ":" + recordKeyType.name() + ":BASE64:" + getRecordKeyBase64String() + "]";
+			return "Key [" + storeName + ":" + recordKeyType.name() + ":BASE64:" + getRecordKeyBase64String() + "]";
 		}
 	}
 

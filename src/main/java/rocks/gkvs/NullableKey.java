@@ -38,19 +38,16 @@ public final class NullableKey {
 		this.key = key;
 	}
 	
-	public boolean empty() {
+	public boolean isNull() {
 		return key == null;
 	}
 	
 	public Key get() {
-		if (key == null) {
-			throw new GkvsException("key is null");
-		}
 		return key;
 	}
 	
 	public String getTableName() {
-		return key != null ? key.getTableName() : null;
+		return key != null ? key.getStoreName() : null;
 	}
 
 	public KeyType getRecordKeyType() {

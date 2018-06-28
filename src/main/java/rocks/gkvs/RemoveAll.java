@@ -41,7 +41,6 @@ public final class RemoveAll {
 	
 	private Select.Builder selectOrNull;
 	private int timeoutMls;
-	private long pit;
 	
 	public RemoveAll(GkvsClient instance) {
 		this.instance = instance;
@@ -64,11 +63,6 @@ public final class RemoveAll {
 		this.timeoutMls = timeoutMls;
 		return this;
 	}
-	
-	public RemoveAll withPit(long pit) {
-		this.pit = pit;
-		return this;
-	}
 
 	private KeyOperation buildRequest(Key key) {
 		
@@ -81,7 +75,6 @@ public final class RemoveAll {
 		RequestOptions.Builder options = RequestOptions.newBuilder();
 		options.setRequestId(instance.nextRequestId());
 		options.setTimeout(timeoutMls);
-		options.setPit(pit);
 		
 		builder.setOptions(options);
 		

@@ -26,6 +26,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import rocks.gkvs.value.Table;
+
 /**
  * 
  * MultiGetSelectTest
@@ -43,9 +45,12 @@ public class MultiGetSelectTest extends AbstractClientTest {
 	public void setup() {
 		
 		for (int i = 0; i != 10; ++i) {
-			Key key = Key.raw(TABLE, UUID.randomUUID().toString());
+			Key key = Key.raw(STORE, UUID.randomUUID().toString());
 			
-			Gkvs.Client.put(key, Value.of("col", "MultiGetSelectTest")).sync();
+			Table tbl = new Table();
+			tbl.put("col", "MultiGetSelectTest");
+			
+			Gkvs.Client.put(key, tbl).sync();
 			LOAD_KEYS.add(key);
 		}
 		

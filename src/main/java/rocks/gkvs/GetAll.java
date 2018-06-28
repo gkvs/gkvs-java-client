@@ -41,7 +41,6 @@ public final class GetAll {
 	private final GkvsClient instance;
 	
 	private int timeoutMls;
-	private long pit;
 	
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
@@ -68,11 +67,6 @@ public final class GetAll {
 		return this;
 	}
 	
-	public GetAll withPit(long pit) {
-		this.pit = pit;
-		return this;
-	}
-	
 	public GetAll metadataOnly() {
 		this.metadataOnly = true;
 		return this;
@@ -85,7 +79,6 @@ public final class GetAll {
 		RequestOptions.Builder options = RequestOptions.newBuilder();
 		options.setRequestId(instance.nextRequestId());
 		options.setTimeout(timeoutMls);
-		options.setPit(pit);
 		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());

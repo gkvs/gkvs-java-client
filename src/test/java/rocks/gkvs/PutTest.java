@@ -17,11 +17,13 @@
  */
 package rocks.gkvs;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import rocks.gkvs.value.Str;
+import rocks.gkvs.value.Table;
 
 /**
  * 
@@ -34,29 +36,31 @@ import org.junit.Test;
 
 public class PutTest extends AbstractClientTest {
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=GkvsException.class)
 	public void testPutNull() {
 		
 		/**
 		 * NULL values are not allowed
 		 */
 		
-		Gkvs.Client.put(TABLE, UUID.randomUUID().toString(), (String) null).sync();
+		Gkvs.Client.put(STORE, "key", null).sync();
 	}
 	
 	@Test
-	public void testPutGetRemove() {
+	public void testPutGetRemove() throws Exception {
 		
 		String key = UUID.randomUUID().toString();
-		String value = "org";
 		
-		Gkvs.Client.put(TABLE, key, value).sync();
+		Table tbl = new Table();
+		tbl.put("field", "value");
 		
-		String actual = Gkvs.Client.get(TABLE, key).sync().value().string();
+		Gkvs.Client.put(STORE, key, tbl).sync().updated();
+		
+		Table actual = Gkvs.Client.get(STORE, key).sync().value().asTable();
 
-		Assert.assertEquals(value, actual);
+		Assert.assertEquals("value", actual.get("field").asString());
 		
-		Gkvs.Client.remove(TABLE, key);
+		Gkvs.Client.remove(STORE, key);
 		
 	}
 	
@@ -64,32 +68,36 @@ public class PutTest extends AbstractClientTest {
 	public void testCompareAndPut() {
 		
 		String key = UUID.randomUUID().toString();
-		String value = "org";
-		String replaceValue = "replaced";
 		
+		Table tbl = new Table();
+		tbl.put("field", "org");
 		
-		Gkvs.Client.put(TABLE, key, value).sync();
+		Gkvs.Client.put(STORE, key, tbl).sync();
 		
-		Record record = Gkvs.Client.get(TABLE, key).sync();
+		Record record = Gkvs.Client.get(STORE, key).sync();
+		Table first = record.value().asTable();
+		Assert.assertEquals("org", first.getStr("field").asString());
 		
-		Put put = Gkvs.Client.put(TABLE, key, replaceValue);
-		put.compareAndPut(0).sync();
-		
-		//System.out.println("result = " + put.result());
-		
+		Table replaceTbl = new Table();
+		replaceTbl.put("field", "replace");
+			
 		// try with 0 version
-		Assert.assertFalse(Gkvs.Client.put(TABLE, key, replaceValue).compareAndPut(0).sync().updated());
+		boolean updated = Gkvs.Client.compareAndPut(STORE, key, replaceTbl, 0).sync().updated();
+		Assert.assertFalse(updated);
 		
 		// try with unknown version
-		Assert.assertFalse(Gkvs.Client.put(TABLE, key, replaceValue).compareAndPut(435345234).sync().updated());
+		updated = Gkvs.Client.compareAndPut(STORE, key, replaceTbl, 435345234).sync().updated();
+		Assert.assertFalse(updated);
 		
 		// try with valid version
-		Assert.assertTrue(Gkvs.Client.put(TABLE, key, replaceValue).compareAndPut(record.version()).sync().updated());
+		updated = Gkvs.Client.compareAndPut(STORE, key, replaceTbl, record.version()).sync().updated();
+		Assert.assertTrue(updated);
 		
 		// check
-		record = Gkvs.Client.get(TABLE, key).sync();
+		String actualValue = Gkvs.Client.get(STORE, key).sync().value().asTable().getStr("field").asString();
 		
-		Assert.assertEquals(replaceValue, record.value().string());
+		Assert.assertEquals("replace", actualValue);
+		
 	}
 	
 	@Test
@@ -99,32 +107,34 @@ public class PutTest extends AbstractClientTest {
 		String column = "col";
 		String value = "org";
 		
-		Gkvs.Client.put(TABLE, key, column, value).sync();
+		Table tbl = new Table();
+		tbl.put(column, value);
 		
-		Record record = Gkvs.Client.get(TABLE, key).sync();
+		Gkvs.Client.put(STORE, key, tbl).sync();
+		
+		Record record = Gkvs.Client.get(STORE, key).sync();
 		Assert.assertTrue(record.exists());
 		
-		Map<String, Value> values = record.valueMap();
+		Table actualTbl = record.value().asTable();
 		
-		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(value, values.get(column).string());
+		Assert.assertEquals(1, actualTbl.size());
+		Assert.assertEquals(value, actualTbl.getStr(column).asString());
 		
-		Gkvs.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(STORE, key).sync();
 	}
 	
 	@Test
 	public void testPutIfAbsent() {
 	
-		
 		String key = UUID.randomUUID().toString();
 		
-		Assert.assertTrue(Gkvs.Client.put(TABLE, key, "first").compareAndPut(0).async().getUnchecked().updated());
+		Assert.assertTrue(Gkvs.Client.compareAndPut(STORE, key, new Str("first"), 0).async().getUnchecked().updated());
 		
-		Assert.assertEquals("first", Gkvs.Client.get(TABLE, key).async().getUnchecked().value().string());
+		Assert.assertEquals("first", Gkvs.Client.get(STORE, key).async().getUnchecked().value().asStr().asString());
 		
-		Assert.assertFalse(Gkvs.Client.put(TABLE, key, "second").compareAndPut(0).async().getUnchecked().updated());
+		Assert.assertFalse(Gkvs.Client.compareAndPut(STORE, key, new Str("second"), 0).async().getUnchecked().updated());
 		
-		Gkvs.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(STORE, key).sync();
 		
 	}
 	
@@ -133,9 +143,9 @@ public class PutTest extends AbstractClientTest {
 		
 		String key = UUID.randomUUID().toString();
 		
-		Gkvs.Client.put(TABLE, key, "value").withTtl(100).sync();
+		Gkvs.Client.put(STORE, key, new Str("value")).withTtl(100).sync();
 		
-		Record rec = Gkvs.Client.get(TABLE, key).metadataOnly().sync();
+		Record rec = Gkvs.Client.get(STORE, key).metadataOnly().sync();
 		
 		Assert.assertTrue(rec.ttl() > 0);
 		

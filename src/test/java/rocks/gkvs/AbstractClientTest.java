@@ -30,6 +30,6 @@ package rocks.gkvs;
 
 public abstract class AbstractClientTest {
 
-	protected String TABLE = System.getProperty("testTable", "TEST");
+	protected String STORE = System.getProperty("testStore", "TEST");
 	
 }

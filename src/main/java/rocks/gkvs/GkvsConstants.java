@@ -41,8 +41,6 @@ public final class GkvsConstants {
 	
 	public static volatile Charset MUTABLE_VALUE_CHARSET = StandardCharsets.UTF_8;
 	
-	public static volatile String DEFAULT_SINGLE_VALUE_COLUMN = "";
-	
 	public static volatile String GKVS_AUTH_CRT = "GkvsAuth.crt";
 	
 	public static final String CLASSPATH_PREFIX = "classpath:/";

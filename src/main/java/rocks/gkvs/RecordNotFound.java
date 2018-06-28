@@ -18,10 +18,6 @@
 
 package rocks.gkvs;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
@@ -75,16 +71,6 @@ public final class RecordNotFound implements Record {
 	@Override
 	public NullableValue value() {
 		return new NullableValue(null);
-	}
-	
-	@Override
-	public List<Value> valueList() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public Map<String, Value> valueMap() {
-		return Collections.emptyMap();
 	}
 
 	@Override

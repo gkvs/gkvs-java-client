@@ -43,7 +43,7 @@ public final class Scan {
 
 	private final GkvsClient instance;
 
-	private String tableName;
+	private String storeName;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 	private Select.Builder selectOrNull;
 	private Bucket.Builder bucketOrNull;
@@ -57,13 +57,8 @@ public final class Scan {
 		this.instance = instance;
 	}
 	
-	public Scan table(String tableName) {
-		this.tableName = tableName;
-		return this;
-	}
-	
-	public Scan withPit(long pit) {
-		options.setPit(pit);
+	public Scan store(String storeName) {
+		this.storeName = storeName;
 		return this;
 	}
 	
@@ -123,14 +118,14 @@ public final class Scan {
 		
 		ScanOperation.Builder builder = ScanOperation.newBuilder();
 		
-		if (tableName == null) {
-			throw new IllegalArgumentException("table name is null");
+		if (storeName == null) {
+			throw new IllegalArgumentException("store name is null");
 		}
 		
 		options.setRequestId(instance.nextRequestId());
 		builder.setOptions(options);
 		
-		builder.setTableName(tableName);
+		builder.setStoreName(storeName);
 		builder.setOutput(ProtocolUtils.getOutput(includeKey, includeValue, valueType));
 		
 		if (selectOrNull != null) {
@@ -160,7 +155,7 @@ public final class Scan {
 
 	@Override
 	public String toString() {
-		return "Scan [tableName=" + tableName + "]";
+		return "Scan [storeName=" + storeName + "]";
 	}
 	
 }

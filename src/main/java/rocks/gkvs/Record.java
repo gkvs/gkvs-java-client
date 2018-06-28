@@ -18,9 +18,6 @@
 
 package rocks.gkvs;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * 
  * Record
@@ -45,9 +42,5 @@ public interface Record {
 	NullableKey key();
 	
 	NullableValue value();
-		
-	List<Value> valueList();
-	
-	Map<String, Value> valueMap();
 	
 }

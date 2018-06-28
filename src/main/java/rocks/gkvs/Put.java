@@ -18,14 +18,13 @@
 
 package rocks.gkvs;
 
-import java.util.Map;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.PutOperation;
 import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusResult;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -45,24 +44,15 @@ public final class Put {
 	private final PutOperation.Builder builder = PutOperation.newBuilder();
 	
 	private Key key;
+	private Value value;
 	private final RequestOptions.Builder options = RequestOptions.newBuilder();
 		
 	public Put(GkvsClient instance) {
 		this.instance = instance;
 	}
 	
-	public Put setKey(Key key) {
-		this.key = key;
-		return this;
-	}
-	
 	public Put withTimeout(int timeoutMls) {
 		options.setTimeout(timeoutMls);
-		return this;
-	}
-	
-	public Put withPit(long pit) {
-		options.setPit(pit);
 		return this;
 	}
 
@@ -71,58 +61,49 @@ public final class Put {
 		return this;
 	}
 	
-	public Put compareAndPut(long version) {
+	public Put compareAndPut(KeyValue keyValue, long version) {
+		this.key = keyValue.key();
+		this.value = keyValue.value();
 		builder.setCompareAndPut(true);
 		builder.setVersion(version);
 		return this;
 	}
+	
+	public Put compareAndPut(Key key, Value value, long version) {
+		this.key = key;
+		this.value = value;
+		builder.setCompareAndPut(true);
+		builder.setVersion(version);
+		return this;
+	}
+	
+	public Put put(KeyValue keyValue) {
+		this.key = keyValue.key();
+		this.value = keyValue.value();
+		return this;
+	}
 		
-	public Put put(Value value) {
-		builder.addValue(value.toProto());
+	public Put put(Key key, Value value) {
+		this.key = key;
+		this.value = value;
 		return this;
 	}
 	
-	public Put put(String column, String value) {
-		builder.addValue(Value.of(column, value).toProto());
-		return this;
-	}
-
-	public Put put(String column, byte[] value) {
-		builder.addValue(Value.of(column, value).toProto());
-		return this;
-	}
-
-	public Put putAll(Value... cells) {
-		for (Value cell : cells) {
-			put(cell);
-		}
-		return this;
-	}
-	
-	public Put putAll(Iterable<Value> cells) {
-		for (Value cell : cells) {
-			put(cell);
-		}
-		return this;
-	}
-	
-	public Put putAll(Map<String, byte[]> map) {
-		for (Map.Entry<String, byte[]> entry : map.entrySet()) {
-			put(Value.of(entry.getKey(), entry.getValue()));
-		}
-		return this;
-	}
-
 	private PutOperation buildRequest() {
 		
 		if (key == null) {
 			throw new IllegalArgumentException("key is null");
 		}
 		
+		if (value == null) {
+			throw new IllegalArgumentException("value is null");
+		}
+		
 		options.setRequestId(instance.nextRequestId());
 		builder.setOptions(options);
 		
 		builder.setKey(key.toProto());
+		builder.setValue(Transformers.toProto(value));
 		
 		return builder.build();
 	}

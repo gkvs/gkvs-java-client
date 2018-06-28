@@ -22,6 +22,12 @@ import java.io.OutputStream;
 
 import javax.annotation.Nullable;
 
+import rocks.gkvs.value.Bool;
+import rocks.gkvs.value.Num;
+import rocks.gkvs.value.Str;
+import rocks.gkvs.value.Table;
+import rocks.gkvs.value.Value;
+
 /**
  * 
  * NullableValue
@@ -35,33 +41,44 @@ import javax.annotation.Nullable;
 
 public final class NullableValue {
 
-	private final @Nullable Value value;
+	private final @Nullable rocks.gkvs.protos.Value value;
 	
-	protected NullableValue(Value value) {
+	protected NullableValue(rocks.gkvs.protos.Value value) {
 		this.value = value;
 	}
 
-	public boolean empty() {
+	public boolean isNull() {
 		return value == null;
 	}
 	
 	public Value get() {
-		if (value == null) {
-			throw new GkvsException("value is null");
+		if (value != null) {
+			return Transformers.fromProto(value);
 		}
-		return value;
+		return null;
 	}
 	
-	public String column() {
-		return value != null ? value.column() : null;
+	public byte[] raw() {
+		if (value == null) {
+			return null;
+		}
+		return value.toByteArray();
 	}
 
-	public byte[] bytes() {
-		return value != null ? value.bytes() : null;
+	public Bool asBool() {
+		return Value.toBool(get());
 	}
 
-	public String string() {
-		return value != null ? value.string() : null;
+	public Num asNum() {
+		return Value.toNum(get());
+	}
+
+	public Str asStr() {
+		return Value.toStr(get());
+	}
+	
+	public Table asTable() {
+		return Value.toTable(get());
 	}
 
 	public void writeTo(OutputStream out) throws IOException {
@@ -71,13 +88,9 @@ public final class NullableValue {
 		value.writeTo(out);
 	}
 
-	public long timestamp() {
-		return value != null ? value.timestamp() : null;
-	}
-
 	@Override
 	public String toString() {
-		return value != null ? value.toString() : "NULL";
+		return String.valueOf(get());
 	}
 
 }

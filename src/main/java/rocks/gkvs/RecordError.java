@@ -17,9 +17,6 @@
  */
 package rocks.gkvs;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
@@ -98,18 +95,6 @@ public final class RecordError implements Record {
 
 	@Override
 	public NullableValue value() {
-		throwException();
-		return null;
-	}
-
-	@Override
-	public List<Value> valueList() {
-		throwException();
-		return null;
-	}
-
-	@Override
-	public Map<String, Value> valueMap() {
 		throwException();
 		return null;
 	}

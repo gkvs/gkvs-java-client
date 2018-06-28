@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -47,6 +46,7 @@ import rocks.gkvs.protos.GenericStoreGrpc;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreBlockingStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreFutureStub;
 import rocks.gkvs.protos.GenericStoreGrpc.GenericStoreStub;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -243,69 +243,36 @@ public final class GkvsClient implements Closeable {
 		return new GetAll(this);
 	}
 	
-	public Put putWithKey(String tableName, String recordKey) {
-		return new Put(this)
-				.setKey(Key.raw(tableName, recordKey));
+	public Put put(String tableName, String recordKey, Value value) {
+		return new Put(this).put(Key.raw(tableName, recordKey), value);
 	}
 	
-	public Put putWithKey(Key key) {
-		return new Put(this).setKey(key);
-	}
-	
-	public Put put(String tableName, String recordKey, String value) {
-		return putWithKey(tableName, recordKey).put(Value.of(value));
-	}
-	
-	public Put put(Key key, String value) {
-		return putWithKey(key).put(Value.of(value));
-	}
-	
-	public Put put(String tableName, String recordKey, String column, String value) {
-		return putWithKey(tableName, recordKey).put(Value.of(column, value));
-	}
-	
-	public Put put(Key key, String column, String value) {
-		return putWithKey(key).put(Value.of(column, value));
-	}
-
-	public Put put(String tableName, String recordKey, byte[] value) {
-		return putWithKey(tableName, recordKey).put(Value.of(value));
-	}
-	
-	public Put put(Key key, byte[] value) {
-		return putWithKey(key).put(Value.of(value));
-	}
-	
-	public Put put(String tableName, String recordKey, String column, byte[] value) {
-		return putWithKey(tableName, recordKey).put(Value.of(column, value));
-	}
-	
-	public Put put(Key key, String column, byte[] value) {
-		return putWithKey(key).put(Value.of(column, value));
-	}
-
 	public Put put(Key key, Value value) {
-		return putWithKey(key).put(value);
+		return new Put(this).put(key, value);
 	}
-
-	public Put put(Key key, Value... values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put put(KeyValue keyValue) {
+		return new Put(this).put(keyValue);
 	}
-
-	public Put put(Key key, Iterable<Value> values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put compareAndPut(String tableName, String recordKey, Value value, long version) {
+		return new Put(this).compareAndPut(Key.raw(tableName, recordKey), value, version);
 	}
-
-	public Put put(Key key, Map<String, byte[]> values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put compareAndPut(Key key, Value value, long version) {
+		return new Put(this).compareAndPut(key, value, version);
+	}
+	
+	public Put compareAndPut(KeyValue keyValue, long version) {
+		return new Put(this).compareAndPut(keyValue, version);
 	}
 	
 	public PutAll putAll() {
 		return new PutAll(this);
 	}
 	
-	public Remove remove(String tableName, String recordKey) {
-		return new Remove(this).setKey(Key.raw(tableName, recordKey));
+	public Remove remove(String storeName, String recordKey) {
+		return new Remove(this).setKey(Key.raw(storeName, recordKey));
 	}
 	
 	public Remove remove(Key key) {
@@ -316,8 +283,8 @@ public final class GkvsClient implements Closeable {
 		return new RemoveAll(this);
 	}
 	
-	public Scan scan(String tableName) {
-		return new Scan(this).table(tableName);
+	public Scan scan(String storeName) {
+		return new Scan(this).store(storeName);
 	}
 	
 	private static File getCertAuthFile(String gkvsKeys) {

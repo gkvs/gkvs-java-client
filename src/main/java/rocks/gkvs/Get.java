@@ -61,11 +61,6 @@ public final class Get {
 		return this;
 	}
 	
-	public Get withPit(long pit) {
-		options.setPit(pit);
-		return this;
-	}
-	
 	public Get select(String column) {
 		
 		if (column == null) {

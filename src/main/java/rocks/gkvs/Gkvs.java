@@ -19,7 +19,8 @@
 package rocks.gkvs;
 
 import java.util.Iterator;
-import java.util.Map;
+
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -68,60 +69,28 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().getAll();
 	}
 	
-	public Put putWithKey(String tableName, String recordKey) {
-		return GkvsClient.getDefaultInstance().putWithKey(tableName, recordKey);
+	public Put put(String storeName, String recordKey, Value value) {
+		return GkvsClient.getDefaultInstance().put(storeName, recordKey, value);
 	}
 	
-	public Put putWithKey(Key key) {
-		return GkvsClient.getDefaultInstance().putWithKey(key);
-	}
-	
-	public Put put(String tableName, String recordKey, String value) {
-		return putWithKey(tableName, recordKey).put(Value.of(value));
-	}
-	
-	public Put put(Key key, String value) {
-		return putWithKey(key).put(Value.of(value));
-	}
-	
-	public Put put(String tableName, String recordKey, String column, String value) {
-		return putWithKey(tableName, recordKey).put(Value.of(column, value));
-	}
-	
-	public Put put(Key key, String column, String value) {
-		return putWithKey(key).put(Value.of(column, value));
-	}
-
-	public Put put(String tableName, String recordKey, byte[] value) {
-		return putWithKey(tableName, recordKey).put(Value.of(value));
-	}
-	
-	public Put put(Key key, byte[] value) {
-		return putWithKey(key).put(Value.of(value));
-	}
-	
-	public Put put(String tableName, String recordKey, String column, byte[] value) {
-		return putWithKey(tableName, recordKey).put(Value.of(column, value));
-	}
-	
-	public Put put(Key key, String column, byte[] value) {
-		return putWithKey(key).put(Value.of(column, value));
-	}
-
 	public Put put(Key key, Value value) {
-		return putWithKey(key).put(value);
+		return GkvsClient.getDefaultInstance().put(key, value);
 	}
-
-	public Put put(Key key, Value... values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put put(KeyValue keyValue) {
+		return GkvsClient.getDefaultInstance().put(keyValue);
 	}
-
-	public Put put(Key key, Iterable<Value> values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put compareAndPut(String storeName, String recordKey, Value value, long version) {
+		return GkvsClient.getDefaultInstance().compareAndPut(storeName, recordKey, value, version);
 	}
-
-	public Put put(Key key, Map<String, byte[]> values) {
-		return putWithKey(key).putAll(values);
+	
+	public Put compareAndPut(Key key, Value value, long version) {
+		return GkvsClient.getDefaultInstance().compareAndPut(key, value, version);
+	}
+	
+	public Put compareAndPut(KeyValue keyValue, long version) {
+		return GkvsClient.getDefaultInstance().compareAndPut(keyValue, version);
 	}
 	
 	public PutAll putAll() {

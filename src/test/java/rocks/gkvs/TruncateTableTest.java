@@ -23,6 +23,8 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * TruncateTableTest
@@ -42,7 +44,7 @@ public class TruncateTableTest extends AbstractClientTest {
 	//@Test
 	public void cleanUp() {
 		
-		Iterator<Record> i = Gkvs.Client.scan(TABLE)
+		Iterator<Record> i = Gkvs.Client.scan(STORE)
 				.sync();
 		
 		while(i.hasNext()) {
@@ -63,7 +65,7 @@ public class TruncateTableTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10; ++i) {
 			String key = UUID.randomUUID().toString();
-			Gkvs.Client.put(TABLE, key, "TruncateTableTest").sync();
+			Gkvs.Client.put(STORE, key, new Str("TruncateTableTest")).sync();
 		}
 		
 		CountDownLatch done = new CountDownLatch(1);
@@ -72,7 +74,7 @@ public class TruncateTableTest extends AbstractClientTest {
 				
 		Observer<Record> record = Observers.transform(key, Observers.GET_KEY_FN);
 		
-		Gkvs.Client.scan(TABLE).async(record);
+		Gkvs.Client.scan(STORE).async(record);
 		
 		// await tota async process
 		done.await();

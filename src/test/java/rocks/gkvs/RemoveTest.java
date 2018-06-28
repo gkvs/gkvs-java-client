@@ -18,11 +18,13 @@
 package rocks.gkvs;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import rocks.gkvs.value.Str;
+import rocks.gkvs.value.Table;
 
 /**
  * 
@@ -35,7 +37,6 @@ import org.junit.Test;
 
 public class RemoveTest extends AbstractClientTest {
 	
-	
 	@Test
 	public void testRemoveSelect() {
 		
@@ -43,20 +44,22 @@ public class RemoveTest extends AbstractClientTest {
 		String column = "col";
 		String value = "org";
 		
-		Gkvs.Client.put(TABLE, key, column, value).sync();
+		Table tbl = new Table();
+		tbl.put(column, value);
 		
-		Record record = Gkvs.Client.get(TABLE, key).select(column).sync();
+		Gkvs.Client.put(STORE, key, tbl).sync();
+		
+		Record record = Gkvs.Client.get(STORE, key).select(column).sync();
 		Assert.assertTrue(record.exists());
 		
-		Map<String, Value> values = record.valueMap();
+		Table actual = record.value().asTable();
 		
-		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(value, values.get(column).string());
+		Assert.assertEquals(1, actual.size());
+		Assert.assertEquals(value, actual.getStr(column).asString());
 		
-		Gkvs.Client.remove(TABLE, key).select(column).sync();
+		Gkvs.Client.remove(STORE, key).select(column).sync();
 		
-		
-		Assert.assertFalse(Gkvs.Client.get(TABLE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.get(STORE, key).sync().exists());
 		
 	}
 	
@@ -70,37 +73,38 @@ public class RemoveTest extends AbstractClientTest {
 		String column2 = "col2";
 		String value2 = "org2";
 		
-		Gkvs.Client.putWithKey(TABLE, key)
-			.put(column, value)
-			.put(column2, value2)
-			.sync();
+		Table tbl = new Table();
+		tbl.put(column, value);
+		tbl.put(column2, value2);
 		
-		Get get = Gkvs.Client.get(TABLE, key);
+		Gkvs.Client.put(STORE, key, tbl).sync();
+		
+		Get get = Gkvs.Client.get(STORE, key);
 		
 		Record record = get.sync();
 		Assert.assertTrue(record.exists());
 		
-		Map<String, Value> values = record.valueMap();
+		Table actual = record.value().asTable();
 		
-		Assert.assertEquals(2, values.size());
-		Assert.assertEquals(value, values.get(column).string());
-		Assert.assertEquals(value2, values.get(column2).string());
+		Assert.assertEquals(2, actual.size());
+		Assert.assertEquals(value, actual.getStr(column).asString());
+		Assert.assertEquals(value2, actual.getStr(column2).asString());
 		
-		Gkvs.Client.remove(TABLE, key).select(column).sync();
+		Gkvs.Client.remove(STORE, key).select(column).sync();
 		
-		Assert.assertTrue(Gkvs.Client.get(TABLE, key).sync().exists());
+		Assert.assertTrue(Gkvs.Client.get(STORE, key).sync().exists());
 		
-		record = Gkvs.Client.get(TABLE, key).sync();
+		record = Gkvs.Client.get(STORE, key).sync();
 		Assert.assertTrue(record.exists());
 		
-		values = record.valueMap();
+		actual = record.value().asTable();
 		
-		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(value2, values.get(column2).string());
+		Assert.assertEquals(1, actual.size());
+		Assert.assertEquals(value2, actual.getStr(column2).asString());
 
-		Gkvs.Client.remove(TABLE, key).select(column2).sync();
+		Gkvs.Client.remove(STORE, key).select(column2).sync();
 		
-		Assert.assertFalse(Gkvs.Client.get(TABLE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.get(STORE, key).sync().exists());
 	}
 	
 	@Test
@@ -110,7 +114,7 @@ public class RemoveTest extends AbstractClientTest {
 		
 		Assert.assertFalse(remove(key));
 		
-		Gkvs.Client.put(TABLE, key, "testRemoveObserver").sync();
+		Gkvs.Client.put(STORE, key, new Str("testRemoveObserver")).sync();
 
 		Assert.assertTrue(remove(key));
 		
@@ -120,7 +124,7 @@ public class RemoveTest extends AbstractClientTest {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
 		
-		Gkvs.Client.remove(TABLE, key).async(collector);
+		Gkvs.Client.remove(STORE, key).async(collector);
 		
 		List<Status> status = collector.awaitUnchecked();
 		

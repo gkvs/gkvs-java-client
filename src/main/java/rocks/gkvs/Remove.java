@@ -59,11 +59,6 @@ public final class Remove {
 		return this;
 	}
 	
-	public Remove withPit(long pit) {
-		options.setPit(pit);
-		return this;
-	}
-	
 	public Remove select(String column) {
 		
 		if (column == null) {

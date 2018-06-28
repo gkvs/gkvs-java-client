@@ -17,15 +17,13 @@
  */
 package rocks.gkvs;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import rocks.gkvs.value.Value;
 
 /**
  * 
  * KeyValue
  * 
- * Each key-value has key and value / list of values
+ * Each key-value has key and value
  *
  * @author Alex Shvid
  * @date Jun 18, 2018 
@@ -35,25 +33,7 @@ import java.util.List;
 public final class KeyValue {
 
 	private final Key key;
-	private final Iterable<Value> values;
-	
-	public KeyValue(Key key, Iterable<Value> vals) {
-		
-		if (key == null) {
-			throw new IllegalArgumentException("key is null");
-		}
-
-		if (vals == null) {
-			throw new IllegalArgumentException("vals is null");
-		}
-
-		this.key = key;
-		this.values = vals;
-	}
-	
-	public static KeyValue of(Key key, Iterable<Value> vals) {
-		return new KeyValue(key, vals);
-	}
+	private final Value value;
 	
 	public KeyValue(Key key, Value value) {
 		
@@ -66,49 +46,24 @@ public final class KeyValue {
 		}
 
 		this.key = key;
-		this.values = Collections.singleton(value);
+		this.value = value;
 	}
 	
 	public static KeyValue of(Key key, Value value) {
 		return new KeyValue(key, value);
 	}
 	
-	public KeyValue(Key key, Value... vals) {
-		
-		if (key == null) {
-			throw new IllegalArgumentException("key is null");
-		}
-
-		if (vals == null) {
-			throw new IllegalArgumentException("vals is null");
-		}
-
-		this.key = key;
-		
-		List<Value> list = new ArrayList<Value>(vals.length);
-		for (Value v : vals) {
-			list.add(v);
-		}
-		
-		this.values = list;
-		
-	}
-	
-	public static KeyValue of(Key key, Value... vals) {
-		return new KeyValue(key, vals);
-	}
-	
 	public Key key() {
 		return key;
 	}
 	
-	public Iterable<Value> values() {
-		return values;
+	public Value value() {
+		return value;
 	}
 
 	@Override
 	public String toString() {
-		return "KeyValue [key=" + key + "]";
+		return "KeyValue [key=" + key + ", value=" + value + "]";
 	}
 
 	

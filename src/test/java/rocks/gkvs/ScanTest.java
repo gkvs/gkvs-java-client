@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * ScanTest
@@ -45,7 +47,7 @@ public class ScanTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10; ++i) {
 			String key = UUID.randomUUID().toString();
-			Gkvs.Client.put(TABLE, key, "testScan").sync();
+			Gkvs.Client.put(STORE, key, new Str("testScan")).sync();
 			LOAD_KEYS.add(key);
 		}
 		
@@ -55,7 +57,7 @@ public class ScanTest extends AbstractClientTest {
 	public void teardown() {
 		
 		for (String key : LOAD_KEYS) {
-			Gkvs.Client.remove(TABLE, key).sync();
+			Gkvs.Client.remove(STORE, key).sync();
 		}
 		
 	}
@@ -65,7 +67,7 @@ public class ScanTest extends AbstractClientTest {
 		
 		Set<String> notFoundKeys = new HashSet<>(LOAD_KEYS);
 		
-		Iterator<Record> records = Gkvs.Client.scan(TABLE).sync();
+		Iterator<Record> records = Gkvs.Client.scan(STORE).sync();
 		
 		while(records.hasNext()) {
 			Record rec = records.next();
@@ -87,13 +89,13 @@ public class ScanTest extends AbstractClientTest {
 	@Test
 	public void testBucket() {
 		
-		Set<String> all = collectKeys(Gkvs.Client.scan(TABLE)
+		Set<String> all = collectKeys(Gkvs.Client.scan(STORE)
 				.sync());
 		
-		Set<String> odd = collectKeys(Gkvs.Client.scan(TABLE)
+		Set<String> odd = collectKeys(Gkvs.Client.scan(STORE)
 				.withBucket(0, 2).sync());
 		
-		Set<String> even = collectKeys(Gkvs.Client.scan(TABLE)
+		Set<String> even = collectKeys(Gkvs.Client.scan(STORE)
 				.withBucket(1, 2).sync());
 		
 		//System.out.println("all = " + all);

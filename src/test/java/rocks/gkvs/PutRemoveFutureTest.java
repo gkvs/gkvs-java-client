@@ -22,6 +22,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * PutRemoveFutureTest
@@ -33,14 +35,14 @@ import org.junit.Test;
 
 public class PutRemoveFutureTest extends AbstractClientTest {
 
-	private Key KEY = Key.raw(TABLE, UUID.randomUUID().toString());
+	private Key KEY = Key.raw(STORE, UUID.randomUUID().toString());
 	
 	@Test
 	public void testPutFuture() {
 		
 		Assert.assertFalse(Gkvs.Client.get(KEY).metadataOnly().sync().exists());
 		
-		GkvsFuture<Status> future = Gkvs.Client.put(KEY, "val").async();
+		GkvsFuture<Status> future = Gkvs.Client.put(KEY, new Str("val")).async();
 		
 		Assert.assertTrue(future.getUnchecked().updated());
 		

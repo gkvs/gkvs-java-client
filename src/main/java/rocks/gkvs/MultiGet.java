@@ -54,7 +54,6 @@ public final class MultiGet {
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
 	private int timeoutMls = 0;
-	private long pit = 0l;
 
 	final KeyResolver keyResolver = new KeyResolver() {
 
@@ -71,11 +70,6 @@ public final class MultiGet {
 	
 	public MultiGet withTimeout(int timeoutMls) {
 		this.timeoutMls = timeoutMls;
-		return this;
-	}
-	
-	public MultiGet withPit(long pit) {
-		this.pit = pit;
 		return this;
 	}
 	
@@ -122,7 +116,6 @@ public final class MultiGet {
 		
 		RequestOptions.Builder options = RequestOptions.newBuilder();
 		options.setTimeout(timeoutMls);
-		options.setPit(pit);
 		options.setRequestId(requestId);
 		
 		builder.setOptions(options);

@@ -39,7 +39,6 @@ public final class PutAll {
 	private final GkvsClient instance;
 	
 	private int timeoutMls;
-	private long pit;
 	private int ttlSec;
 	
 	public PutAll(GkvsClient instance) {
@@ -48,11 +47,6 @@ public final class PutAll {
 	
 	public PutAll withTimeout(int timeoutMls) {
 		this.timeoutMls = timeoutMls;
-		return this;
-	}
-	
-	public PutAll withPit(long pit) {
-		this.pit = pit;
 		return this;
 	}
 	
@@ -73,16 +67,11 @@ public final class PutAll {
 		
 		options.setRequestId(instance.nextRequestId());
 		options.setTimeout(timeoutMls);
-		options.setPit(pit);
 		
 		builder.setOptions(options);
 		
 		builder.setKey(keyValue.key().toProto());
-		builder.setTtl(ttlSec);
-		
-		for (Value value : keyValue.values()) {
-			builder.addValue(value.toProto());
-		}
+		builder.setValue(Transformers.toProto(keyValue.value()));
 
 		builder.setTtl(ttlSec);
 

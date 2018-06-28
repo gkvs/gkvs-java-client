@@ -24,6 +24,9 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+import rocks.gkvs.value.Value;
+
 /**
  * 
  * PutRemoveAllTest
@@ -38,13 +41,13 @@ public class PutRemoveAllTest extends AbstractClientTest {
 	@Test
 	public void testPutAll() {
 		
-		Value def = Value.of("def");
+		Value def = new Str("def");
 		
 		List<KeyValue> list = new ArrayList<KeyValue>();
 		
-		list.add(KeyValue.of(Key.raw(TABLE, UUID.randomUUID().toString()), def));
-		list.add(KeyValue.of(Key.raw(TABLE, UUID.randomUUID().toString()), def));
-		list.add(KeyValue.of(Key.raw(TABLE, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
 		
 		Iterable<Status> result = Gkvs.Client.putAll().withTtl(10000).sync(list);
 		

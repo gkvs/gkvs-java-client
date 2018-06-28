@@ -18,14 +18,8 @@
 
 package rocks.gkvs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Nullable;
 
-import rocks.gkvs.protos.Value;
 import rocks.gkvs.protos.ValueResult;
 
 /**
@@ -79,9 +73,9 @@ public final class RecordFound implements Record {
 			switch(protoKey.getRecordKeyCase()) {
 			
 			case RAW:
-				return new NullableKey(Key.raw(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
+				return new NullableKey(Key.raw(protoKey.getStoreName(), protoKey.getRaw().toByteArray()));
 			case DIGEST:
-				return new NullableKey(Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
+				return new NullableKey(Key.digest(protoKey.getStoreName(), protoKey.getRaw().toByteArray()));
 			
 			default:
 				throw new GkvsException("unknown key type: " + protoKey);
@@ -95,37 +89,11 @@ public final class RecordFound implements Record {
 	@Override
 	public NullableValue value() {
 		
-		if (result.getValueCount() == 0) {
-			return new NullableValue(null);
+		if (result.hasValue()) {
+			return new NullableValue(result.getValue());
 		}
 		
-		return new NullableValue(new rocks.gkvs.Value(result.getValue(0)));
-	}
-	
-	@Override
-	public List<rocks.gkvs.Value> valueList() {
-		
-		List<rocks.gkvs.Value> list = new ArrayList<>(result.getValueCount());
-		
-		for (Value value : result.getValueList()) {
-			list.add(new rocks.gkvs.Value(value));
-		}
-		
-		return list;
-		
-	}
-	
-	@Override
-	public Map<String, rocks.gkvs.Value> valueMap() {
-		
-		Map<String, rocks.gkvs.Value> map = new HashMap<String, rocks.gkvs.Value>();
-		
-		for (Value value : result.getValueList()) {
-			map.put(value.getColumn(), new rocks.gkvs.Value(value));
-		}
-		
-		return map;
-		
+		return new NullableValue(null);
 	}
 
 	@Override

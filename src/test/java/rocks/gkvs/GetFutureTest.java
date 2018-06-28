@@ -25,6 +25,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * GetFutureTest
@@ -36,13 +38,13 @@ import org.junit.Test;
 
 public class GetFutureTest extends AbstractClientTest {
 
-	private Key KEY = Key.raw(TABLE, UUID.randomUUID().toString());
+	private Key KEY = Key.raw(STORE, UUID.randomUUID().toString());
 	
 	
 	@Before
 	public void setup() {
 
-		Gkvs.Client.put(KEY, Value.of("GetFutureTest")).sync();
+		Gkvs.Client.put(KEY, new Str("GetFutureTest")).sync();
 		
 	}
 	
@@ -71,7 +73,7 @@ public class GetFutureTest extends AbstractClientTest {
 		Record rec = future.getUnchecked();
 		
 		Assert.assertNotNull(rec);
-		Assert.assertEquals("GetFutureTest", rec.value().string());
+		Assert.assertEquals("GetFutureTest", rec.value().asStr().asString());
 		Assert.assertTrue(triggered.get());
 	}
 	

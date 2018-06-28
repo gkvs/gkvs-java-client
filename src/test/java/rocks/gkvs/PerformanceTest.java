@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * PerformanceTest
@@ -34,9 +36,9 @@ public class PerformanceTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10000; ++i) {
 			String key = UUID.randomUUID().toString();
-			Gkvs.Client.put(TABLE, key, "value").sync();
-			Gkvs.Client.get(TABLE, key).sync().value();
-			Gkvs.Client.remove(TABLE, key);
+			Gkvs.Client.put(STORE, key, new Str("value")).sync();
+			Gkvs.Client.get(STORE, key).sync().value();
+			Gkvs.Client.remove(STORE, key);
 		}
 		
 		long diff = System.currentTimeMillis() - t0;

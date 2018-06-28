@@ -25,10 +25,12 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
 import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
+import rocks.gkvs.value.Str;
 
 /**
  * 
@@ -44,6 +46,39 @@ import rocks.gkvs.protos.ValueResult;
 final class Transformers {
 
 	private Transformers() {
+	}
+	
+	protected static rocks.gkvs.protos.Value toProto(rocks.gkvs.value.Value value) {
+		rocks.gkvs.protos.Value.Builder builder = rocks.gkvs.protos.Value.newBuilder();
+		
+		ByteString.Output out = ByteString.newOutput();
+		value.writeTo(out);
+		builder.setRaw(out.toByteString());
+		
+		return builder.build();
+	}
+	
+	protected static rocks.gkvs.value.Value fromProto(rocks.gkvs.protos.Value proto) {
+		ByteString payload = getValuePayload(proto);
+		
+		if (payload.isEmpty()) {
+			return new Str("");
+		}
+		
+		return rocks.gkvs.value.Parser.parseValue(payload.newInput());
+	}
+	
+	protected static ByteString getValuePayload(rocks.gkvs.protos.Value proto) {
+		
+		switch (proto.getValueCase()) {
+		case RAW:
+			return proto.getRaw();
+		case DIGEST:
+			return proto.getDigest();
+		default:
+			return ByteString.EMPTY;
+		}
+		
 	}
 	
 	protected static Record toRecord(@Nullable Key requestKey, ValueResult result) {

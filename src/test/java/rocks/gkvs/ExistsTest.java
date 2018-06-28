@@ -22,6 +22,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rocks.gkvs.value.Str;
+
 /**
  * 
  * ExistsTest
@@ -38,15 +40,15 @@ public class ExistsTest extends AbstractClientTest {
 		
 		String key = UUID.randomUUID().toString();
 		
-		Assert.assertFalse(Gkvs.Client.exists(TABLE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.exists(STORE, key).sync().exists());
 		
-		Gkvs.Client.put(TABLE, key, "value").sync();
+		Gkvs.Client.put(STORE, key, new Str("value")).sync();
 		
-		Assert.assertTrue(Gkvs.Client.exists(TABLE, key).sync().exists());
+		Assert.assertTrue(Gkvs.Client.exists(STORE, key).sync().exists());
 		
-		Gkvs.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(STORE, key).sync();
 		
-		Assert.assertFalse(Gkvs.Client.exists(TABLE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.exists(STORE, key).sync().exists());
 		
 	}
 	

@@ -18,11 +18,13 @@
 package rocks.gkvs;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import rocks.gkvs.value.Str;
+import rocks.gkvs.value.Table;
 
 /**
  * 
@@ -38,7 +40,7 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		byte[] result = Gkvs.Client.get(TABLE, UUID.randomUUID().toString()).sync().value().bytes();
+		Str result = Gkvs.Client.get(STORE, UUID.randomUUID().toString()).sync().value().asStr();
 		
 		Assert.assertNull("expected null result", result);
 		
@@ -51,17 +53,20 @@ public class GetTest extends AbstractClientTest {
 		String column = "col";
 		String value = "org";
 		
-		Gkvs.Client.put(TABLE, key, column, value).sync();
+		Table tbl = new Table();
+		tbl.put("col", "org");
 		
-		Record record = Gkvs.Client.get(TABLE, key).select(column).sync();
+		Gkvs.Client.put(STORE, key, tbl).sync();
+		
+		Record record = Gkvs.Client.get(STORE, key).select(column).sync();
 		Assert.assertTrue(record.exists());
 		
-		Map<String, Value> values = record.valueMap();
+		Table actual = record.value().asTable();
 		
-		Assert.assertEquals(1, values.size());
-		Assert.assertEquals(value, values.get(column).string());
+		Assert.assertEquals(1, actual.size());
+		Assert.assertEquals(value, actual.getStr(column).asString());
 		
-		Gkvs.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(STORE, key).sync();
 	}
 	
 	@Test
@@ -69,18 +74,23 @@ public class GetTest extends AbstractClientTest {
 		
 		String key = UUID.randomUUID().toString();
 		
-		Gkvs.Client.put(TABLE, key, "column", "value").sync();
+		Table tbl = new Table();
+		tbl.put("column", "value");
+		
+		Gkvs.Client.put(STORE, key, tbl).sync();
 		
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
 		
-		Gkvs.Client.get(TABLE, key).select("column").async(collector);
+		Gkvs.Client.get(STORE, key).select("column").async(collector);
 		
 		List<Record> list = collector.awaitUnchecked();
 		
 		Assert.assertEquals(1, list.size());
-		Assert.assertEquals("value", list.get(0).value().string());
+		Record record = list.get(0);
+		Table actual = record.value().asTable();
+		Assert.assertEquals("value", actual.getStr("column").asString());
 		
-		Gkvs.Client.remove(TABLE, key).sync();
+		Gkvs.Client.remove(STORE, key).sync();
 	}
 	
 	
