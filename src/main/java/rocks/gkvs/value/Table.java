@@ -30,14 +30,14 @@ public final class Table extends Value {
 
 	private final Map<String, Value> table = new HashMap<String, Value>();
 
-	private TableType type = TableType.INT_KEY;
+	private TableType type = TableType.INT_MAP;
 
 	public final class KeyComparator implements Comparator<String> {
 
 		@Override
 		public int compare(String o1, String o2) {
 
-			if (type == TableType.INT_KEY) {
+			if (type == TableType.INT_MAP) {
 
 				try {
 					int i1 = Integer.parseInt(o1);
@@ -146,11 +146,11 @@ public final class Table extends Value {
 
 		if (value != null) {
 			
-			if (type == TableType.INT_KEY) {
+			if (type == TableType.INT_MAP) {
 
 				NumType numberType = Num.detectNumber(key);
 				if (numberType != NumType.INT64) {
-					type = TableType.STRING_KEY;
+					type = TableType.STRING_MAP;
 				}
 
 			}
@@ -255,7 +255,7 @@ public final class Table extends Value {
 		return table.keySet();
 	}
 
-	public List<Integer> intKeys() {
+	public List<Integer> sortedIndex() {
 
 		List<Integer> list = new ArrayList<Integer>(table.size());
 
@@ -273,7 +273,27 @@ public final class Table extends Value {
 		return list;
 	}
 
-	public Integer intMaxKey() {
+	public Integer firstIdx() {
+		
+		Integer minKey = null;
+
+		for (String key : table.keySet()) {
+
+			try {
+				int value = Integer.parseInt(key);
+				if (minKey == null || value < minKey) {
+					minKey = value;
+				}
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+
+		return minKey;
+		
+	}
+	
+	public Integer lastIdx() {
 
 		Integer maxKey = null;
 
@@ -321,18 +341,18 @@ public final class Table extends Value {
 
 		switch (type) {
 
-		case INT_KEY:
-			return toIntValue();
+		case INT_MAP:
+			return toIntMapValue();
 
-		case STRING_KEY:
-			return toStringValue();
+		case STRING_MAP:
+			return toStringMapValue();
 
 		}
 
 		throw new GkvsException("unexpected type: " + type);
 	}
 
-	private org.msgpack.value.Value toIntValue() {
+	private org.msgpack.value.Value toIntMapValue() {
 
 		int size = size();
 
@@ -360,7 +380,7 @@ public final class Table extends Value {
 
 	}
 
-	private org.msgpack.value.Value toStringValue() {
+	private org.msgpack.value.Value toStringMapValue() {
 
 		int size = size();
 
@@ -385,11 +405,11 @@ public final class Table extends Value {
 	public void writeTo(MessagePacker packer) throws IOException {
 		switch (type) {
 
-		case INT_KEY:
+		case INT_MAP:
 			writeIntMapTo(packer);
 			break;
 
-		case STRING_KEY:
+		case STRING_MAP:
 			writeStringMapTo(packer);
 			break;
 

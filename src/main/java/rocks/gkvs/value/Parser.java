@@ -131,7 +131,7 @@ public final class Parser {
 
 			if (key != null && value != null) {
 
-				if (key instanceof Num && table.getType() == TableType.INT_KEY) {
+				if (key instanceof Num && table.getType() == TableType.INT_MAP) {
 					Num number = (Num) key;
 					table.put((int) number.asLong(), value);
 				} else {

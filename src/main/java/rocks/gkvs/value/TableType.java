@@ -11,7 +11,7 @@ package rocks.gkvs.value;
 
 public enum TableType {
 	
-	INT_KEY,
-	STRING_KEY;
+	INT_MAP,
+	STRING_MAP;
 	
 }
