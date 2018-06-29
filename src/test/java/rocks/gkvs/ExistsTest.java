@@ -40,15 +40,15 @@ public class ExistsTest extends AbstractClientTest {
 		
 		String key = UUID.randomUUID().toString();
 		
-		Assert.assertFalse(Gkvs.Client.exists(STORE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.exists(TEST, key).sync().exists());
 		
-		Gkvs.Client.put(STORE, key, new Str("value")).sync();
+		Gkvs.Client.put(TEST, key, new Str("value")).sync();
 		
-		Assert.assertTrue(Gkvs.Client.exists(STORE, key).sync().exists());
+		Assert.assertTrue(Gkvs.Client.exists(TEST, key).sync().exists());
 		
-		Gkvs.Client.remove(STORE, key).sync();
+		Gkvs.Client.remove(TEST, key).sync();
 		
-		Assert.assertFalse(Gkvs.Client.exists(STORE, key).sync().exists());
+		Assert.assertFalse(Gkvs.Client.exists(TEST, key).sync().exists());
 		
 	}
 	

@@ -52,7 +52,7 @@ public class GetAllAsyncTest extends AbstractClientTest {
 	public void setup() {
 		
 		for (int i = 0; i != 10; ++i) {
-			Key key = Key.raw(STORE, UUID.randomUUID().toString());
+			Key key = Key.raw(TEST, UUID.randomUUID().toString());
 			
 			Gkvs.Client.put(key, new Str("GetAllTest")).sync();
 			LOAD_KEYS.add(key);

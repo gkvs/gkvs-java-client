@@ -35,7 +35,7 @@ import rocks.gkvs.value.Str;
 
 public class PutRemoveFutureTest extends AbstractClientTest {
 
-	private Key KEY = Key.raw(STORE, UUID.randomUUID().toString());
+	private Key KEY = Key.raw(TEST, UUID.randomUUID().toString());
 	
 	@Test
 	public void testPutFuture() {

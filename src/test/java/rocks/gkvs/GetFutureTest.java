@@ -38,7 +38,7 @@ import rocks.gkvs.value.Str;
 
 public class GetFutureTest extends AbstractClientTest {
 
-	private Key KEY = Key.raw(STORE, UUID.randomUUID().toString());
+	private Key KEY = Key.raw(TEST, UUID.randomUUID().toString());
 	
 	
 	@Before

@@ -36,9 +36,9 @@ public class PerformanceTest extends AbstractClientTest {
 		
 		for (int i = 0; i != 10000; ++i) {
 			String key = UUID.randomUUID().toString();
-			Gkvs.Client.put(STORE, key, new Str("value")).sync();
-			Gkvs.Client.get(STORE, key).sync().value();
-			Gkvs.Client.remove(STORE, key);
+			Gkvs.Client.put(TEST, key, new Str("value")).sync();
+			Gkvs.Client.get(TEST, key).sync().value();
+			Gkvs.Client.remove(TEST, key);
 		}
 		
 		long diff = System.currentTimeMillis() - t0;

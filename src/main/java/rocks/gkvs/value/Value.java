@@ -106,6 +106,9 @@ public abstract class Value {
 			if (value instanceof Bool) {
 				return (Bool) value;
 			}
+			else if (value instanceof Num) {
+				return new Bool(((Num) value).asLong());
+			}
 			else {
 				return new Bool(value.asString());
 			}

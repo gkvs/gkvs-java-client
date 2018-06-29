@@ -22,6 +22,14 @@ public final class Bool extends Value {
 		this.booleanValue = value;
 	}
 
+	public Bool(int value) {
+		this.booleanValue = value > 0;
+	}
+
+	public Bool(long value) {
+		this.booleanValue = value > 0;
+	}
+	
 	public Bool(String value) {
 		this.booleanValue = Boolean.parseBoolean(value);
 	}

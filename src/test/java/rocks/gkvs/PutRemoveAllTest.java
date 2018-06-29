@@ -45,9 +45,9 @@ public class PutRemoveAllTest extends AbstractClientTest {
 		
 		List<KeyValue> list = new ArrayList<KeyValue>();
 		
-		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
-		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
-		list.add(KeyValue.of(Key.raw(STORE, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(TEST, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(TEST, UUID.randomUUID().toString()), def));
+		list.add(KeyValue.of(Key.raw(TEST, UUID.randomUUID().toString()), def));
 		
 		Iterable<Status> result = Gkvs.Client.putAll().withTtl(10000).sync(list);
 		

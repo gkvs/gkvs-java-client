@@ -40,7 +40,7 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		Str result = Gkvs.Client.get(STORE, UUID.randomUUID().toString()).sync().value().asStr();
+		Str result = Gkvs.Client.get(TEST, UUID.randomUUID().toString()).sync().value().asStr();
 		
 		Assert.assertNull("expected null result", result);
 		
@@ -56,9 +56,9 @@ public class GetTest extends AbstractClientTest {
 		Table tbl = new Table();
 		tbl.put("col", "org");
 		
-		Gkvs.Client.put(STORE, key, tbl).sync();
+		Gkvs.Client.put(TEST, key, tbl).sync();
 		
-		Record record = Gkvs.Client.get(STORE, key).select(column).sync();
+		Record record = Gkvs.Client.get(TEST, key).select(column).sync();
 		Assert.assertTrue(record.exists());
 		
 		Table actual = record.value().asTable();
@@ -66,7 +66,7 @@ public class GetTest extends AbstractClientTest {
 		Assert.assertEquals(1, actual.size());
 		Assert.assertEquals(value, actual.getStr(column).asString());
 		
-		Gkvs.Client.remove(STORE, key).sync();
+		Gkvs.Client.remove(TEST, key).sync();
 	}
 	
 	@Test
@@ -77,11 +77,11 @@ public class GetTest extends AbstractClientTest {
 		Table tbl = new Table();
 		tbl.put("column", "value");
 		
-		Gkvs.Client.put(STORE, key, tbl).sync();
+		Gkvs.Client.put(TEST, key, tbl).sync();
 		
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
 		
-		Gkvs.Client.get(STORE, key).select("column").async(collector);
+		Gkvs.Client.get(TEST, key).select("column").async(collector);
 		
 		List<Record> list = collector.awaitUnchecked();
 		
@@ -90,7 +90,7 @@ public class GetTest extends AbstractClientTest {
 		Table actual = record.value().asTable();
 		Assert.assertEquals("value", actual.getStr("column").asString());
 		
-		Gkvs.Client.remove(STORE, key).sync();
+		Gkvs.Client.remove(TEST, key).sync();
 	}
 	
 	
