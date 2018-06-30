@@ -99,19 +99,19 @@ public final class Table extends Value {
 		}
 		
 		public Value put(String key, Value value) {
-			return Nil.get();
+			throw new UnsupportedOperationException("put in to immutable NULL table");
 		}
 		
 		public Value put(int key, Value value) {
-			return Nil.get();
+			throw new UnsupportedOperationException("put in to immutable NULL table");
 		}
 		
 		public Value remove(String key) {
-			return Nil.get();
+			throw new UnsupportedOperationException("remove in immutable NULL table");
 		}
 		
 		public Value remove(int key) {
-			return Nil.get();
+			throw new UnsupportedOperationException("remove in immutable NULL table");
 		}
 		
 		public Set<String> keySet() {
@@ -142,11 +142,11 @@ public final class Table extends Value {
 		}
 		
 		public org.msgpack.value.Value toMsgpackValue() {
-			return ImmutableNilValueImpl.get();
+			throw new UnsupportedOperationException("serialize immutable NULL table");
 		}
 		
 		public void writeTo(MessagePacker packer) throws IOException {
-			packer.packArrayHeader(0);
+			throw new UnsupportedOperationException("serialize immutable NULL table");
 		}
 		
 		public void print(StringBuilder str, int initialSpaces, int tabSpaces) {
