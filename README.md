@@ -26,7 +26,7 @@ Two types of API are supported: sync and async
 
 #### GET
 ```
-byte[] value = Gkvs.Client.get("TEST", "key").sync().value().bytes();
+Value value = Gkvs.Client.get("TEST", "key").sync().value().get();
 ```
 
 #### PUT

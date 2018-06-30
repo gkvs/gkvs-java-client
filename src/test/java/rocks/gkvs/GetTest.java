@@ -23,8 +23,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
-import rocks.gkvs.value.Str;
 import rocks.gkvs.value.Table;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -40,9 +40,9 @@ public class GetTest extends AbstractClientTest {
 	@Test
 	public void testGet() {
 		
-		Str result = Gkvs.Client.get(TEST, UUID.randomUUID().toString()).sync().value().asStr();
+		Value result = Gkvs.Client.get(TEST, UUID.randomUUID().toString()).sync().value();
 		
-		Assert.assertNull("expected null result", result);
+		Assert.assertTrue("expected null result", result.isNil());
 		
 	}
 	
@@ -64,7 +64,7 @@ public class GetTest extends AbstractClientTest {
 		Table actual = record.value().asTable();
 		
 		Assert.assertEquals(1, actual.size());
-		Assert.assertEquals(value, actual.getStr(column).asString());
+		Assert.assertEquals(value, actual.get(column).asString());
 		
 		Gkvs.Client.remove(TEST, key).sync();
 	}
@@ -88,7 +88,7 @@ public class GetTest extends AbstractClientTest {
 		Assert.assertEquals(1, list.size());
 		Record record = list.get(0);
 		Table actual = record.value().asTable();
-		Assert.assertEquals("value", actual.getStr("column").asString());
+		Assert.assertEquals("value", actual.get("column").asString());
 		
 		Gkvs.Client.remove(TEST, key).sync();
 	}

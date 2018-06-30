@@ -1,12 +1,10 @@
 package rocks.gkvs;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import rocks.gkvs.value.Str;
 import rocks.gkvs.value.Table;
 
 /**
@@ -43,11 +41,11 @@ public class MapTest extends AbstractClientTest {
 		
 		Assert.assertTrue(updated);
 		
-		Table aa = actual.getTable("account");
+		Table aa = actual.get("account").asTable();
 		
 		Assert.assertNotNull(aa);
-		Assert.assertEquals(acc.getStr("accId").asString(), aa.getStr("accId").asString());
-		Assert.assertEquals(acc.getStr("accNum").asString(), aa.getStr("accNum").asString());
+		Assert.assertEquals(acc.get("accId").asString(), aa.get("accId").asString());
+		Assert.assertEquals(acc.get("accNum").asString(), aa.get("accNum").asString());
 		
 		Gkvs.Client.remove(TEST, key).sync();
 	}
@@ -78,16 +76,16 @@ public class MapTest extends AbstractClientTest {
 		
 		Assert.assertTrue(updated);
 		
-		Table aa = actual.getTable("account");
+		Table aa = actual.get("account").asTable();
 		
 		Assert.assertNotNull(aa);
-		Assert.assertEquals(acc.getStr("accId").asString(), aa.getStr("accId").asString());
-		Assert.assertEquals(acc.getStr("accNum").asString(), aa.getStr("accNum").asString());
+		Assert.assertEquals(acc.get("accId").asString(), aa.get("accId").asString());
+		Assert.assertEquals(acc.get("accNum").asString(), aa.get("accNum").asString());
 		
-		Table p = aa.getTable("person");
+		Table p = aa.get("person").asTable();
 		
 		Assert.assertNotNull(p);
-		Assert.assertEquals(alex.getStr("name").asString(), p.getStr("name").asString());
+		Assert.assertEquals(alex.get("name").asString(), p.get("name").asString());
 				
 		Gkvs.Client.remove(TEST, key).sync();
 		

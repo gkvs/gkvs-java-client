@@ -20,6 +20,8 @@ package rocks.gkvs;
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
+import rocks.gkvs.value.Nil;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -92,10 +94,20 @@ public final class RecordError implements Record {
 	public NullableKey key() {
 		return new NullableKey(requestKey);
 	}
+	
+	@Override
+	public boolean hasValue() {
+		return false;
+	}
+	
+	@Override
+	public Value value() {
+		throwException();
+		return Nil.get();
+	}
 
 	@Override
-	public NullableValue value() {
-		throwException();
+	public @Nullable byte[] rawValue() {
 		return null;
 	}
 

@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright 2018-present GKVS authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package rocks.gkvs.value;
 
 import java.util.Random;
@@ -40,7 +57,7 @@ public class SparseListTest {
 		Assert.assertFalse(list.isEmpty());
 		Assert.assertEquals(1, list.size());
 		
-		Integer actual = list.get(0);
+		Integer actual = list.get(SparseList.BASE);
 		Assert.assertNotNull(actual);
 		Assert.assertEquals(100, actual.intValue());
 		
@@ -85,14 +102,14 @@ public class SparseListTest {
 		SparseList<String> list = new SparseList<>();
 		
 		list.add("alex");
-		list.add(1, "shvid");
+		list.add(list.lastKey()+1, "shvid");
 		
 		//System.out.println(list);
 		
 		Assert.assertFalse(list.isEmpty());
 		Assert.assertEquals(2, list.size());
 		
-		String actual = list.get(0);
+		String actual = list.get(SparseList.BASE);
 		Assert.assertNotNull(actual);
 		Assert.assertEquals("alex", actual);
 		
@@ -133,7 +150,7 @@ public class SparseListTest {
 		SparseList<Integer> list = new SparseList<>();
 		
 		Assert.assertEquals(0, list.firstKey());
-		Assert.assertEquals(-1, list.lastKey());
+		Assert.assertEquals(SparseList.BASE-1, list.lastKey());
 		
 		for (int i = 100; i != 200; ++i) {
 			list.set(i, i);
@@ -198,7 +215,6 @@ public class SparseListTest {
 
 		Assert.assertTrue(list.isEmpty());
 		Assert.assertEquals(0, list.size());
-		Assert.assertTrue(list.isSequence());
 		
 		/**
 		 * NEXT TEST
@@ -211,11 +227,10 @@ public class SparseListTest {
 		Assert.assertTrue(list.isSequence());
 		
 		// by key
-		list.remove(0);
+		list.remove(list.firstKey());
 		
 		Assert.assertTrue(list.isEmpty());
 		Assert.assertEquals(0, list.size());
-		Assert.assertTrue(list.isSequence());
 	}
 	
 	

@@ -76,7 +76,7 @@ public class PutTest extends AbstractClientTest {
 		
 		Record record = Gkvs.Client.get(TEST, key).sync();
 		Table first = record.value().asTable();
-		Assert.assertEquals("org", first.getStr("field").asString());
+		Assert.assertEquals("org", first.get("field").asString());
 		
 		Table replaceTbl = new Table();
 		replaceTbl.put("field", "replace");
@@ -94,7 +94,7 @@ public class PutTest extends AbstractClientTest {
 		Assert.assertTrue(updated);
 		
 		// check
-		String actualValue = Gkvs.Client.get(TEST, key).sync().value().asTable().getStr("field").asString();
+		String actualValue = Gkvs.Client.get(TEST, key).sync().value().asTable().get("field").asString();
 		
 		Assert.assertEquals("replace", actualValue);
 		
@@ -118,7 +118,7 @@ public class PutTest extends AbstractClientTest {
 		Table actualTbl = record.value().asTable();
 		
 		Assert.assertEquals(1, actualTbl.size());
-		Assert.assertEquals(value, actualTbl.getStr(column).asString());
+		Assert.assertEquals(value, actualTbl.get(column).asString());
 		
 		Gkvs.Client.remove(TEST, key).sync();
 	}

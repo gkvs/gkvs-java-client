@@ -21,6 +21,8 @@ package rocks.gkvs;
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
+import rocks.gkvs.value.Nil;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -69,8 +71,18 @@ public final class RecordNotFound implements Record {
 	}
 
 	@Override
-	public NullableValue value() {
-		return new NullableValue(null);
+	public boolean hasValue() {
+		return false;
+	}
+
+	@Override
+	public Value value() {
+		return Nil.get();
+	}
+
+	@Override
+	public @Nullable byte[] rawValue() {
+		return null;
 	}
 
 	@Override

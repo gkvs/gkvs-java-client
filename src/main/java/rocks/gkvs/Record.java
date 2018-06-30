@@ -18,6 +18,10 @@
 
 package rocks.gkvs;
 
+import javax.annotation.Nullable;
+
+import rocks.gkvs.value.Value;
+
 /**
  * 
  * Record
@@ -41,6 +45,10 @@ public interface Record {
 
 	NullableKey key();
 	
-	NullableValue value();
+	boolean hasValue();
+	
+	Value value();
+	
+	@Nullable byte[] rawValue();
 	
 }

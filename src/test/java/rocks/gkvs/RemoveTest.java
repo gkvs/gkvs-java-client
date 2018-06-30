@@ -55,7 +55,7 @@ public class RemoveTest extends AbstractClientTest {
 		Table actual = record.value().asTable();
 		
 		Assert.assertEquals(1, actual.size());
-		Assert.assertEquals(value, actual.getStr(column).asString());
+		Assert.assertEquals(value, actual.get(column).asString());
 		
 		Gkvs.Client.remove(TEST, key).select(column).sync();
 		
@@ -87,8 +87,8 @@ public class RemoveTest extends AbstractClientTest {
 		Table actual = record.value().asTable();
 		
 		Assert.assertEquals(2, actual.size());
-		Assert.assertEquals(value, actual.getStr(column).asString());
-		Assert.assertEquals(value2, actual.getStr(column2).asString());
+		Assert.assertEquals(value, actual.get(column).asString());
+		Assert.assertEquals(value2, actual.get(column2).asString());
 		
 		Gkvs.Client.remove(TEST, key).select(column).sync();
 		
@@ -100,7 +100,7 @@ public class RemoveTest extends AbstractClientTest {
 		actual = record.value().asTable();
 		
 		Assert.assertEquals(1, actual.size());
-		Assert.assertEquals(value2, actual.getStr(column2).asString());
+		Assert.assertEquals(value2, actual.get(column2).asString());
 
 		Gkvs.Client.remove(TEST, key).select(column2).sync();
 		

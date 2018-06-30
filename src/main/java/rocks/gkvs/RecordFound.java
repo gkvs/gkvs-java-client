@@ -21,6 +21,8 @@ package rocks.gkvs;
 import javax.annotation.Nullable;
 
 import rocks.gkvs.protos.ValueResult;
+import rocks.gkvs.value.Nil;
+import rocks.gkvs.value.Value;
 
 /**
  * 
@@ -87,18 +89,41 @@ public final class RecordFound implements Record {
 	}
 	
 	@Override
-	public NullableValue value() {
+	public boolean hasValue() {
+		return result.hasValue();
+	}
+	
+	@Override
+	public Value value() {
+		return result.hasValue() ? Transformers.fromProto(result.getValue()) : Nil.get();
+	}
+
+	@Override
+	public @Nullable byte[] rawValue() {
 		
 		if (result.hasValue()) {
-			return new NullableValue(result.getValue());
+			
+			rocks.gkvs.protos.Value proto = result.getValue();
+			
+			switch(proto.getValueCase()) {
+			
+			case RAW:
+				return proto.getRaw().toByteArray();
+			case DIGEST:
+				return proto.getDigest().toByteArray();
+			default:
+				return proto.toByteArray();
+					
+			}
+			
 		}
 		
-		return new NullableValue(null);
+		return null;
 	}
 
 	@Override
 	public String toString() {
-		return "RECORD_FOUND [" + requestId() + "]: " + key();
+		return "RECORD_FOUND [" + requestId() + "]: " + key() + "=" + value();
 	}
 
 }
