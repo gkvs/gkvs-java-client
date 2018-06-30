@@ -79,5 +79,5 @@ public final class Bool extends Value {
 	public void print(StringBuilder str, int initialSpaces, int tabSpaces) {
 		str.append("Bool [booleanValue=").append(booleanValue).append("]");
 	}
-
+	
 }

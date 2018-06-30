@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,32 +27,10 @@ import rocks.gkvs.GkvsException;
 
 public final class Table extends Value {
 
-	private final Map<String, Value> table = new HashMap<String, Value>();
+	private final SparseList<Value> list = new SparseList<Value>();
+	private final Map<String, Value> map = new HashMap<String, Value>();
 
-	private TableType type = TableType.INT_MAP;
-
-	public final class KeyComparator implements Comparator<String> {
-
-		@Override
-		public int compare(String o1, String o2) {
-
-			if (type == TableType.INT_MAP) {
-
-				try {
-					int i1 = Integer.parseInt(o1);
-					int i2 = Integer.parseInt(o2);
-
-					return Integer.compare(i1, i2);
-
-				} catch (NumberFormatException e) {
-					return o1.compareTo(o2);
-				}
-			}
-
-			return o1.compareTo(o2);
-		}
-
-	}
+	private TableType type = TableType.LIST;
 
 	public TableType getType() {
 		return type;
@@ -65,7 +42,16 @@ public final class Table extends Value {
 			throw new IllegalArgumentException("empty key");
 		}
 
-		return table.get(key);
+		switch(type) {
+			case LIST: 
+				return map.get(key);
+				//return list.get(Integer.parseInt(key));
+			case MAP:
+				return map.get(key);
+			default:
+				return Nil.get();
+		}
+		
 	}
 
 	public Table getTable(String key) {
@@ -85,7 +71,7 @@ public final class Table extends Value {
 	}
 
 	public Value get(int key) {
-		return table.get(Integer.toString(key));
+		return map.get(Integer.toString(key));
 	}
 
 	public Table getTable(int key) {
@@ -146,18 +132,18 @@ public final class Table extends Value {
 
 		if (value != null) {
 			
-			if (type == TableType.INT_MAP) {
+			if (type == TableType.LIST) {
 
 				NumType numberType = Num.detectNumber(key);
 				if (numberType != NumType.INT64) {
-					type = TableType.STRING_MAP;
+					type = TableType.MAP;
 				}
 
 			}
 			
-			return table.put(key, value);
+			return map.put(key, value);
 		} else {
-			return table.remove(key);
+			return map.remove(key);
 		}
 	}
 
@@ -167,9 +153,9 @@ public final class Table extends Value {
 
 	public Value put(int key, Value value) {
 		if (value != null) {
-			return table.put(Integer.toString(key), value);
+			return map.put(Integer.toString(key), value);
 		} else {
-			return table.remove(Integer.toString(key));
+			return map.remove(Integer.toString(key));
 		}
 	}
 
@@ -202,11 +188,11 @@ public final class Table extends Value {
 	}
 
 	public Value remove(String key) {
-		return table.remove(key);
+		return map.remove(key);
 	}
 
 	public Value remove(int key) {
-		return table.remove(Integer.toString(key));
+		return map.remove(Integer.toString(key));
 	}
 
 	public Value remove(Field field) {
@@ -252,14 +238,14 @@ public final class Table extends Value {
 	}
 	
 	public Set<String> keySet() {
-		return table.keySet();
+		return map.keySet();
 	}
 
 	public List<Integer> sortedIndex() {
 
-		List<Integer> list = new ArrayList<Integer>(table.size());
+		List<Integer> list = new ArrayList<Integer>(map.size());
 
-		for (String key : table.keySet()) {
+		for (String key : map.keySet()) {
 
 			try {
 				list.add(Integer.parseInt(key));
@@ -277,7 +263,7 @@ public final class Table extends Value {
 		
 		Integer minKey = null;
 
-		for (String key : table.keySet()) {
+		for (String key : map.keySet()) {
 
 			try {
 				int value = Integer.parseInt(key);
@@ -297,7 +283,7 @@ public final class Table extends Value {
 
 		Integer maxKey = null;
 
-		for (String key : table.keySet()) {
+		for (String key : map.keySet()) {
 
 			try {
 				int value = Integer.parseInt(key);
@@ -313,11 +299,11 @@ public final class Table extends Value {
 	}
 
 	public int size() {
-		return table.size();
+		return map.size();
 	}
 
 	public void clear() {
-		table.clear();
+		map.clear();
 	}
 
 	@Override
@@ -325,7 +311,7 @@ public final class Table extends Value {
 		StringBuilder str = new StringBuilder();
 		str.append("{");
 		boolean first = true;
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 			if (!first) {
 				str.append(", ");
 			}
@@ -341,10 +327,10 @@ public final class Table extends Value {
 
 		switch (type) {
 
-		case INT_MAP:
+		case LIST:
 			return toIntMapValue();
 
-		case STRING_MAP:
+		case MAP:
 			return toStringMapValue();
 
 		}
@@ -360,7 +346,7 @@ public final class Table extends Value {
 		org.msgpack.value.Value[] array = new org.msgpack.value.Value[capacity];
 
 		int index = 0;
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 
 			int integerKey;
 			try {
@@ -388,7 +374,7 @@ public final class Table extends Value {
 		org.msgpack.value.Value[] array = new org.msgpack.value.Value[capacity];
 
 		int index = 0;
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 
 			Value val = entry.getValue();
 
@@ -405,11 +391,11 @@ public final class Table extends Value {
 	public void writeTo(MessagePacker packer) throws IOException {
 		switch (type) {
 
-		case INT_MAP:
+		case LIST:
 			writeIntMapTo(packer);
 			break;
 
-		case STRING_MAP:
+		case MAP:
 			writeStringMapTo(packer);
 			break;
 
@@ -425,7 +411,7 @@ public final class Table extends Value {
 
 		packer.packMapHeader(size);
 
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 
 			String key = entry.getKey();
 			int intKey;
@@ -449,7 +435,7 @@ public final class Table extends Value {
 
 		packer.packMapHeader(size);
 
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 
 			String key = entry.getKey();
 			Value value = entry.getValue();
@@ -465,9 +451,9 @@ public final class Table extends Value {
 
 	@Override
 	public void print(StringBuilder str, int initialSpaces, int tabSpaces) {
-		str.append("Table [type=" + type + ", size=" + table.size() + "] {\n");
+		str.append("Table [type=" + type + ", size=" + map.size() + "] {\n");
 		boolean first = true;
-		for (Map.Entry<String, Value> entry : table.entrySet()) {
+		for (Map.Entry<String, Value> entry : map.entrySet()) {
 			if (!first) {
 				str.append(",\n");
 			}
