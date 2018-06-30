@@ -28,6 +28,7 @@ import org.msgpack.core.buffer.ArrayBufferOutput;
 
 import rocks.gkvs.GkvsException;
 
+
 /**
  * 
  * Value
@@ -86,21 +87,16 @@ public abstract class Value {
 			writeTo(packer);
 			packer.flush();
 		} catch (IOException e) {
-			throw new GkvsException("IOException happened during serialization to byte array", e);
+			throw new GkvsException("i/o error", e);
 		}
 
 		return out.toByteArray();
 	}
 	
-	public void writeTo(OutputStream out) {
-
-		try {
-			MessagePacker packer = MessagePack.newDefaultPacker(out);
-			writeTo(packer);
-			packer.flush();
-		} catch (IOException e) {
-			throw new GkvsException("IOException happened during serialization to output stream", e);
-		}
+	public void writeTo(OutputStream out) throws IOException {
+		MessagePacker packer = MessagePack.newDefaultPacker(out);
+		writeTo(packer);
+		packer.flush();
 	
 	}
 

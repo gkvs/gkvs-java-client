@@ -716,11 +716,16 @@ public final class Table extends Value {
 			throw new IllegalArgumentException("key is null");
 		}
 
-		return table.get(key);
+		Value val = table.get(key);
+		
+		return val != null ? val : Nil.get();
 	}
 
 	public Value get(int key) {
-		return table.get(key);
+		
+		Value val = table.get(key);
+		
+		return val != null ? val : Nil.get();
 	}
 
 	public Value get(Field field) {
@@ -741,7 +746,7 @@ public final class Table extends Value {
 			return currentTable.get(key);
 		}
 		
-		return null;
+		return Nil.get();
 
 	}
 	

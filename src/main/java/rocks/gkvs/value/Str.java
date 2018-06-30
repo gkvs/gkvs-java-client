@@ -25,7 +25,6 @@ import org.msgpack.core.MessagePacker;
 import org.msgpack.value.impl.ImmutableBinaryValueImpl;
 import org.msgpack.value.impl.ImmutableStringValueImpl;
 
-import rocks.gkvs.GkvsException;
 
 /**
  * 
@@ -58,7 +57,7 @@ public final class Str extends Value {
 	}
 	
 	public Str(byte[] value, boolean copy) {
-		this(value, 0, value.length, copy);
+		this(value, 0, value != null ? value.length : 0, copy);
 	}
 	
 	public Str(byte[] value, int offset, int length, boolean copy) {
@@ -106,7 +105,12 @@ public final class Str extends Value {
 	
 	@Override
 	public Num asNum(Num defaultValue) {
-		return new Num(asString());
+		try {
+			return new Num(asString());
+		}
+		catch(IllegalArgumentException e) {
+			throw new ParseException(asString(), e);
+		}
 	}
 	
 	@Override
@@ -136,7 +140,7 @@ public final class Str extends Value {
 			
 		}
 		
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 		
 	}
 	
@@ -152,7 +156,7 @@ public final class Str extends Value {
 			
 		}
 		
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 	
 	@Override
@@ -166,7 +170,7 @@ public final class Str extends Value {
 			return new ImmutableBinaryValueImpl(bytesValue);  
 		}
 		
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
   @Override

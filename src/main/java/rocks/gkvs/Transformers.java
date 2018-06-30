@@ -17,6 +17,7 @@
  */
 package rocks.gkvs;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import javax.annotation.Nullable;
@@ -52,7 +53,11 @@ final class Transformers {
 		rocks.gkvs.protos.Value.Builder builder = rocks.gkvs.protos.Value.newBuilder();
 		
 		ByteString.Output out = ByteString.newOutput();
-		value.writeTo(out);
+		try {
+			value.writeTo(out);
+		} catch (IOException e) {
+			throw new GkvsException("i/o error", e);
+		}
 		builder.setRaw(out.toByteString());
 		
 		return builder.build();

@@ -25,8 +25,6 @@ import org.msgpack.core.MessagePacker;
 import org.msgpack.value.impl.ImmutableDoubleValueImpl;
 import org.msgpack.value.impl.ImmutableLongValueImpl;
 
-import rocks.gkvs.GkvsException;
-
 /**
  * 
  * Num
@@ -57,34 +55,26 @@ public final class Num extends Value {
 	public Num(String stringValue) {
 
 		if (stringValue == null) {
-			throw new IllegalArgumentException("empty value");
+			throw new IllegalArgumentException("value is null");
 		}
 
 		this.type = detectNumber(stringValue);
 
 		if (this.type == null) {
-			throw new GkvsException("NAN: " + stringValue);
+			throw new IllegalArgumentException("NAN: " + stringValue);
 		}
 
 		switch (this.type) {
 		case INT64:
-			try {
-				this.longValue = Long.parseLong(stringValue);
-				this.doubleValue = 0.0;
-			} catch (NumberFormatException e) {
-				throw new GkvsException(stringValue, e);
-			}
+			this.longValue = Long.parseLong(stringValue);
+			this.doubleValue = 0.0;
 			break;
 		case FLOAT64:
-			try {
-				this.longValue = 0L;
-				this.doubleValue = Double.parseDouble(stringValue);
-			} catch (NumberFormatException e) {
-				throw new GkvsException(stringValue, e);
-			}
+			this.longValue = 0L;
+			this.doubleValue = Double.parseDouble(stringValue);
 			break;
 		default:
-			throw new GkvsException("unknown type: " + stringValue);
+			throw new IllegalStateException("unknown type: " + stringValue);
 		}
 
 	}
@@ -125,7 +115,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return add(otherNumber.asDouble());
 		}
-		throw new GkvsException("unexpected type: " + otherNumber.getType());
+		throw new IllegalStateException("unexpected type: " + otherNumber.getType());
 	}
 
 	public Num add(long otherLongValue) {
@@ -135,7 +125,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return new Num(doubleValue + (double) otherLongValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public Num add(double otherDoubleValue) {
@@ -145,7 +135,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return new Num(doubleValue + otherDoubleValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public Num subtract(Num otherNumber) {
@@ -155,7 +145,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return subtract(otherNumber.asDouble());
 		}
-		throw new GkvsException("unexpected type: " + otherNumber.getType());
+		throw new IllegalStateException("unexpected type: " + otherNumber.getType());
 	}
 
 	public Num subtract(long otherLongValue) {
@@ -165,7 +155,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return new Num(doubleValue - (double) otherLongValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public Num subtract(double otherDoubleValue) {
@@ -175,7 +165,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return new Num(doubleValue - otherDoubleValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public long asLong() {
@@ -185,7 +175,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return (long) doubleValue;
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public double asDouble() {
@@ -195,7 +185,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return doubleValue;
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	public String asString() {
@@ -205,7 +195,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return Double.toString(doubleValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	@Override
@@ -216,7 +206,7 @@ public final class Num extends Value {
 		case FLOAT64:
 			return new ImmutableDoubleValueImpl(doubleValue);
 		}
-		throw new GkvsException("unexpected type: " + type);
+		throw new IllegalStateException("unexpected type: " + type);
 	}
 
 	@Override
