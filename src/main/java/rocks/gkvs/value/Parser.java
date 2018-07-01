@@ -25,8 +25,6 @@ import org.msgpack.core.MessageFormat;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessageUnpacker;
 
-import rocks.gkvs.GkvsException;
-
 /**
  * 
  * Parser
@@ -61,7 +59,7 @@ public final class Parser {
 		try {
 			return parseValue(unpacker);
 		} catch (IOException e) {
-			throw new GkvsException("unexpected IOException", e);
+			throw new ParseException("unexpected IOException", e);
 		}
 	}
 
@@ -70,7 +68,7 @@ public final class Parser {
 		try {
 			return parseValue(unpacker);
 		} catch (IOException e) {
-			throw new GkvsException("unexpected IOException", e);
+			throw new ParseException("unexpected IOException", e);
 		}
 	}
 	
@@ -79,7 +77,7 @@ public final class Parser {
 		try {
 			return parseValue(unpacker);
 		} catch (IOException e) {
-			throw new GkvsException("unexpected IOException", e);
+			throw new ParseException("unexpected IOException", e);
 		}
 	}
 
@@ -228,18 +226,18 @@ public final class Parser {
 				try {
 					return new Num(Long.parseLong(stringifyValue));
 				} catch (NumberFormatException e) {
-					throw new GkvsException(stringifyValue, e);
+					throw new ParseException(stringifyValue, e);
 				}
 
 			case FLOAT64:
 				try {
 					return new Num(Double.parseDouble(stringifyValue));
 				} catch (NumberFormatException e) {
-					throw new GkvsException(stringifyValue, e);
+					throw new ParseException(stringifyValue, e);
 				}
 
 			default:
-				throw new GkvsException("invalid type: " + type + ", for stringfy value: " + stringifyValue);
+				throw new ParseException("invalid type: " + type + ", for stringfy value: " + stringifyValue);
 			}
 
 		}
