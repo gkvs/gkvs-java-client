@@ -75,9 +75,9 @@ public final class RecordFound implements Record {
 			switch(protoKey.getRecordKeyCase()) {
 			
 			case RAW:
-				return new NullableKey(Key.raw(protoKey.getStoreName(), protoKey.getRaw().toByteArray()));
+				return new NullableKey(Key.raw(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
 			case DIGEST:
-				return new NullableKey(Key.digest(protoKey.getStoreName(), protoKey.getRaw().toByteArray()));
+				return new NullableKey(Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
 			
 			default:
 				throw new GkvsException("unknown key type: " + protoKey);

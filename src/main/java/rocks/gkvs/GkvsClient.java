@@ -271,8 +271,8 @@ public final class GkvsClient implements Closeable {
 		return new PutAll(this);
 	}
 	
-	public Remove remove(String storeName, String recordKey) {
-		return new Remove(this).setKey(Key.raw(storeName, recordKey));
+	public Remove remove(String tableName, String recordKey) {
+		return new Remove(this).setKey(Key.raw(tableName, recordKey));
 	}
 	
 	public Remove remove(Key key) {
@@ -283,8 +283,8 @@ public final class GkvsClient implements Closeable {
 		return new RemoveAll(this);
 	}
 	
-	public Scan scan(String storeName) {
-		return new Scan(this).store(storeName);
+	public Scan scan(String tableName) {
+		return new Scan(this).table(tableName);
 	}
 	
 	private static File getCertAuthFile(String gkvsKeys) {

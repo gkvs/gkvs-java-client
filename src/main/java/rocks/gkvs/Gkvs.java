@@ -69,8 +69,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().getAll();
 	}
 	
-	public Put put(String storeName, String recordKey, Value value) {
-		return GkvsClient.getDefaultInstance().put(storeName, recordKey, value);
+	public Put put(String tableName, String recordKey, Value value) {
+		return GkvsClient.getDefaultInstance().put(tableName, recordKey, value);
 	}
 	
 	public Put put(Key key, Value value) {
@@ -81,8 +81,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().put(keyValue);
 	}
 	
-	public Put compareAndPut(String storeName, String recordKey, Value value, long version) {
-		return GkvsClient.getDefaultInstance().compareAndPut(storeName, recordKey, value, version);
+	public Put compareAndPut(String tableName, String recordKey, Value value, long version) {
+		return GkvsClient.getDefaultInstance().compareAndPut(tableName, recordKey, value, version);
 	}
 	
 	public Put compareAndPut(Key key, Value value, long version) {

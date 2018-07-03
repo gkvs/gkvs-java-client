@@ -47,7 +47,7 @@ public final class NullableKey {
 	}
 	
 	public String getTableName() {
-		return key != null ? key.getStoreName() : null;
+		return key != null ? key.getTableName() : null;
 	}
 
 	public KeyType getRecordKeyType() {

@@ -100,7 +100,6 @@ final class ProtocolUtils {
 		switch(code) {
 		case SUCCESS:
 		case SUCCESS_NOT_UPDATED:
-		case SUCCESS_END_STREAM:
 			return true;
 		default:
 			return false;
