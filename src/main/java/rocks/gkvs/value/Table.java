@@ -44,7 +44,7 @@ import org.msgpack.value.impl.ImmutableStringValueImpl;
 
 public final class Table extends Value {
 
-	interface InternalTable {
+	protected interface InternalTable {
 		
 		TableType type();
 		
@@ -82,7 +82,7 @@ public final class Table extends Value {
 		
 	}
 	
-	enum NullTable implements InternalTable {
+	protected enum NullTable implements InternalTable {
 		
 		NULL;
 		
@@ -668,16 +668,14 @@ public final class Table extends Value {
 
 		return table;
 	}
-	
-	public static final Table NULL = new Table(NullTable.NULL);
-	
+		
 	private InternalTable table;
 	
 	public Table() {
 		this.table = new EmptyTable();
 	}
 	
-	private Table(InternalTable internalTable) {
+	protected Table(InternalTable internalTable) {
 		this.table = internalTable;
 	}
 	

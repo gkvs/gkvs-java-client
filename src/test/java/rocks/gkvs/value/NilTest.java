@@ -35,10 +35,10 @@ public class NilTest {
 	public void testDefault() {
 	
 		
-		Assert.assertEquals(Value.DEFAULT_BOOL, Nil.get().asBool());
-		Assert.assertEquals(Value.DEFAULT_NUM, Nil.get().asNum());
-		Assert.assertEquals(Value.DEFAULT_STR, Nil.get().asStr());
-		Assert.assertEquals(Value.DEFAULT_TABLE, Nil.get().asTable());
+		Assert.assertEquals(Value.getDefaultBool(), Nil.get().asBool());
+		Assert.assertEquals(Value.getDefaultNum(), Nil.get().asNum());
+		Assert.assertEquals(Value.getDefaultStr(), Nil.get().asStr());
+		Assert.assertEquals(Value.getDefaultTable(), Nil.get().asTable());
 		
 	}
 	

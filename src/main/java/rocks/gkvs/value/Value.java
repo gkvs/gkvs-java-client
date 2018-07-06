@@ -27,6 +27,7 @@ import org.msgpack.core.MessagePacker;
 import org.msgpack.core.buffer.ArrayBufferOutput;
 
 import rocks.gkvs.GkvsException;
+import rocks.gkvs.value.Table.NullTable;
 
 
 /**
@@ -40,10 +41,10 @@ import rocks.gkvs.GkvsException;
 
 public abstract class Value {
 
-	public static volatile Bool DEFAULT_BOOL = new Bool(false); 
-	public static volatile Num DEFAULT_NUM = new Num(0L); 
-	public static volatile Str DEFAULT_STR = new Str(""); 
-	public static volatile Table DEFAULT_TABLE = Table.NULL; 
+	private static volatile Bool DEFAULT_BOOL = new Bool(false); 
+	private static volatile Num DEFAULT_NUM = new Num(0L); 
+	private static volatile Str DEFAULT_STR = new Str(""); 
+	private static volatile Table DEFAULT_TABLE = new Table(NullTable.NULL); 
 	
 	public abstract String asString();
 	
@@ -55,6 +56,38 @@ public abstract class Value {
 	
 	public abstract boolean isNil();
 	
+	public static Bool getDefaultBool() {
+		return DEFAULT_BOOL;
+	}
+	
+	public static void setDefaultBool(Bool b) {
+		DEFAULT_BOOL = b;
+	}
+
+	public static Num getDefaultNum() {
+		return DEFAULT_NUM;
+	}
+	
+	public static void setDefaultNum(Num n) {
+		DEFAULT_NUM = n;
+	}
+
+	public static Str getDefaultStr() {
+		return DEFAULT_STR;
+	}
+	
+	public static void setDefaultStr(Str s) {
+		DEFAULT_STR = s;
+	}
+
+	public static Table getDefaultTable() {
+		return DEFAULT_TABLE;
+	}
+	
+	public static void setDefaultTable(Table t) {
+		DEFAULT_TABLE = t;
+	}
+
 	public @Nullable Bool asBool() {
 		return asBool(DEFAULT_BOOL);
 	}

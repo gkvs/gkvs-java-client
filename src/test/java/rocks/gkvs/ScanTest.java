@@ -75,7 +75,6 @@ public class ScanTest extends AbstractClientTest {
 			try {
 				String key = rec.key().getRecordKeyString();
 				notFoundKeys.remove(key);
-				//System.out.println("scan: " + rec);
 			}
 			catch(GkvsException e) {
 				e.printStackTrace();

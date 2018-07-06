@@ -80,7 +80,7 @@ public class PutTest extends AbstractClientTest {
 		
 		Table replaceTbl = new Table();
 		replaceTbl.put("field", "replace");
-			
+
 		// try with 0 version
 		boolean updated = Gkvs.Client.compareAndPut(TEST, key, replaceTbl, 0).sync().updated();
 		Assert.assertFalse(updated);
