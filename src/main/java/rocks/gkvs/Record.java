@@ -35,11 +35,11 @@ import rocks.gkvs.value.Value;
 
 public interface Record {
 
-	long requestId();
+	long tag();
 	
 	boolean exists();
 	
-	long version();
+	@Nullable int[] version();
 	
 	int ttl();
 

@@ -46,8 +46,8 @@ public final class RecordNotFound implements Record {
 	}
 
 	@Override
-	public long requestId() {
-		return result.getRequestId();
+	public long tag() {
+		return result.getHeader().getTag();
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public final class RecordNotFound implements Record {
 	}
 	
 	@Override
-	public long version() {
-		return -1L;
+	public int[] version() {
+		return null;
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public final class RecordNotFound implements Record {
 
 	@Override
 	public String toString() {
-		return "RECORD_NOT_FOUND [" + requestId() + "]";
+		return "RECORD_NOT_FOUND [" + tag() + "]";
 	}
 	
 		

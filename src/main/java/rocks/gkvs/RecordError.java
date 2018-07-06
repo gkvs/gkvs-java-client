@@ -60,8 +60,8 @@ public final class RecordError implements Record {
 	}
 	
 	@Override
-	public long requestId() {
-		return result.getRequestId();
+	public long tag() {
+		return result.getHeader().getTag();
 	}
 
 	public String getStatus() {
@@ -79,9 +79,9 @@ public final class RecordError implements Record {
 	}
 
 	@Override
-	public long version() {
+	public int[] version() {
 		throwException();
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public final class RecordError implements Record {
 
 	@Override
 	public String toString() {
-		return "RECORD_ERROR [" + requestId() + "]: " + getStatus();
+		return "RECORD_ERROR [" + tag() + "]: " + getStatus();
 	}
 
 }

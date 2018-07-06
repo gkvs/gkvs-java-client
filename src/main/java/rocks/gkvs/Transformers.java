@@ -74,16 +74,7 @@ final class Transformers {
 	}
 	
 	protected static ByteString getValuePayload(rocks.gkvs.protos.Value proto) {
-		
-		switch (proto.getValueCase()) {
-		case RAW:
-			return proto.getRaw();
-		case DIGEST:
-			return proto.getDigest();
-		default:
-			return ByteString.EMPTY;
-		}
-		
+		return proto.getRaw();
 	}
 	
 	protected static Record toRecord(@Nullable Key requestKey, ValueResult result) {
@@ -212,7 +203,7 @@ final class Transformers {
 		}
 
 		public Record apply(ValueResult result) {
-			return toRecord(keyResolver.find(result.getRequestId()), result);
+			return toRecord(keyResolver.find(result.getHeader().getTag()), result);
 		}
 		
 	}
@@ -226,7 +217,7 @@ final class Transformers {
 		}
 
 		public Status apply(StatusResult result) {
-			return toStatus(keyResolver.find(result.getRequestId()), result);
+			return toStatus(keyResolver.find(result.getHeader().getTag()), result);
 		}
 		
 	}
@@ -251,7 +242,7 @@ final class Transformers {
 		
 		@Override
 		public void onNext(ValueResult value) {
-			recordObserver.onNext(Transformers.toRecord(keyResolver.find(value.getRequestId()), value));
+			recordObserver.onNext(Transformers.toRecord(keyResolver.find(value.getHeader().getTag()), value));
 		}
 
 		@Override
@@ -278,7 +269,7 @@ final class Transformers {
 		
 		@Override
 		public void onNext(StatusResult value) {
-			statusObserver.onNext(Transformers.toStatus(keyResolver.find(value.getRequestId()), value));
+			statusObserver.onNext(Transformers.toStatus(keyResolver.find(value.getHeader().getTag()), value));
 		}
 
 		@Override

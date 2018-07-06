@@ -38,24 +38,12 @@ final class ProtocolUtils {
 	private ProtocolUtils() {
 	}
 	
-	protected enum ValueType {
-		RAW, DIGEST, MAP;
-	}
-	
-	protected static OutputOptions getOutput(boolean includeKey, boolean includeValue, ValueType valueType) {
+	protected static OutputOptions getOutput(boolean includeKey, boolean includeValue) {
 		
 		if (includeKey) {
 			
 			if (includeValue) {
-				switch(valueType) {
-				case RAW:
-					return OutputOptions.KEY_VALUE_RAW;
-				case DIGEST:
-					return OutputOptions.KEY_VALUE_DIGEST;
-				case MAP:
-					return OutputOptions.KEY_VALUE_MAP;
-				}
-				return OutputOptions.KEY_VALUE_RAW;
+				return OutputOptions.KEYVALUE;
 			}
 			else {
 				return OutputOptions.KEY;
@@ -64,18 +52,10 @@ final class ProtocolUtils {
 		}
 		else {
 			if (includeValue) {
-				switch(valueType) {
-					case RAW:
-						return OutputOptions.VALUE_RAW;
-					case DIGEST:
-						return OutputOptions.VALUE_DIGEST;
-					case MAP:
-						return OutputOptions.VALUE_MAP;
-					}
-				return OutputOptions.VALUE_RAW;
+				return OutputOptions.VALUE;
 			}
 			else {
-				return OutputOptions.METADATA_ONLY;
+				return OutputOptions.METADATA;
 			}
 			
 		}

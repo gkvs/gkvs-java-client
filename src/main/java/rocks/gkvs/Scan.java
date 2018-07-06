@@ -20,10 +20,8 @@ package rocks.gkvs;
 
 import java.util.Iterator;
 
-import rocks.gkvs.ProtocolUtils.ValueType;
 import rocks.gkvs.Transformers.NullKeyResolver;
-import rocks.gkvs.protos.Bucket;
-import rocks.gkvs.protos.RequestOptions;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.ScanOperation;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.ValueResult;
@@ -44,14 +42,11 @@ public final class Scan {
 	private final GkvsClient instance;
 
 	private String tableName;
-	private final RequestOptions.Builder options = RequestOptions.newBuilder();
+	private final OperationHeader.Builder header = OperationHeader.newBuilder();
 	private Select.Builder selectOrNull;
-	private Bucket.Builder bucketOrNull;
 	
 	private boolean includeKey = true;
 	private boolean includeValue = false;
-	private ValueType valueType = ValueType.RAW;
-	
 	
 	public Scan(GkvsClient instance) {
 		this.instance = instance;
@@ -62,20 +57,6 @@ public final class Scan {
 		return this;
 	}
 	
-	public Scan withBucket(int n, int total) {
-		if (n < 0 || total < 0 || n >= total) {
-			throw new IllegalArgumentException("invalid bucket number and total number of buckets");
-		}
-			
-		if (bucketOrNull == null) {
-			bucketOrNull = Bucket.newBuilder();
-		}
-
-		bucketOrNull.setBucketNum(n);
-		bucketOrNull.setTotalNum(total);
-		return this;
-	}
-
 	public Scan includeKey(boolean outputKey) {
 		this.includeKey = outputKey; 
 		return this;
@@ -83,21 +64,6 @@ public final class Scan {
 
 	public Scan includeValue(boolean outputValue) {
 		this.includeValue = outputValue; 
-		return this;
-	}
-	
-	public Scan valueRaw() {
-		this.valueType = ValueType.RAW;
-		return this;
-	}
-	
-	public Scan valueDigest() {
-		this.valueType = ValueType.DIGEST;
-		return this;
-	}
-
-	public Scan valueMap() {
-		this.valueType = ValueType.MAP;
 		return this;
 	}
 
@@ -122,18 +88,14 @@ public final class Scan {
 			throw new IllegalArgumentException("store name is null");
 		}
 		
-		options.setRequestId(instance.nextRequestId());
-		builder.setOptions(options);
+		header.setTag(instance.nextTag());
+		builder.setHeader(header);
 		
 		builder.setTableName(tableName);
-		builder.setOutput(ProtocolUtils.getOutput(includeKey, includeValue, valueType));
+		builder.setOutput(ProtocolUtils.getOutput(includeKey, includeValue));
 		
 		if (selectOrNull != null) {
 			builder.setSelect(selectOrNull);
-		}
-		
-		if (bucketOrNull != null) {
-			builder.setBucket(bucketOrNull);
 		}
 		
 		return builder.build();

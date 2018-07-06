@@ -20,8 +20,8 @@ package rocks.gkvs;
 
 import io.grpc.stub.StreamObserver;
 import rocks.gkvs.Transformers.KeyResolver;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.PutOperation;
-import rocks.gkvs.protos.RequestOptions;
 
 /**
  * 
@@ -63,12 +63,12 @@ public final class PutAll {
 		
 		PutOperation.Builder builder = PutOperation.newBuilder();
 		
-		RequestOptions.Builder options = RequestOptions.newBuilder();
+		OperationHeader.Builder header = OperationHeader.newBuilder();
 		
-		options.setRequestId(instance.nextRequestId());
-		options.setTimeout(timeoutMls);
+		header.setTag(instance.nextTag());
+		header.setTimeout(timeoutMls);
 		
-		builder.setOptions(options);
+		builder.setHeader(header);
 		
 		builder.setKey(keyValue.key().toProto());
 		builder.setValue(Transformers.toProto(keyValue.value()));
@@ -111,7 +111,7 @@ public final class PutAll {
 			@Override
 			public void onNext(KeyValue keyValue) {
 				PutOperation op = buildRequest(keyValue).build();
-				instance.pushWaitingQueue(op.getOptions().getRequestId(), keyValue.key());
+				instance.pushWaitingQueue(op.getHeader().getTag(), keyValue.key());
 				streamIn.onNext(op);
 			}
 

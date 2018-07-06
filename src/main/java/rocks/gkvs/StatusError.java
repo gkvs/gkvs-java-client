@@ -41,8 +41,8 @@ public final class StatusError implements Status {
 	}
 	
 	@Override
-	public long requestId() {
-		return result.getRequestId();
+	public long tag() {
+		return result.getHeader().getTag();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public final class StatusError implements Status {
 
 	@Override
 	public String toString() {
-		return "STATUS_ERROR [" + requestId() + "]: " + getStatus();
+		return "STATUS_ERROR [" + tag() + "]: " + getStatus();
 	}
 	
 }

@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
-import rocks.gkvs.protos.RequestOptions;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.StatusResult;
 
@@ -42,7 +42,7 @@ public final class Remove {
 	private final GkvsClient instance;
 	
 	private Key key;
-	private final RequestOptions.Builder options = RequestOptions.newBuilder();
+	private final OperationHeader.Builder header = OperationHeader.newBuilder();
 	private Select.Builder selectOrNull;
 	
 	public Remove(GkvsClient instance) {
@@ -55,7 +55,7 @@ public final class Remove {
 	}
 	
 	public Remove withTimeout(int timeoutMls) {
-		options.setTimeout(timeoutMls);
+		header.setTimeout(timeoutMls);
 		return this;
 	}
 	
@@ -80,8 +80,8 @@ public final class Remove {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		options.setRequestId(instance.nextRequestId());
-		builder.setOptions(options);
+		header.setTag(instance.nextTag());
+		builder.setHeader(header);
 		
 		builder.setKey(key.toProto());
 		
@@ -123,7 +123,7 @@ public final class Remove {
 		
 		KeyOperation request = buildRequest();
 		
-		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		instance.pushWaitingQueue(request.getHeader().getTag(), key);
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 

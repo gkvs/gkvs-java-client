@@ -43,8 +43,8 @@ public final class StatusSuccess implements Status {
 	}
 
 	@Override
-	public long requestId() {
-		return result.getRequestId();
+	public long tag() {
+		return result.getHeader().getTag();
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public final class StatusSuccess implements Status {
 	
 	@Override
 	public String toString() {
-		return "STATUS_SUCCESS [" + requestId() + "]: " + key();
+		return "STATUS_SUCCESS [" + tag() + "]: " + key();
 	}
 
 }

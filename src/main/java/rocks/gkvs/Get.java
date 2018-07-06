@@ -22,8 +22,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.OutputOptions;
-import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 import rocks.gkvs.protos.ValueResult;
 
@@ -43,7 +43,7 @@ public final class Get {
 	private final GkvsClient instance;
 
 	private Key key;
-	private final RequestOptions.Builder options = RequestOptions.newBuilder();
+	private final OperationHeader.Builder header = OperationHeader.newBuilder();
 	private Select.Builder selectOrNull;
 	private boolean metadataOnly = false;
 	
@@ -57,7 +57,7 @@ public final class Get {
 	}
 	
 	public Get withTimeout(int timeoutMls) {
-		options.setTimeout(timeoutMls);
+		header.setTimeout(timeoutMls);
 		return this;
 	}
 	
@@ -87,16 +87,16 @@ public final class Get {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		options.setRequestId(instance.nextRequestId());
-		builder.setOptions(options);
+		header.setTag(instance.nextTag());
+		builder.setHeader(header);
 		
 		builder.setKey(key.toProto());
 		
 		if (metadataOnly) {
-			builder.setOutput(OutputOptions.METADATA_ONLY);
+			builder.setOutput(OutputOptions.METADATA);
 		}
 		else {
-			builder.setOutput(OutputOptions.VALUE_RAW);
+			builder.setOutput(OutputOptions.VALUE);
 		}
 				
 		if (selectOrNull != null) {
@@ -136,7 +136,7 @@ public final class Get {
 		
 		KeyOperation request = buildRequest();
 				
-		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		instance.pushWaitingQueue(request.getHeader().getTag(), key);
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 

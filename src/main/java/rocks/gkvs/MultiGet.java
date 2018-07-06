@@ -30,8 +30,8 @@ import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.BatchKeyOperation;
 import rocks.gkvs.protos.BatchValueResult;
 import rocks.gkvs.protos.KeyOperation;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.OutputOptions;
-import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 
 /**
@@ -75,14 +75,14 @@ public final class MultiGet {
 	
 	public MultiGet setKeys(Key...keys) {
 		for (Key key : keys) {
-			this.keys.put(instance.nextRequestId(), key);
+			this.keys.put(instance.nextTag(), key);
 		}
 		return this;
 	}
 	
 	public MultiGet setKeys(Iterator<Key> keys) {
 		while(keys.hasNext()) {
-			this.keys.put(instance.nextRequestId(), keys.next());
+			this.keys.put(instance.nextTag(), keys.next());
 		}
 		return this;
 	}
@@ -93,7 +93,7 @@ public final class MultiGet {
 	}
 	
 	public MultiGet addKey(Key key) {
-		this.keys.put(instance.nextRequestId(), key);
+		this.keys.put(instance.nextTag(), key);
 		return this;
 	}
 	
@@ -110,22 +110,22 @@ public final class MultiGet {
 		return this;
 	}
 	
-	private KeyOperation.Builder buildRequest(long requestId, Key key) {
+	private KeyOperation.Builder buildRequest(long tag, Key key) {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		RequestOptions.Builder options = RequestOptions.newBuilder();
-		options.setTimeout(timeoutMls);
-		options.setRequestId(requestId);
+		OperationHeader.Builder header = OperationHeader.newBuilder();
+		header.setTag(tag);
+		header.setTimeout(timeoutMls);
 		
-		builder.setOptions(options);
+		builder.setHeader(header);
 		builder.setKey(key.toProto());
 		
 		if (metadataOnly) {
-			builder.setOutput(OutputOptions.METADATA_ONLY);
+			builder.setOutput(OutputOptions.METADATA);
 		}
 		else {
-			builder.setOutput(OutputOptions.VALUE_RAW);
+			builder.setOutput(OutputOptions.VALUE);
 		}
 		
 		if (selectOrNull != null) {

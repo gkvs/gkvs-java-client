@@ -30,7 +30,7 @@ package rocks.gkvs;
 
 public interface Status {
 
-	long requestId();
+	long tag();
 	
 	boolean updated();
 	

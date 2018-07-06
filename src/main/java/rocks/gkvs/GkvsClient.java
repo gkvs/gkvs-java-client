@@ -179,25 +179,25 @@ public final class GkvsClient implements Closeable {
 		return futureStub;
 	}
 
-	protected long nextRequestId() {
+	protected long nextTag() {
 		long num = sequenceNum.incrementAndGet();
 		if (num > Long.MAX_VALUE - 100) {
 			if (!sequenceNum.compareAndSet(num, 1)) {
-				return nextRequestId();
+				return nextTag();
 			}
 			return 1L;
 		}
 	    return num;
 	}
 	
-	protected void pushWaitingQueue(long requestId, Key key) {
-		waitingQueue.put(requestId, key);
+	protected void pushWaitingQueue(long tag, Key key) {
+		waitingQueue.put(tag, key);
 	}
 	
-	protected @Nullable Key popWaitingQueue(long requestId) {
-		Key key =  waitingQueue.getIfPresent(requestId);
+	protected @Nullable Key popWaitingQueue(long tag) {
+		Key key =  waitingQueue.getIfPresent(tag);
 		if (key != null) {
-			waitingQueue.invalidate(requestId);
+			waitingQueue.invalidate(tag);
 		}
 		return key;
 	}
@@ -255,15 +255,27 @@ public final class GkvsClient implements Closeable {
 		return new Put(this).put(keyValue);
 	}
 	
-	public Put compareAndPut(String tableName, String recordKey, Value value, long version) {
+	public Put putIfAbsent(String tableName, String recordKey, Value value) {
+		return new Put(this).putIfAbsent(Key.raw(tableName, recordKey), value);
+	}
+	
+	public Put putIfAbsent(Key key, Value value) {
+		return new Put(this).putIfAbsent(key, value);
+	}
+	
+	public Put putIfAbsent(KeyValue keyValue) {
+		return new Put(this).putIfAbsent(keyValue);
+	}
+	
+	public Put compareAndPut(String tableName, String recordKey, Value value, @Nullable int[] version) {
 		return new Put(this).compareAndPut(Key.raw(tableName, recordKey), value, version);
 	}
 	
-	public Put compareAndPut(Key key, Value value, long version) {
+	public Put compareAndPut(Key key, Value value, @Nullable int[] version) {
 		return new Put(this).compareAndPut(key, value, version);
 	}
 	
-	public Put compareAndPut(KeyValue keyValue, long version) {
+	public Put compareAndPut(KeyValue keyValue, @Nullable int[] version) {
 		return new Put(this).compareAndPut(keyValue, version);
 	}
 	

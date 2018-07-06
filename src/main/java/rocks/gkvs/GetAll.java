@@ -21,8 +21,8 @@ package rocks.gkvs;
 import io.grpc.stub.StreamObserver;
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.OutputOptions;
-import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.Select;
 
 /**
@@ -76,18 +76,18 @@ public final class GetAll {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		RequestOptions.Builder options = RequestOptions.newBuilder();
-		options.setRequestId(instance.nextRequestId());
-		options.setTimeout(timeoutMls);
-		builder.setOptions(options);
+		OperationHeader.Builder header = OperationHeader.newBuilder();
+		header.setTag(instance.nextTag());
+		header.setTimeout(timeoutMls);
+		builder.setHeader(header);
 		
 		builder.setKey(key.toProto());
 		
 		if (metadataOnly) {
-			builder.setOutput(OutputOptions.METADATA_ONLY);
+			builder.setOutput(OutputOptions.METADATA);
 		}
 		else {
-			builder.setOutput(OutputOptions.VALUE_RAW);
+			builder.setOutput(OutputOptions.VALUE);
 		}
 		
 		if (selectOrNull != null) {
@@ -131,7 +131,7 @@ public final class GetAll {
 			@Override
 			public void onNext(Key key) {
 				KeyOperation op = buildRequest(key).build();
-				instance.pushWaitingQueue(op.getOptions().getRequestId(), key);
+				instance.pushWaitingQueue(op.getHeader().getTag(), key);
 				streamOut.onNext(op);
 			}
 

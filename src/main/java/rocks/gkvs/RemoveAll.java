@@ -21,7 +21,7 @@ package rocks.gkvs;
 import io.grpc.stub.StreamObserver;
 import rocks.gkvs.Transformers.KeyResolver;
 import rocks.gkvs.protos.KeyOperation;
-import rocks.gkvs.protos.RequestOptions;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.Select;
 
 /**
@@ -72,11 +72,11 @@ public final class RemoveAll {
 		
 		KeyOperation.Builder builder = KeyOperation.newBuilder();
 		
-		RequestOptions.Builder options = RequestOptions.newBuilder();
-		options.setRequestId(instance.nextRequestId());
-		options.setTimeout(timeoutMls);
+		OperationHeader.Builder header = OperationHeader.newBuilder();
+		header.setTag(instance.nextTag());
+		header.setTimeout(timeoutMls);
 		
-		builder.setOptions(options);
+		builder.setHeader(header);
 		
 		builder.setKey(key.toProto());
 		
@@ -120,7 +120,7 @@ public final class RemoveAll {
 			@Override
 			public void onNext(Key key) {
 				KeyOperation op = buildRequest(key);
-				instance.pushWaitingQueue(op.getOptions().getRequestId(), key);
+				instance.pushWaitingQueue(op.getHeader().getTag(), key);
 				streamIn.onNext(op);
 			}
 

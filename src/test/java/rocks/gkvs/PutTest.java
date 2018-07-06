@@ -17,6 +17,7 @@
  */
 package rocks.gkvs;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -57,7 +58,7 @@ public class PutTest extends AbstractClientTest {
 		Gkvs.Client.put(TEST, key, tbl).sync().updated();
 		
 		Table actual = Gkvs.Client.get(TEST, key).sync().value().asTable();
-
+		
 		Assert.assertEquals("value", actual.get("field").asString());
 		
 		Gkvs.Client.remove(TEST, key);
@@ -82,11 +83,11 @@ public class PutTest extends AbstractClientTest {
 		replaceTbl.put("field", "replace");
 
 		// try with 0 version
-		boolean updated = Gkvs.Client.compareAndPut(TEST, key, replaceTbl, 0).sync().updated();
+		boolean updated = Gkvs.Client.compareAndPut(TEST, key, replaceTbl, null).sync().updated();
 		Assert.assertFalse(updated);
 		
 		// try with unknown version
-		updated = Gkvs.Client.compareAndPut(TEST, key, replaceTbl, 435345234).sync().updated();
+		updated = Gkvs.Client.compareAndPut(TEST, key, replaceTbl, new int[] {435345234}).sync().updated();
 		Assert.assertFalse(updated);
 		
 		// try with valid version
@@ -128,11 +129,11 @@ public class PutTest extends AbstractClientTest {
 	
 		String key = UUID.randomUUID().toString();
 		
-		Assert.assertTrue(Gkvs.Client.compareAndPut(TEST, key, new Str("first"), 0).async().getUnchecked().updated());
+		Assert.assertTrue(Gkvs.Client.putIfAbsent(TEST, key, new Str("first")).async().getUnchecked().updated());
 		
 		Assert.assertEquals("first", Gkvs.Client.get(TEST, key).async().getUnchecked().value().asStr().asString());
 		
-		Assert.assertFalse(Gkvs.Client.compareAndPut(TEST, key, new Str("second"), 0).async().getUnchecked().updated());
+		Assert.assertFalse(Gkvs.Client.putIfAbsent(TEST, key, new Str("second")).async().getUnchecked().updated());
 		
 		Gkvs.Client.remove(TEST, key).sync();
 		

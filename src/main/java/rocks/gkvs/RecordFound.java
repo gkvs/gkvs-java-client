@@ -20,6 +20,7 @@ package rocks.gkvs;
 
 import javax.annotation.Nullable;
 
+import rocks.gkvs.protos.Metadata;
 import rocks.gkvs.protos.ValueResult;
 import rocks.gkvs.value.Nil;
 import rocks.gkvs.value.Value;
@@ -46,8 +47,8 @@ public final class RecordFound implements Record {
 	}
 	
 	@Override
-	public long requestId() {
-		return result.getRequestId();
+	public long tag() {
+		return result.getHeader().getTag();
 	}
 
 	@Override
@@ -56,8 +57,14 @@ public final class RecordFound implements Record {
 	}
 	
 	@Override
-	public long version() {
-		return result.getMetadata().getVersion();
+	public int[] version() {
+		Metadata metadata = result.getMetadata();
+		int size = metadata.getVersionCount();
+		int[] result = new int[size];
+		for (int i = 0; i != size; ++i) {
+			result[i] = metadata.getVersion(i);
+		}
+		return result;
 	}
 	
 	@Override
@@ -102,20 +109,8 @@ public final class RecordFound implements Record {
 	public @Nullable byte[] rawValue() {
 		
 		if (result.hasValue()) {
-			
 			rocks.gkvs.protos.Value proto = result.getValue();
-			
-			switch(proto.getValueCase()) {
-			
-			case RAW:
-				return proto.getRaw().toByteArray();
-			case DIGEST:
-				return proto.getDigest().toByteArray();
-			default:
-				return proto.toByteArray();
-					
-			}
-			
+			return proto.getRaw().toByteArray();
 		}
 		
 		return null;
@@ -123,7 +118,7 @@ public final class RecordFound implements Record {
 
 	@Override
 	public String toString() {
-		return "RECORD_FOUND [" + requestId() + "]: " + key() + "=" + value();
+		return "RECORD_FOUND [" + tag() + "]: " + key() + "=" + value();
 	}
 
 }

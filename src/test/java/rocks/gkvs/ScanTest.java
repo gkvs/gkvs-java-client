@@ -85,30 +85,6 @@ public class ScanTest extends AbstractClientTest {
 		
 	}
 	
-	@Test
-	public void testBucket() {
-		
-		Set<String> all = collectKeys(Gkvs.Client.scan(TEST)
-				.sync());
-		
-		Set<String> odd = collectKeys(Gkvs.Client.scan(TEST)
-				.withBucket(0, 2).sync());
-		
-		Set<String> even = collectKeys(Gkvs.Client.scan(TEST)
-				.withBucket(1, 2).sync());
-		
-		//System.out.println("all = " + all);
-		//System.out.println("odd = " + odd);
-		//System.out.println("even = " + even);
-		
-		Assert.assertEquals(all.size(), odd.size() + even.size());
-		
-		all.removeAll(odd);
-		all.removeAll(even);
-		
-		Assert.assertTrue(all.isEmpty());
-	}
-	
 	protected static Set<String> collectKeys(Iterator<Record> records) {
 		
 		Set<String> set = new HashSet<>();

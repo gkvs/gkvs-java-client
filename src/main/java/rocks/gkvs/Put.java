@@ -18,11 +18,13 @@
 
 package rocks.gkvs;
 
+import javax.annotation.Nullable;
+
 import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.Transformers.KeyResolver;
+import rocks.gkvs.protos.OperationHeader;
 import rocks.gkvs.protos.PutOperation;
-import rocks.gkvs.protos.RequestOptions;
 import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.value.Value;
 
@@ -45,14 +47,14 @@ public final class Put {
 	
 	private Key key;
 	private Value value;
-	private final RequestOptions.Builder options = RequestOptions.newBuilder();
+	private final OperationHeader.Builder header = OperationHeader.newBuilder();
 		
 	public Put(GkvsClient instance) {
 		this.instance = instance;
 	}
 	
 	public Put withTimeout(int timeoutMls) {
-		options.setTimeout(timeoutMls);
+		header.setTimeout(timeoutMls);
 		return this;
 	}
 
@@ -61,19 +63,31 @@ public final class Put {
 		return this;
 	}
 	
-	public Put compareAndPut(KeyValue keyValue, long version) {
-		this.key = keyValue.key();
-		this.value = keyValue.value();
-		builder.setCompareAndPut(true);
-		builder.setVersion(version);
-		return this;
+	public Put putIfAbsent(KeyValue keyValue) {
+		return compareAndPut(keyValue, null);
 	}
 	
-	public Put compareAndPut(Key key, Value value, long version) {
+	public Put compareAndPut(KeyValue keyValue, @Nullable int[] version) {
+		return compareAndPut(keyValue.key(), keyValue.value(), version);
+	}
+	
+	public Put putIfAbsent(Key key, Value value) {
+		return compareAndPut(key, value, null);
+	}
+	
+	public Put compareAndPut(Key key, Value value, @Nullable int[] version) {
 		this.key = key;
 		this.value = value;
 		builder.setCompareAndPut(true);
-		builder.setVersion(version);
+
+		// if version not exists, then it is PutIfAbsent
+		if (version != null) {
+			int size = version.length;
+			for (int i = 0; i != size; ++i) {
+				builder.addVersion(version[i]);
+			}
+		}
+		
 		return this;
 	}
 	
@@ -99,8 +113,8 @@ public final class Put {
 			throw new IllegalArgumentException("value is null");
 		}
 		
-		options.setRequestId(instance.nextRequestId());
-		builder.setOptions(options);
+		header.setTag(instance.nextTag());
+		builder.setHeader(header);
 		
 		builder.setKey(key.toProto());
 		builder.setValue(Transformers.toProto(value));
@@ -139,7 +153,7 @@ public final class Put {
 		
 		PutOperation request = buildRequest();
 		
-		instance.pushWaitingQueue(request.getOptions().getRequestId(), key);
+		instance.pushWaitingQueue(request.getHeader().getTag(), key);
 		
 		final KeyResolver keyResolver = new KeyResolver() {
 
