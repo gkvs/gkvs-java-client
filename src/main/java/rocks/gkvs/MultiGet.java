@@ -58,8 +58,8 @@ public final class MultiGet {
 	final KeyResolver keyResolver = new KeyResolver() {
 
 		@Override
-		public Key find(long requestId) {
-			return keys.get(requestId);
+		public Key find(long tag) {
+			return keys.get(tag);
 		}
 		
 	};
