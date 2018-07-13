@@ -54,7 +54,7 @@ public class GetTest extends AbstractClientTest {
 		String value = "org";
 		
 		Table tbl = new Table();
-		tbl.put("col", "org");
+		tbl.put(column, value);
 		
 		Gkvs.Client.put(TEST, key, tbl).sync();
 		

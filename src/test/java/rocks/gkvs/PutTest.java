@@ -17,7 +17,6 @@
  */
 package rocks.gkvs;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -147,6 +146,8 @@ public class PutTest extends AbstractClientTest {
 		Gkvs.Client.put(TEST, key, new Str("value")).withTtl(100).sync();
 		
 		Record rec = Gkvs.Client.get(TEST, key).metadataOnly().sync();
+		
+		System.out.println("rec.ttl = " + rec.ttl());
 		
 		Assert.assertTrue(rec.ttl() > 0);
 		
