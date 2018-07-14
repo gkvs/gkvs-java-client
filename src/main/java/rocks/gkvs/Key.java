@@ -21,6 +21,8 @@ package rocks.gkvs;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 
+import rocks.gkvs.value.Value;
+
 /**
  * 
  * Key
@@ -34,35 +36,28 @@ import com.google.protobuf.ByteString;
 
 public final class Key {
 
-	private final String tableName;
-	private final KeyType recordKeyType;
+	public static final String DIGEST_PREFIX = "hash!";
+	private static final byte[] DIGEST_PREFIX_BYTES = DIGEST_PREFIX.getBytes(); 
+	
+	private final String viewName;
 	private final ByteString recordKey;
 
-	public Key(String tableName, KeyType recordKeyType, ByteString recordKey) {
+	protected Key(String viewName, ByteString recordKey) {
 		
-		if (tableName == null) {
-			throw new IllegalArgumentException("tableName is null");
-		}		
-
-		if (recordKeyType == null) {
-			throw new IllegalArgumentException("recordKeyType is null");
+		if (viewName == null) {
+			throw new IllegalArgumentException("viewName is null");
 		}		
 
 		if (recordKey == null) {
 			throw new IllegalArgumentException("recordKey is null");
 		}		
 
-		this.tableName = tableName;
-		this.recordKeyType = recordKeyType;
+		this.viewName = viewName;
 		this.recordKey = recordKey;
 	}
 
-	public String getTableName() {
-		return tableName;
-	}
-
-	public KeyType getRecordKeyType() {
-		return recordKeyType;
+	public String getViewName() {
+		return viewName;
 	}
 
 	protected ByteString getRecordKey() {
@@ -85,29 +80,41 @@ public final class Key {
 		return BaseEncoding.base64().encode(recordKey.toByteArray());
 	}
 	
-	public static Key raw(String tableName, String recordKey) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey, GkvsConstants.MUTABLE_KEY_CHARSET));
+	public static Key raw(String viewName, String recordKey) {
+		
+		if (recordKey == null) {
+			throw new IllegalArgumentException("recordKey is null");
+		}
+		
+		return new Key(viewName, ByteString.copyFrom(recordKey, GkvsConstants.MUTABLE_KEY_CHARSET));
 	}
 
-	public static Key raw(String tableName, byte[] recordKey) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKey));
+	public static Key raw(String viewName, byte[] recordKey) {
+		
+		if (recordKey == null) {
+			throw new IllegalArgumentException("recordKey is null");
+		}
+		
+		return new Key(viewName, ByteString.copyFrom(recordKey));
 	}
 
-	public static Key digest(String tableName, byte[] recordKeyDigest) {
-		return new Key(tableName, KeyType.RAW, ByteString.copyFrom(recordKeyDigest));
+	public static Key digest(String viewName, byte[] recordKeyDigest) {
+		
+		if (recordKeyDigest == null) {
+			throw new IllegalArgumentException("recordKeyDigest is null");
+		}
+		
+		byte[] key = new byte[DIGEST_PREFIX_BYTES.length + recordKeyDigest.length];
+		System.arraycopy(DIGEST_PREFIX_BYTES, 0, key, 0, DIGEST_PREFIX_BYTES.length);		
+		System.arraycopy(recordKeyDigest, 0, key, DIGEST_PREFIX_BYTES.length, recordKeyDigest.length);
+		
+		return new Key(viewName, ByteString.copyFrom(key));
 	}
 
 	protected rocks.gkvs.protos.Key toProto() {
 		rocks.gkvs.protos.Key.Builder b = rocks.gkvs.protos.Key.newBuilder();
-		b.setTableName(tableName);
-		switch (recordKeyType) {
-		case RAW:
-			b.setRaw(recordKey);
-			break;
-		case DIGEST:
-			b.setDigest(recordKey);
-			break;
-		}
+		b.setViewName(viewName);
+		b.setRecordKey(recordKey);
 		return b.build();
 	}
 
@@ -116,8 +123,7 @@ public final class Key {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((recordKey == null) ? 0 : recordKey.hashCode());
-		result = prime * result + ((recordKeyType == null) ? 0 : recordKeyType.hashCode());
-		result = prime * result + ((tableName == null) ? 0 : tableName.hashCode());
+		result = prime * result + ((viewName == null) ? 0 : viewName.hashCode());
 		return result;
 	}
 
@@ -135,33 +141,40 @@ public final class Key {
 				return false;
 		} else if (!recordKey.equals(other.recordKey))
 			return false;
-		if (recordKeyType != other.recordKeyType)
-			return false;
-		if (tableName == null) {
-			if (other.tableName != null)
+		if (viewName == null) {
+			if (other.viewName != null)
 				return false;
-		} else if (!tableName.equals(other.tableName))
+		} else if (!viewName.equals(other.viewName))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		if (isPrintableKey()) {
-			return "Key [" + tableName + ":" + recordKeyType.name() + ":" + getRecordKeyString() + "]";
-		}
-		else {
-			return "Key [" + tableName + ":" + recordKeyType.name() + ":BASE64:" + getRecordKeyBase64String() + "]";
-		}
-	}
-
-	private boolean isPrintableKey() {
-		if (recordKeyType == KeyType.DIGEST) {
-			return false;
-		}
+		StringBuilder out  = new StringBuilder();
+		out.append("Key [").append(viewName).append(":");
+		
 		int size = recordKey.size();
 		for (int i = 0; i != size; ++i) {
 			int b = recordKey.byteAt(i);
+			if (isPrintable(b & 0xFF)) {
+				out.append((char) b);
+			}
+			else {
+				out.append("\\u00");
+				out.append(Value.firstHex(b));
+				out.append(Value.secondHex(b));
+			}
+		}
+		
+		out.append("]");
+		return out.toString();
+	}
+
+	public static boolean isPrintable(byte[] array) {
+		int size = array.length;
+		for (int i = 0; i != size; ++i) {
+			int b = array[i];
 			if (!isPrintable(b & 0xFF)) {
 				return false;
 			}

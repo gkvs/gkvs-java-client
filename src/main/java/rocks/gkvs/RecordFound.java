@@ -76,20 +76,8 @@ public final class RecordFound implements Record {
 	public NullableKey key() {
 		
 		if (result.hasKey()) {
-			
 			rocks.gkvs.protos.Key protoKey = result.getKey();
-			
-			switch(protoKey.getRecordKeyCase()) {
-			
-			case RAW:
-				return new NullableKey(Key.raw(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
-			case DIGEST:
-				return new NullableKey(Key.digest(protoKey.getTableName(), protoKey.getRaw().toByteArray()));
-			
-			default:
-				throw new GkvsException("unknown key type: " + protoKey.getRecordKeyCase());
-			}
-			
+			return new NullableKey(new Key(protoKey.getViewName(), protoKey.getRecordKey()));
 		}
 		
 		return new NullableKey(requestKey);

@@ -37,16 +37,16 @@ public enum Gkvs {
 
 	Client;
 	
-	public Get exists(String tableName, String recordKey) {
-		return GkvsClient.getDefaultInstance().exists(tableName, recordKey);
+	public Get exists(String viewName, String recordKey) {
+		return GkvsClient.getDefaultInstance().exists(viewName, recordKey);
 	}
 	
 	public Get exists(Key key) {
 		return GkvsClient.getDefaultInstance().exists(key);
 	}
 	
-	public Get get(String tableName, String recordKey) {
-		return GkvsClient.getDefaultInstance().get(tableName, recordKey);
+	public Get get(String viewName, String recordKey) {
+		return GkvsClient.getDefaultInstance().get(viewName, recordKey);
 	}
 	
 	public Get get(Key key) {
@@ -69,8 +69,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().getAll();
 	}
 	
-	public Put put(String tableName, String recordKey, Value value) {
-		return GkvsClient.getDefaultInstance().put(tableName, recordKey, value);
+	public Put put(String viewName, String recordKey, Value value) {
+		return GkvsClient.getDefaultInstance().put(viewName, recordKey, value);
 	}
 	
 	public Put put(Key key, Value value) {
@@ -81,8 +81,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().put(keyValue);
 	}
 	
-	public Put putIfAbsent(String tableName, String recordKey, Value value) {
-		return GkvsClient.getDefaultInstance().putIfAbsent(tableName, recordKey, value);
+	public Put putIfAbsent(String viewName, String recordKey, Value value) {
+		return GkvsClient.getDefaultInstance().putIfAbsent(viewName, recordKey, value);
 	}
 	
 	public Put putIfAbsent(Key key, Value value) {
@@ -93,8 +93,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().putIfAbsent(keyValue);
 	}
 	
-	public Put compareAndPut(String tableName, String recordKey, Value value, int[] version) {
-		return GkvsClient.getDefaultInstance().compareAndPut(tableName, recordKey, value, version);
+	public Put compareAndPut(String viewName, String recordKey, Value value, int[] version) {
+		return GkvsClient.getDefaultInstance().compareAndPut(viewName, recordKey, value, version);
 	}
 	
 	public Put compareAndPut(Key key, Value value, int[] version) {
@@ -109,8 +109,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().putAll();
 	}
 	
-	public Remove remove(String tableName, String recordKey) {
-		return GkvsClient.getDefaultInstance().remove(tableName, recordKey);
+	public Remove remove(String viewName, String recordKey) {
+		return GkvsClient.getDefaultInstance().remove(viewName, recordKey);
 	}
 	
 	public Remove remove(Key key) {
@@ -121,8 +121,8 @@ public enum Gkvs {
 		return GkvsClient.getDefaultInstance().removeAll();
 	}
 	
-	public Scan scan(String tableName) {
-		return GkvsClient.getDefaultInstance().scan(tableName);
+	public Scan scan(String viewName) {
+		return GkvsClient.getDefaultInstance().scan(viewName);
 	}
 	
 }

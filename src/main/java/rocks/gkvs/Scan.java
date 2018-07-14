@@ -41,7 +41,7 @@ public final class Scan {
 
 	private final GkvsClient instance;
 
-	private String tableName;
+	private String viewName;
 	private final OperationHeader.Builder header = OperationHeader.newBuilder();
 	private Select.Builder selectOrNull;
 	
@@ -52,8 +52,8 @@ public final class Scan {
 		this.instance = instance;
 	}
 	
-	public Scan table(String tableName) {
-		this.tableName = tableName;
+	public Scan view(String viewName) {
+		this.viewName = viewName;
 		return this;
 	}
 	
@@ -84,14 +84,14 @@ public final class Scan {
 		
 		ScanOperation.Builder builder = ScanOperation.newBuilder();
 		
-		if (tableName == null) {
+		if (viewName == null) {
 			throw new IllegalArgumentException("store name is null");
 		}
 		
 		header.setTag(instance.nextTag());
 		builder.setHeader(header);
 		
-		builder.setTableName(tableName);
+		builder.setViewName(viewName);
 		builder.setOutput(ProtocolUtils.getOutput(includeKey, includeValue));
 		
 		if (selectOrNull != null) {
@@ -117,7 +117,7 @@ public final class Scan {
 
 	@Override
 	public String toString() {
-		return "Scan [tableName=" + tableName + "]";
+		return "Scan [viewName=" + viewName + "]";
 	}
 	
 }

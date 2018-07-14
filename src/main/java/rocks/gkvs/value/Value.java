@@ -163,12 +163,22 @@ public abstract class Value {
 		for (int i = 0, j = 0; i != bytes.length; ++i) {
 			
 			int v = bytes[i] & 0xFF;
-			hexChars[j++] = HEX_ARRAY[v >>> 4];
-			hexChars[j++] = HEX_ARRAY[v & 0x0F];
+			hexChars[j++] = firstHex(v);
+			hexChars[j++] = secondHex(v);
 			
 		}
 		
 		return new String(hexChars);
 	}
 
+	public static char firstHex(int b) {
+		int v = b & 0xFF;
+		return HEX_ARRAY[v >>> 4];
+	}
+	
+	public static char secondHex(int b) {
+		int v = b & 0xFF;
+		return HEX_ARRAY[v & 0x0F];
+	}
 }
+

@@ -211,16 +211,16 @@ public final class GkvsClient implements Closeable {
 		}
 	}
 	
-	public Get exists(String tableName, String recordKey) {
-		return new Get(this).setKey(Key.raw(tableName, recordKey)).metadataOnly();
+	public Get exists(String viewName, String recordKey) {
+		return new Get(this).setKey(Key.raw(viewName, recordKey)).metadataOnly();
 	}
 	
 	public Get exists(Key key) {
 		return new Get(this).setKey(key).metadataOnly();
 	}
 	
-	public Get get(String tableName, String recordKey) {
-		return new Get(this).setKey(Key.raw(tableName, recordKey));
+	public Get get(String viewName, String recordKey) {
+		return new Get(this).setKey(Key.raw(viewName, recordKey));
 	}
 	
 	public Get get(Key key) {
@@ -243,8 +243,8 @@ public final class GkvsClient implements Closeable {
 		return new GetAll(this);
 	}
 	
-	public Put put(String tableName, String recordKey, Value value) {
-		return new Put(this).put(Key.raw(tableName, recordKey), value);
+	public Put put(String viewName, String recordKey, Value value) {
+		return new Put(this).put(Key.raw(viewName, recordKey), value);
 	}
 	
 	public Put put(Key key, Value value) {
@@ -255,8 +255,8 @@ public final class GkvsClient implements Closeable {
 		return new Put(this).put(keyValue);
 	}
 	
-	public Put putIfAbsent(String tableName, String recordKey, Value value) {
-		return new Put(this).putIfAbsent(Key.raw(tableName, recordKey), value);
+	public Put putIfAbsent(String viewName, String recordKey, Value value) {
+		return new Put(this).putIfAbsent(Key.raw(viewName, recordKey), value);
 	}
 	
 	public Put putIfAbsent(Key key, Value value) {
@@ -267,8 +267,8 @@ public final class GkvsClient implements Closeable {
 		return new Put(this).putIfAbsent(keyValue);
 	}
 	
-	public Put compareAndPut(String tableName, String recordKey, Value value, @Nullable int[] version) {
-		return new Put(this).compareAndPut(Key.raw(tableName, recordKey), value, version);
+	public Put compareAndPut(String viewName, String recordKey, Value value, @Nullable int[] version) {
+		return new Put(this).compareAndPut(Key.raw(viewName, recordKey), value, version);
 	}
 	
 	public Put compareAndPut(Key key, Value value, @Nullable int[] version) {
@@ -283,8 +283,8 @@ public final class GkvsClient implements Closeable {
 		return new PutAll(this);
 	}
 	
-	public Remove remove(String tableName, String recordKey) {
-		return new Remove(this).setKey(Key.raw(tableName, recordKey));
+	public Remove remove(String viewName, String recordKey) {
+		return new Remove(this).setKey(Key.raw(viewName, recordKey));
 	}
 	
 	public Remove remove(Key key) {
@@ -295,8 +295,8 @@ public final class GkvsClient implements Closeable {
 		return new RemoveAll(this);
 	}
 	
-	public Scan scan(String tableName) {
-		return new Scan(this).table(tableName);
+	public Scan scan(String viewName) {
+		return new Scan(this).view(viewName);
 	}
 	
 	private static File getCertAuthFile(String gkvsKeys) {

@@ -47,11 +47,7 @@ public final class NullableKey {
 	}
 	
 	public String getTableName() {
-		return key != null ? key.getTableName() : null;
-	}
-
-	public KeyType getRecordKeyType() {
-		return key != null ? key.getRecordKeyType() : null;
+		return key != null ? key.getViewName() : null;
 	}
 
 	public byte[] getRecordKeyBytes() {
