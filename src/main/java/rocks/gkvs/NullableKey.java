@@ -46,7 +46,7 @@ public final class NullableKey {
 		return key;
 	}
 	
-	public String getTableName() {
+	public String getViewName() {
 		return key != null ? key.getViewName() : null;
 	}
 

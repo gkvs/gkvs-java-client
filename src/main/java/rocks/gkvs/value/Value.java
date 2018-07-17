@@ -56,6 +56,10 @@ public abstract class Value {
 	
 	public abstract boolean isNil();
 	
+	public static Value nil() {
+		return Nil.get();
+	}
+	
 	public static Bool getDefaultBool() {
 		return DEFAULT_BOOL;
 	}

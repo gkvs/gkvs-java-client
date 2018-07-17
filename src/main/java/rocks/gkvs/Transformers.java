@@ -18,7 +18,9 @@
 package rocks.gkvs;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -29,9 +31,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
+import rocks.gkvs.protos.ListEntry;
+import rocks.gkvs.protos.ListResult;
 import rocks.gkvs.protos.StatusResult;
 import rocks.gkvs.protos.ValueResult;
-import rocks.gkvs.value.Str;
 
 /**
  * 
@@ -49,6 +52,38 @@ final class Transformers {
 	private Transformers() {
 	}
 	
+	protected static List<Entry> toEntryList(ListResult result) {
+		
+		List<Entry> list = new ArrayList<Entry>(result.getEntryCount());
+		
+		for (ListEntry protoEntry : result.getEntryList()) {
+			
+			String name = protoEntry.getName();
+			rocks.gkvs.value.Value value = parseValue(protoEntry.getPayload());
+			
+			list.add(new Entry(name, value));
+			
+		}
+		
+		return list;
+		
+	}
+	
+	protected static ListenableFuture<List<Entry>> toEntryList(ListenableFuture<ListResult> result) {
+		return Futures.transform(result, ListEntryFn.IMPL);
+	}
+	
+	protected enum ListEntryFn implements Function<ListResult,List<Entry>> {
+		
+		IMPL;
+
+		@Override
+		public List<Entry> apply(ListResult input) {
+			return toEntryList(input);
+		}
+		
+	}
+	
 	protected static rocks.gkvs.protos.Value toProto(rocks.gkvs.value.Value value) {
 		rocks.gkvs.protos.Value.Builder builder = rocks.gkvs.protos.Value.newBuilder();
 		
@@ -63,14 +98,18 @@ final class Transformers {
 		return builder.build();
 	}
 	
-	protected static rocks.gkvs.value.Value fromProto(rocks.gkvs.protos.Value proto) {
-		ByteString payload = getValuePayload(proto);
+	protected static rocks.gkvs.value.Value parseValue(ByteString payload) {
 		
 		if (payload.isEmpty()) {
-			return new Str("");
+			return rocks.gkvs.value.Value.nil();
 		}
 		
 		return rocks.gkvs.value.Parser.parseValue(payload.newInput());
+		
+	}
+	
+	protected static rocks.gkvs.value.Value fromProto(rocks.gkvs.protos.Value proto) {
+		return parseValue(getValuePayload(proto));
 	}
 	
 	protected static ByteString getValuePayload(rocks.gkvs.protos.Value proto) {

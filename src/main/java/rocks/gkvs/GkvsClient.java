@@ -211,6 +211,10 @@ public final class GkvsClient implements Closeable {
 		}
 	}
 	
+	public ListCmd list() {
+		return new ListCmd(this);
+	}
+	
 	public Get exists(String viewName, String recordKey) {
 		return new Get(this).setKey(Key.raw(viewName, recordKey)).metadataOnly();
 	}

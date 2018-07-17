@@ -37,6 +37,10 @@ public enum Gkvs {
 
 	Client;
 	
+	public ListCmd list() {
+		return GkvsClient.getDefaultInstance().list();
+	}
+	
 	public Get exists(String viewName, String recordKey) {
 		return GkvsClient.getDefaultInstance().exists(viewName, recordKey);
 	}
