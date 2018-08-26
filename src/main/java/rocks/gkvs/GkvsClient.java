@@ -107,31 +107,12 @@ public final class GkvsClient implements Closeable {
 	}
 	
 	public static GkvsClient createFromProperties(Properties props) {
-		String host = props.getProperty("gkvs.host", "localhost");
-		int port;
-		try {
-			port = Integer.parseInt(props.getProperty("gkvs.port", "4040"));
-		}
-		catch(NumberFormatException e) {
-			throw new IllegalStateException("unable parse gkvs.port property", e);
-		}
-		String keys = props.getProperty("gkvs.keys");
-		if (keys == null) {
-			keys = System.getProperty("GKVS_KEYS");			
-		}
-		if (keys == null) {
-			keys = System.getenv("GKVS_KEYS");
-		}
-		if (keys == null) {
-			keys = GkvsConstants.CLASSPATH_PREFIX;
-		}
-		return new GkvsClient(host, port, keys);
+		GkvsConfig config = GkvsConfig.fromProperties(props);
+		return new GkvsClient(config);
 	}
 	
-	public GkvsClient(String host, int port, String keys) {
-		this(NettyChannelBuilder.forAddress(host, port)
-			.negotiationType(NegotiationType.TLS)
-            .sslContext(buildSslContext(keys)));
+	public GkvsClient(GkvsConfig config) {
+		this(buildChannel(config));
 	}
 	
 	public GkvsClient(ManagedChannelBuilder<?> channelBuilder) {
@@ -317,6 +298,22 @@ public final class GkvsClient implements Closeable {
 		}
 		else {
 			return new File(gkvsKeys + File.separator + GkvsConstants.GKVS_AUTH_CRT);
+		}
+
+	}
+	
+	private static NettyChannelBuilder buildChannel(GkvsConfig config) {
+
+		if (config.useSsl()) {
+		
+			return NettyChannelBuilder.forAddress(config.getHost(), config.getPort()).negotiationType(NegotiationType.TLS)
+				.sslContext(buildSslContext(config.getSslKeys()));
+		
+		}
+		else {
+			
+			return NettyChannelBuilder.forAddress(config.getHost(), config.getPort()).usePlaintext();
+			
 		}
 
 	}
