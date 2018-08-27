@@ -39,7 +39,7 @@ import rocks.gkvs.value.Value;
  *
  */
 
-public final class Put {
+public final class Put extends One<Status> {
 
 	private final GkvsClient instance;
 
@@ -122,6 +122,7 @@ public final class Put {
 		return builder.build();
 	}
 
+	@Override
 	public Status sync() {
 		
 		try {
@@ -141,6 +142,7 @@ public final class Put {
 		
 	}
 	
+	@Override
 	public GkvsFuture<Status> async() {
 		
 		ListenableFuture<StatusResult> result = instance.getFutureStub().put(buildRequest());
@@ -149,6 +151,7 @@ public final class Put {
 		
 	}
 	
+	@Override
 	public void async(final Observer<Status> statusObserver) {
 		
 		PutOperation request = buildRequest();
@@ -167,7 +170,7 @@ public final class Put {
 		instance.getAsyncStub().put(request, Transformers.observeStatuses(statusObserver, keyResolver));
 	
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Put " + key;

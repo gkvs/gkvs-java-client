@@ -11,7 +11,7 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.7</java.version>
+    <java.version>1.8</java.version>
     <msgpack.version>0.8.11</msgpack.version>
     <protobuf.version>3.5.1</protobuf.version>
     <protoc.artifact>com.google.protobuf:protoc:3.5.1</protoc.artifact>
@@ -19,6 +19,8 @@
     <grpc.artifact>io.grpc:protoc-gen-grpc-java:1.12.0</grpc.artifact>
     <jsr305.version>3.0.0</jsr305.version>
     <tcnative.version>2.0.10.Final</tcnative.version>
+    <reactor.version>3.1.8.RELEASE</reactor.version>
+    <rxjava.version>1.3.8</rxjava.version>
   </properties>
   
   <scm>
@@ -88,6 +90,8 @@
 	                               <exclude>com.google.code.findbugs:jsr305</exclude>
 	                               <exclude>io.netty:netty-tcnative-boringssl-static</exclude>
 	                               <exclude>org.conscrypt:conscrypt-openjdk</exclude>
+	                               <exclude>io.projectreactor:reactor-core</exclude>
+	                               <exclude>io.reactivex:rxjava</exclude>
 	                            </excludes>
 	                        </artifactSet>                            
                             <relocations>
@@ -209,6 +213,29 @@
       <version>${tcnative.version}</version>
     </dependency>	
 
+    <!-- REACTOR -->
+
+    <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-core</artifactId>
+        <version>${reactor.version}</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-test</artifactId>
+        <version>${reactor.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- RX-JAVA -->
+    
+	<dependency>
+	    <groupId>io.reactivex</groupId>
+	    <artifactId>rxjava</artifactId>
+	    <version>${rxjava.version}</version>
+	</dependency>    
+
     <!-- TEST -->
 
     <dependency>
@@ -301,7 +328,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>3.2</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>

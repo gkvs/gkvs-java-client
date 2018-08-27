@@ -31,6 +31,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
+import rocks.gkvs.protos.BatchValueResult;
 import rocks.gkvs.protos.ListEntry;
 import rocks.gkvs.protos.ListResult;
 import rocks.gkvs.protos.StatusResult;
@@ -141,6 +142,10 @@ final class Transformers {
 		return Futures.transform(result, new SimpleKeyRecordFn(requestKey));
 	}
 	
+	protected static ListenableFuture<Iterable<Record>> toBatchRecords(ListenableFuture<BatchValueResult> result, KeyResolver keyResolver) {
+		return Futures.transform(result, new BatchKeyRecordFn(keyResolver));
+	}
+	
 	protected static ListenableFuture<Status> toStatus(@Nullable Key requestKey, ListenableFuture<StatusResult> result) {
 		return Futures.transform(result, new SimpleKeyStatusFn(requestKey));
 	}
@@ -195,6 +200,20 @@ final class Transformers {
 		
 		public Record apply(ValueResult result) {
 			return toRecord(requestKey, result);
+		}
+		
+	}
+	
+	protected static final class BatchKeyRecordFn implements Function<BatchValueResult, Iterable<Record>> {
+
+		private final KeyResolver keyResolver;
+		
+		protected BatchKeyRecordFn(KeyResolver keyResolver) {
+			this.keyResolver = keyResolver;
+		}
+		
+		public Iterable<Record> apply(BatchValueResult result) {
+			return toRecords(result.getResultList(), keyResolver);
 		}
 		
 	}
@@ -265,6 +284,10 @@ final class Transformers {
 		return new StreamRecordObserverAdapter(recordObserver, keyResolver);
 	}
 	
+	protected static StreamObserver<BatchValueResult> observeBatchRecords(Observer<Iterable<Record>> recordObserver, KeyResolver keyResolver) {
+		return new StreamBatchRecordObserverAdapter(recordObserver, keyResolver);
+	}
+	
 	protected static StreamObserver<StatusResult> observeStatuses(Observer<Status> statusObserver, KeyResolver keyResolver) {
 		return new StreamStatusObserverAdapter(statusObserver, keyResolver);
 	}
@@ -282,6 +305,33 @@ final class Transformers {
 		@Override
 		public void onNext(ValueResult value) {
 			recordObserver.onNext(Transformers.toRecord(keyResolver.find(value.getHeader().getTag()), value));
+		}
+
+		@Override
+		public void onError(Throwable t) {
+			recordObserver.onError(t);
+		}
+
+		@Override
+		public void onCompleted() {
+			recordObserver.onCompleted();
+		}
+		
+	}
+	
+	protected static final class StreamBatchRecordObserverAdapter implements StreamObserver<BatchValueResult> {
+
+		private final Observer<Iterable<Record>> recordObserver;
+		private final KeyResolver keyResolver;
+		
+		public StreamBatchRecordObserverAdapter(Observer<Iterable<Record>> recordObserver, KeyResolver keyResolver) {
+			this.recordObserver = recordObserver;
+			this.keyResolver = keyResolver;
+		}
+		
+		@Override
+		public void onNext(BatchValueResult value) {
+			recordObserver.onNext(Transformers.toRecords(value.getResultList(), keyResolver));
 		}
 
 		@Override

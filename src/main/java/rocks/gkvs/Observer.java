@@ -31,9 +31,25 @@ package rocks.gkvs;
 
 public interface Observer<T> {
 	
+	/**
+	 * Calls on next item
+	 * 
+	 * @param item
+	 */
+	
 	void onNext(T item);
 	
+	/**
+	 * Calls on error
+	 * 
+	 * @param t - exception
+	 */
+	
 	void onError(Throwable t);
+	
+	/**
+	 * Calls at the end of the stream
+	 */
 	
 	void onCompleted();
 	

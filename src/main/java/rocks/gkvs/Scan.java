@@ -37,7 +37,7 @@ import rocks.gkvs.protos.ValueResult;
  *
  */
 
-public final class Scan {
+public final class Scan extends IncomingStream<Record> {
 
 	private final GkvsClient instance;
 
@@ -102,6 +102,7 @@ public final class Scan {
 		
 	}
 	
+	@Override
 	public Iterator<Record> sync() {
 		
 		Iterator<ValueResult> results = instance.getBlockingStub().scan(buildRequest());
@@ -109,6 +110,7 @@ public final class Scan {
 		
 	}
 	
+	@Override
 	public void async(Observer<Record> recordObserver) {
 		
 		instance.getAsyncStub().scan(buildRequest(), Transformers.observeRecords(recordObserver, NullKeyResolver.INS));

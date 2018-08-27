@@ -17,12 +17,15 @@
  */
 package rocks.gkvs;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -38,17 +41,42 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @param <T>
  */
 
-public class GkvsFuture<T> implements Future<T> {
+public class GkvsFuture<T> extends CompletableFuture<T> {
 
 	private final ListenableFuture<T> delegate; 
 	
 	protected GkvsFuture(ListenableFuture<T> delegate) {
 		this.delegate = delegate;
+		addCallbacks(this::complete, this::completeExceptionally);
+	}
+    
+	protected static <T> GkvsFuture<T> from(ListenableFuture<T> delegate) {
+		return new GkvsFuture<T>(delegate);
 	}
 	
+    public void addCallbacks(Consumer<T> successCallback, Consumer<Throwable> failureCallback) {
+        Futures.addCallback(delegate, new FutureCallback<T>() {
+            @Override
+            public void onSuccess(T result) {
+                successCallback.accept(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                failureCallback.accept(t);
+
+            }
+        }, MoreExecutors.directExecutor());
+    }
+    
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
-		return delegate.cancel(mayInterruptIfRunning);
+        if (isDone()) {
+            return false;
+        }
+		 boolean result = delegate.cancel(mayInterruptIfRunning);
+	     super.cancel(mayInterruptIfRunning);
+	     return result;
 	}
 
 	@Override

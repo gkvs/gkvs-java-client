@@ -37,7 +37,7 @@ import rocks.gkvs.protos.StatusResult;
  *
  */
 
-public final class Remove {
+public final class Remove extends One<Status> {
 
 	private final GkvsClient instance;
 	
@@ -92,6 +92,7 @@ public final class Remove {
 		return builder.build();
 	}
 	
+	@Override
 	public Status sync() {
 		
 		try {
@@ -111,6 +112,7 @@ public final class Remove {
 		
 	}
 	
+	@Override
 	public GkvsFuture<Status> async() {
 		
 		ListenableFuture<StatusResult> result = instance.getFutureStub().remove(buildRequest());
@@ -119,6 +121,7 @@ public final class Remove {
 		
 	}
 	
+	@Override
 	public void async(final Observer<Status> statusObserver) {
 		
 		KeyOperation request = buildRequest();
@@ -137,7 +140,7 @@ public final class Remove {
 		instance.getAsyncStub().remove(request, Transformers.observeStatuses(statusObserver, keyResolver));
 	
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Remove " + key;

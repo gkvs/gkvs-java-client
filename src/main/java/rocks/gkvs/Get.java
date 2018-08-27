@@ -38,7 +38,7 @@ import rocks.gkvs.protos.ValueResult;
  *
  */
 
-public final class Get {
+public final class Get extends One<Record> {
 
 	private final GkvsClient instance;
 
@@ -106,6 +106,7 @@ public final class Get {
 		return builder.build();
 	}
 	
+	@Override
 	public Record sync() {
 		
 		try {
@@ -124,6 +125,7 @@ public final class Get {
 		
 	}
 	
+	@Override
 	public GkvsFuture<Record> async() {
 		
 		ListenableFuture<ValueResult> result = instance.getFutureStub().get(buildRequest());
@@ -131,7 +133,8 @@ public final class Get {
 		return new GkvsFuture<Record>(Transformers.toRecord(key, result));
 		
 	}
-	
+
+	@Override
 	public void async(final Observer<Record> recordObserver) {
 		
 		KeyOperation request = buildRequest();
@@ -150,7 +153,7 @@ public final class Get {
 		instance.getAsyncStub().get(request, Transformers.observeRecords(recordObserver, keyResolver));
 	
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Get " + key;

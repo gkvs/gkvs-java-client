@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import rocks.gkvs.Transformers.KeyResolver;
@@ -45,7 +43,7 @@ import rocks.gkvs.protos.Select;
  *
  */
 
-public final class MultiGet {
+public final class MultiGet extends One<Iterable<Record>> {
 
 	private final GkvsClient instance;
 	
@@ -148,6 +146,7 @@ public final class MultiGet {
 		
 	}
 	
+	@Override
 	public Iterable<Record> sync() {
 		
 		final BatchValueResult result = instance.getBlockingStub().multiGet(buildRequest());
@@ -156,20 +155,23 @@ public final class MultiGet {
 		
 	}
 	
+	@Override
 	public GkvsFuture<Iterable<Record>> async() {
 		
 		ListenableFuture<BatchValueResult> result = instance.getFutureStub().multiGet(buildRequest());
 		
-		ListenableFuture<Iterable<Record>> transformedResult = Futures.transform(result, new Function<BatchValueResult, Iterable<Record>>() {
-
-			@Override
-			public Iterable<Record> apply(BatchValueResult input) {
-				return Transformers.toRecords(input.getResultList(), keyResolver);
-			}
-			
-		});
+		return GkvsFuture.from(Transformers.toBatchRecords(result, keyResolver));
 		
-		return new GkvsFuture<Iterable<Record>>(transformedResult);
 	}
 	
+	@Override
+	public void async(final Observer<Iterable<Record>> recordObserver) {
+		instance.getAsyncStub().multiGet(buildRequest(), Transformers.observeBatchRecords(recordObserver, keyResolver));
+	}
+	
+	@Override
+	public String toString() {
+		return "MultiGet";
+	}
+
 }

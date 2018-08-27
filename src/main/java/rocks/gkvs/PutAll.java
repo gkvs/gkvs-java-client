@@ -34,7 +34,7 @@ import rocks.gkvs.protos.PutOperation;
  *
  */
 
-public final class PutAll {
+public final class PutAll extends BiStream<KeyValue, Status> {
 
 	private final GkvsClient instance;
 	
@@ -78,6 +78,7 @@ public final class PutAll {
 		return builder;
 	}
 	
+	@Override
 	public Iterable<Status> sync(Iterable<KeyValue> keyValues) {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
@@ -93,6 +94,7 @@ public final class PutAll {
 		return collector.awaitUnchecked();
 	}
 	
+	@Override
 	public Observer<KeyValue> async(Observer<Status> statusObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {

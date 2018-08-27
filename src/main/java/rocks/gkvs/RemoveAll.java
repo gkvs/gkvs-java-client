@@ -35,7 +35,7 @@ import rocks.gkvs.protos.Select;
  *
  */
 
-public final class RemoveAll {
+public final class RemoveAll extends BiStream<Key, Status> {
 
 	private final GkvsClient instance;
 	
@@ -87,6 +87,7 @@ public final class RemoveAll {
 		return builder.build();
 	}
 	
+	@Override
 	public Iterable<Status> sync(Iterable<Key> keys) {
 		
 		BlockingCollector<Status> collector = new BlockingCollector<Status>();
@@ -102,6 +103,7 @@ public final class RemoveAll {
 		return collector.awaitUnchecked();
 	}
 	
+	@Override
 	public Observer<Key> async(Observer<Status> statusObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {
