@@ -226,14 +226,14 @@ public final class Parser {
 				try {
 					return new Num(Long.parseLong(stringifyValue));
 				} catch (NumberFormatException e) {
-					throw new ParseException(stringifyValue, e);
+					return new Str(stringifyValue);
 				}
 
 			case FLOAT64:
 				try {
 					return new Num(Double.parseDouble(stringifyValue));
 				} catch (NumberFormatException e) {
-					throw new ParseException(stringifyValue, e);
+					return new Str(stringifyValue);
 				}
 
 			default:
