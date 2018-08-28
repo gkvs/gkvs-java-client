@@ -36,7 +36,7 @@ import rocks.gkvs.protos.Select;
  *
  */
 
-public final class GetAll {
+public final class GetAll extends BiStream<Key, Record> {
 
 	private final GkvsClient instance;
 	
@@ -98,6 +98,7 @@ public final class GetAll {
 		
 	}
 	
+	@Override
 	public Iterable<Record> sync(Iterable<Key> keys) {
 		
 		BlockingCollector<Record> collector = new BlockingCollector<Record>();
@@ -113,6 +114,7 @@ public final class GetAll {
 		return collector.awaitUnchecked();
 	}
 	
+	@Override
 	public Observer<Key> async(final Observer<Record> recordObserver) {
 		
 		final KeyResolver keyResolver = new KeyResolver() {

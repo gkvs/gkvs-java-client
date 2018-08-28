@@ -19,15 +19,25 @@ package rocks.gkvs;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
+import com.google.common.collect.Lists;
+
+import reactor.core.publisher.Flux;
 import rocks.gkvs.value.Str;
+import rx.Observable;
 
 /**
  * 
@@ -63,15 +73,116 @@ public class ScanTest extends AbstractClientTest {
 	}
 	
 	@Test
-	public void testScan() {
-		
-		Set<String> notFoundKeys = new HashSet<>(LOAD_KEYS);
+	public void testScanSync() {
 		
 		Iterator<Record> records = Gkvs.Client.scan(TEST).sync();
+				
+		Assert.assertTrue(filterKeys(records).isEmpty());
+		
+	}
+	
+	@Test
+	public void testScanAsync() throws InterruptedException {
+		
+		BlockingCollector<Record> records = new BlockingCollector<Record>();
+		
+		Gkvs.Client.scan(TEST).async(records);
+		
+		List<Record> list = records.await();
+
+		Assert.assertTrue(filterKeys(list.iterator()).isEmpty());
+
+	}
+	
+	
+	@Test
+	public void testScanObserve() throws InterruptedException {
+				
+		Observable<Record> actual = Gkvs.Client.scan(TEST).observe();
+		
+		Iterable<Record> result = actual.toBlocking().toIterable();
+		
+		List<Record> list = Lists.newArrayList(result);
+
+		Assert.assertTrue(filterKeys(list.iterator()).isEmpty());
+
+	}
+
+	@Test
+	public void testScanFluxIterable() throws InterruptedException {
+				
+		Flux<Record> actual = Gkvs.Client.scan(TEST).flux();
+		
+		Iterable<Record> result = actual.toIterable();
+		
+		List<Record> list = Lists.newArrayList(result);
+
+		Assert.assertTrue(filterKeys(list.iterator()).isEmpty());
+
+	}
+	
+	@Test
+	public void testScanFluxBlock() throws InterruptedException {
+				
+		Flux<Record> actual = Gkvs.Client.scan(TEST).flux();
+		
+		List<Record> list = actual.collectList().block();
+		
+		Assert.assertTrue(filterKeys(list.iterator()).isEmpty());
+
+	}
+	
+	@Test
+	public void testScanFluxSubscribe() throws InterruptedException {
+				
+		Flux<Record> actual = Gkvs.Client.scan(TEST).flux();
+		
+		final AtomicReference<Throwable> error = new AtomicReference<>();
+		final CountDownLatch done = new CountDownLatch(1);
+		final List<Record> list = new CopyOnWriteArrayList<Record>();
+		
+		
+		actual.subscribe(new Subscriber<Record>() {
+	
+			@Override
+			public void onSubscribe(Subscription s) {
+				s.request(Long.MAX_VALUE);
+			}
+
+			@Override
+			public void onNext(Record record) {
+				list.add(record);
+			}
+
+			@Override
+			public void onError(Throwable t) {
+				error.set(t);
+			}
+
+			@Override
+			public void onComplete() {
+				done.countDown();
+			}
+
+
+		});
+		
+		done.await();
+		
+		if (error.get() != null) {
+			throw new RuntimeException("flux error:", error.get());
+		}
+		
+		Assert.assertTrue(filterKeys(list.iterator()).isEmpty());
+
+	}
+	
+	
+	private Set<String> filterKeys(Iterator<Record> records) {
+		Set<String> notFoundKeys = new HashSet<>(LOAD_KEYS);
 		
 		while(records.hasNext()) {
 			Record rec = records.next();
-			
 			try {
 				String key = rec.key().getRecordKeyString();
 				notFoundKeys.remove(key);
@@ -80,30 +191,10 @@ public class ScanTest extends AbstractClientTest {
 				e.printStackTrace();
 			}
 		}
-		
-		Assert.assertTrue(notFoundKeys.isEmpty());
-		
+		return notFoundKeys;
 	}
 	
-	protected static Set<String> collectKeys(Iterator<Record> records) {
-		
-		Set<String> set = new HashSet<>();
-		
-		while(records.hasNext()) {
-			Record rec = records.next();
-			
-			try {
-				String key = rec.key().getRecordKeyString();
-				set.add(key);
-			}
-			catch(GkvsException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return set;
-		
-	}
+
 	
 	
 }

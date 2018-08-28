@@ -132,6 +132,7 @@ public abstract class BiStream<S, R> {
 
 					@Override
 					public void onSubscribe(Subscription s) {
+						s.request(Long.MAX_VALUE);
 					}
 
 					@Override

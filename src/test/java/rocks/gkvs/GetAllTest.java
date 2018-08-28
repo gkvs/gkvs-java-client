@@ -27,7 +27,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
+import reactor.core.publisher.Flux;
 import rocks.gkvs.value.Str;
+import rx.Observable;
 
 /**
  * 
@@ -64,11 +68,66 @@ public class GetAllTest extends AbstractClientTest {
 	}
 	
 	@Test
-	public void testGetAll() {
+	public void testGetAllSync() {
 
 		Iterable<Record> actual = Gkvs.Client.getAll().sync(LOAD_KEYS);
 
 		List<Record> list = (List<Record>) actual;
+		
+		Assert.assertEquals(list.size(), LOAD_KEYS.size());
+		
+	}
+	
+	@Test
+	public void testGetAllAsync() throws InterruptedException {
+
+		BlockingCollector<Record> records = new BlockingCollector<Record>();
+		
+		Observer<Key> keys = Gkvs.Client.getAll().async(records);
+		
+		for (Key key : LOAD_KEYS) {
+			keys.onNext(key);
+		}
+		keys.onCompleted();
+		
+		List<Record> list = records.await();
+		
+		Assert.assertEquals(list.size(), LOAD_KEYS.size());
+		
+	}
+	
+	
+	@Test
+	public void testGetAllObserver() {
+
+		Observable<Record> actual = Gkvs.Client.getAll().observe(Observable.from(LOAD_KEYS));
+		
+		Iterable<Record> result = actual.toBlocking().toIterable();
+		
+		List<Record> list = Lists.newArrayList(result);
+		
+		Assert.assertEquals(list.size(), LOAD_KEYS.size());
+		
+	}
+	
+	@Test
+	public void testGetAllFluxIterable() {
+
+		Flux<Record> actual = Gkvs.Client.getAll().flux(Flux.fromIterable(LOAD_KEYS));
+		
+		Iterable<Record> result = actual.toIterable();
+		List<Record> list = Lists.newArrayList(result);
+				
+		Assert.assertEquals(list.size(), LOAD_KEYS.size());
+		
+	}
+	
+	@Test
+	public void testGetAllFluxBlock() {
+
+		Flux<Record> actual = Gkvs.Client.getAll().flux(Flux.fromIterable(LOAD_KEYS));
+	
+		List<Record> list = actual.collectList().block();
 		
 		Assert.assertEquals(list.size(), LOAD_KEYS.size());
 		
