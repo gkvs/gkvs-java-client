@@ -92,6 +92,48 @@ public class GetTest extends AbstractClientTest {
 		
 		Gkvs.Client.remove(TEST, key).sync();
 	}
+
+	@Test
+	public void testGetSingle() {
+
+		String key = UUID.randomUUID().toString();
+		String column = "col";
+		String value = "org";
+		
+		Table tbl = new Table();
+		tbl.put(column, value);
+		
+		Gkvs.Client.put(TEST, key, tbl).single().toBlocking().value();
+
+		boolean exists = Gkvs.Client.exists(TEST, key).single().toBlocking().value().exists();
+		Assert.assertTrue(exists);
+		
+		Gkvs.Client.remove(TEST, key).single().toBlocking().value();
+		
+		exists = Gkvs.Client.exists(TEST, key).single().toBlocking().value().exists();
+		Assert.assertFalse(exists);
+	}
 	
+	
+	@Test
+	public void testGetMono() {
+
+		String key = UUID.randomUUID().toString();
+		String column = "col";
+		String value = "org";
+		
+		Table tbl = new Table();
+		tbl.put(column, value);
+		
+		Gkvs.Client.put(TEST, key, tbl).mono().block();
+
+		boolean exists = Gkvs.Client.exists(TEST, key).mono().block().exists();
+		Assert.assertTrue(exists);
+		
+		Gkvs.Client.remove(TEST, key).mono().block();
+		
+		exists = Gkvs.Client.exists(TEST, key).mono().block().exists();
+		Assert.assertFalse(exists);
+	}
 	
 }
