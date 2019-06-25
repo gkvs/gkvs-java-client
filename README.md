@@ -1,3 +1,7 @@
+# Deprecated
+
+The whole GKVS project was deprecated, please use https://github.com/shvid/datafire
+
 # gkvs-java
 gKVS Java Client
 
